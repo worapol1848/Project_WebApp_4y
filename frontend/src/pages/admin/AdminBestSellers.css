@@ -1,0 +1,455 @@
+/* Styled by worapol สุดหล่อ */
+.podium-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 30px;
+  margin: 40px 0;
+  min-height: 380px;
+}
+
+.podium-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.podium-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.place-1 {
+  width: 320px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  z-index: 10;
+  border: 3px solid #FDE68A;
+  background: linear-gradient(to bottom, #FFFFFF 0%, #FFFBEB 100%);
+  box-shadow: 0 15px 35px -5px rgba(217, 119, 6, 0.15);
+}
+
+.place-1::before {
+  content: "CHAMPION";
+  position: absolute;
+  top: 15px;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  font-weight: 900;
+  color: #D97706;
+  opacity: 0.5;
+}
+
+.place-1:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 25px 40px -10px rgba(217, 119, 6, 0.25);
+}
+
+.place-2,
+.place-3 {
+  width: 260px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  opacity: 1;
+}
+
+.place-2 {
+  border: 2px solid #E2E8F0;
+  background: linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 100%);
+  box-shadow: 0 10px 20px -5px rgba(148, 163, 184, 0.1);
+}
+
+.place-3 {
+  border: 2px solid #FFEDD5;
+  background: linear-gradient(to bottom, #FFFFFF 0%, #FFF7ED 100%);
+  box-shadow: 0 10px 20px -5px rgba(180, 83, 9, 0.1);
+}
+
+.podium-img-wrapper {
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #F8FAFC;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.place-1 .podium-img-wrapper {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  border: 3px solid #FEF2F2;
+}
+
+.podium-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.podium-item:hover .podium-img-wrapper img {
+  transform: scale(1.05);
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.podium-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1E293B;
+  text-align: center;
+  margin: 0 0 5px 0;
+  line-height: 1.3;
+}
+
+.podium-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 5px;
+}
+
+.podium-rank-svg {
+  position: absolute;
+  top: -18px;
+  z-index: 5;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.podium-crown-medal {
+  position: absolute;
+  top: -25px;
+  z-index: 5;
+  filter: drop-shadow(0 6px 10px rgba(217, 119, 6, 0.3));
+  animation: float 3s ease-in-out infinite;
+}
+
+.rank-svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.place-1 .podium-name {
+  font-size: 1.3rem;
+  background: linear-gradient(90deg, #B45309, #D97706);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.podium-brand {
+  font-size: 0.85rem;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.podium-sales-focus {
+  background: #DCFCE7;
+  color: #059669;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1);
+  margin-bottom: 4px;
+}
+
+.premium-sales-focus {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: white;
+  font-size: 1.6rem;
+  padding: 10px 24px;
+  box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+  transform: scale(1.05);
+}
+
+.podium-label {
+  margin-top: 15px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 900;
+  color: #D97706;
+  opacity: 0.8;
+}
+
+ Table for Catalog */
+.bestsellers-table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.styled-table th {
+  padding: 1.2rem;
+  background: #F8FAFC;
+  color: #64748B;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.styled-table td {
+  padding: 1.2rem;
+  border-bottom: 1px solid #F1F5F9;
+  vertical-align: middle;
+}
+
+.styled-table tr:hover td {
+  background: #F8FAFC;
+}
+
+.export-pdf-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.export-pdf-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+  background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+}
+
+.podium-pid {
+  font-size: 0.75rem;
+  color: #94A3B8;
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: -5px;
+  margin-bottom: 5px;
+  letter-spacing: 0.05em;
+}
+
+.product-id-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #F1F5F9;
+  color: #475569;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.podium-rev {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.premium-rev {
+  font-size: 1.1rem;
+  color: #475569;
+  font-weight: 700;
+}
+
+.podium-sub-stats,
+.podium-sold-count {
+  font-size: 0.85rem;
+  color: #64748B;
+  font-weight: 600;
+}
+
+.podium-total-rev {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #10B981;
+}
+
+.revenue-pill {
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 0.95rem;
+  background: #F1F5F9;
+  color: #475569;
+}
+
+.rank-1 {
+  background: linear-gradient(135deg, #FDE68A 0%, #D97706 100%);
+  color: white;
+  box-shadow: 0 2px 5px rgba(217, 119, 6, 0.3);
+}
+
+.rank-2 {
+  background: linear-gradient(135deg, #E2E8F0 0%, #94A3B8 100%);
+  color: white;
+}
+
+.rank-3 {
+  background: linear-gradient(135deg, #FDBA74 0%, #C2410C 100%);
+  color: white;
+}
+
+.product-table-cell {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.units-pill-prominent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #DCFCE7;
+  border: 1px solid #BBF7D0;
+  border-radius: 12px;
+  padding: 8px 0;
+  min-width: 80px;
+  margin: 0 auto;
+}
+
+.units-count {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #166534;
+  line-height: 1;
+}
+
+.units-label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #15803D;
+  margin-top: 3px;
+  opacity: 0.8;
+  letter-spacing: 0.05em;
+}
+
+.revenue-text-secondary {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748B;
+  font-family: 'Inter', sans-serif;
+}
+
+.product-mini-thumbnail {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 2px solid white;
+}
+
+.product-name {
+  display: block;
+  font-weight: 700;
+  color: #1E293B;
+  margin-bottom: 4px;
+}
+
+.product-brand {
+  display: block;
+  font-size: 0.8rem;
+  color: #64748B;
+}
+
+.category-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #F1F5F9;
+  color: #475569;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-top {
+  background: #DCFCE7;
+  color: #166534;
+}
+
+.status-stable {
+  background: #EFF6FF;
+  color: #1E40AF;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .podium-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .place-1,
+  .place-2,
+  .place-3 {
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .podium-item.place-1 {
+    order: -1;
+    /* Always put #1 at top on mobile */
+  }
+}

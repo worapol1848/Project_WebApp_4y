@@ -1,0 +1,128 @@
+/* Styled by worapol สุดหล่อ */
+.mini-calendar.dark-theme {
+  background: #FFFFFF;
+  /* กลับมาใช้สีพื้นหลังขาวเดิม */
+  border-radius: 28px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  /* เส้นขอบบางๆ แบบเดิม */
+  padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+  /* เงาบางๆ แบบเดิม */
+  color: #1f2937;
+  /* ตัวอักษรสีเข้มแบบเดิม */
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 0 0.5rem;
+}
+
+.cal-month-year {
+  font-weight: 700;
+  color: #1f2937;
+  font-size: 1.2rem;
+}
+
+.cal-nav-group {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.cal-nav-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  color: #9CA3AF;
+  /* สีปุ่มนำทางแบบเดิม */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.cal-nav-btn:hover {
+  color: #1f2937;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #9CA3AF;
+  /* สีวันแบบเดิม */
+  margin-bottom: 1.5rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+
+.calendar-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  border-radius: 50%;
+  /* วงกลมตาม UI ใหม่ */
+  position: relative;
+}
+
+.calendar-cell.day {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #374151;
+  /* สีตัวเลขแบบเดิม */
+  font-family: inherit;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.calendar-cell.outside-month {
+  color: #D1D5DB !important;
+  /* ตัวเลขจางสำหรับเดือนอื่น */
+  cursor: default;
+}
+
+.calendar-cell.day:hover:not(.outside-month):not(.selected) {
+  background-color: #F3F4F6;
+}
+
+.calendar-cell.selected {
+  background-color: #6366F1 !important;
+  /* สีม่วงน้ำเงินหลักของระบบเดิม */
+  color: white !important;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+.calendar-cell.today:not(.selected) {
+  color: #6366F1;
+  font-weight: 800;
+}
+
+.calendar-cell.today::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  width: 4px;
+  height: 4px;
+  background-color: #6366F1;
+  border-radius: 50%;
+}
+
+.calendar-cell.selected::after {
+  background-color: white;
+}

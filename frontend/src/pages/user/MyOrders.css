@@ -1,0 +1,389 @@
+/* Styled by worapol สุดหล่อ */
+.orders-container {
+  padding: 8rem 2rem 5rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 2.5rem;
+  color: #111;
+  text-align: left;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.order-card-premium {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.order-card-premium:hover {
+  border-color: #ddd;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
+}
+
+.order-header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+}
+
+.order-id-label {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #111;
+}
+
+.order-date-label {
+  font-size: 0.85rem;
+  color: #888;
+  margin: 0.25rem 0 0 0;
+}
+
+.status-pill {
+  padding: 0.4rem 1rem;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.status-pending {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.status-shipped {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.status-delivered {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.status-arrived {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.status-cancelled {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.order-items-list {
+  padding: 0.5rem 1.5rem;
+}
+
+.order-single-item {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.order-single-item:last-child {
+  border-bottom: none;
+}
+
+.item-img-box {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f9f9f9;
+  flex-shrink: 0;
+}
+
+.item-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-details-box {
+  flex: 1;
+}
+
+.item-details-box h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.4rem 0;
+  color: #111;
+}
+
+.item-meta {
+  font-size: 0.85rem;
+  color: #888;
+  margin: 0;
+}
+
+.item-price-box span {
+  font-weight: 600;
+  color: #111;
+}
+
+.order-footer-premium {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.total-text {
+  font-size: 0.9rem;
+  color: #888;
+  display: block;
+}
+
+.total-amount-large {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #10B981;
+}
+
+.confirm-delivery-btn {
+  background: #111;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.confirm-delivery-btn:hover {
+  background: #333;
+}
+
+.no-orders {
+  text-align: center;
+  padding: 5rem 0;
+  background: #fafafa;
+  border-radius: 12px;
+  border: 1px dashed #ddd;
+}
+
+.no-orders p {
+  color: #888;
+  margin: 1.5rem 0;
+}
+
+.shop-now-btn {
+  background: #111;
+  color: white;
+  padding: 0.8rem 2rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* Shimmer Loading */
+.orders-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Minimalist Modal Styles */
+.order-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.order-modal-content.minimalist-confirm {
+  background: white;
+  width: 100%;
+  max-width: 380px;
+  border-radius: 24px;
+  padding: 2.5rem 2rem 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  animation: modalScaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.order-modal-content.review-modal-content {
+  background: white;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  animation: modalScaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalScaleUp {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.confirm-icon-modern {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.order-modal-body h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.75rem;
+}
+
+.order-modal-body p {
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+}
+
+.order-modal-footer-minimal {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-cancel-minimal {
+  flex: 1;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: #f5f5f5;
+  color: #666;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel-minimal:hover {
+  background: #eeeeee;
+}
+
+.btn-confirm-minimal {
+  flex: 1.5;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: #10b981;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-confirm-minimal:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+/* Pagination Styles */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.pagination-numbers {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.pagination-btn {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  border-color: #111;
+  color: #111;
+  background: #f9fafb;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-number {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #4b5563;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination-number:hover {
+  border-color: #111;
+  color: #111;
+}
+
+.pagination-number.active {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}

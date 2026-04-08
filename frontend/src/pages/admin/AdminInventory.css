@@ -1,0 +1,274 @@
+/* Styled by worapol สุดหล่อ */
+.inventory-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-card h3 {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-card .stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
+
+.stat-card.warning {
+  border-left: 4px solid #f59e0b;
+}
+
+.stat-card.success {
+  border-left: 4px solid #10b981;
+}
+
+.stat-card.info {
+  border-left: 4px solid #3b82f6;
+}
+
+.inv-product-cell {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.inv-product-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.inv-product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.inv-code {
+  font-size: 0.75rem;
+  color: #888;
+  font-family: monospace;
+}
+
+.inv-name {
+  font-weight: 600;
+  color: #111;
+  font-size: 0.95rem;
+}
+
+.inv-brand {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.badge-qty {
+  background: #f3f4f6;
+  color: #4b5563;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.badge-sold {
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.badge-remain {
+  background: #d1fae5;
+  color: #047857;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.export-pdf-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #6366F1;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.export-pdf-btn:hover {
+  background-color: #4f46e5;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+}
+
+.inventory-split-table thead th {
+  text-align: center;
+  border: 1px solid #edf2f7;
+}
+
+.group-header {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.6rem !important;
+}
+
+.qty-group {
+  background-color: #f7fafc;
+  color: #4a5568;
+}
+
+.financial-group {
+  background-color: #f0fff4;
+  color: #2f855a;
+}
+
+.header-sub-row th {
+  font-size: 0.75rem;
+  background: white;
+  padding: 0.8rem !important;
+}
+
+.price-td { text-align: right; font-weight: 500; }
+.center-td { text-align: center; }
+.right-td { text-align: right; font-weight: 600; }
+
+.qty-remain-badge {
+  background: #edf2f7;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.qty-remain-badge.out {
+  background: #fed7d7;
+  color: #c53030;
+}
+
+.unit-price-col {
+  background-color: #fffaf0;
+  color: #c05621;
+}
+
+.highlight-sold { color: #2b6cb0; }
+.highlight-remain { color: #38a169; }
+.highlight-total { color: #2d3748; background: #f8fafc; font-weight: 800 !important; }
+
+.unit-text {
+  font-size: 0.9rem;
+  color: #888;
+  font-weight: 400;
+  margin-left: 0.4rem;
+}
+
+.table-responsive {
+  overflow-x: hidden;
+}
+
+.inventory-split-table {
+  width: 100%;
+}
+
+.inventory-split-table th, 
+.inventory-split-table td {
+  font-size: 0.85rem;
+  padding: 0.8rem 0.4rem !important;
+}
+
+.inv-product-img {
+  width: 40px;
+  height: 40px;
+}
+
+.inv-name {
+  font-size: 0.85rem;
+}
+
+.sub-th {
+  font-size: 0.7rem !important;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+/* Ensure column widths are balanced and don't squish */
+.admin-table th:nth-child(1),
+.admin-table td:nth-child(1) {
+  min-width: 280px; /* Product name/image */
+}
+
+.admin-table th:nth-child(2),
+.admin-table td:nth-child(2) {
+  min-width: 120px; /* Price */
+}
+
+.admin-table th:nth-child(3),
+.admin-table td:nth-child(3),
+.admin-table th:nth-child(4),
+.admin-table td:nth-child(4),
+.admin-table th:nth-child(5),
+.admin-table td:nth-child(5) {
+  min-width: 130px; /* Stats */
+  text-align: center;
+}
+
+.admin-table th:nth-child(6),
+.admin-table td:nth-child(6),
+.admin-table th:nth-child(7),
+.admin-table td:nth-child(7) {
+  min-width: 150px; /* Values */
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Target numbers to look aligned */
+.admin-table td:nth-child(2) {
+  text-align: right;
+  font-weight: 500;
+}
+
+.badge-qty, .badge-sold, .badge-remain {
+  display: inline-block;
+  min-width: 3rem;
+  text-align: center;
+}

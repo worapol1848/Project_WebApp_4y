@@ -1,0 +1,106 @@
+/* Styled by worapol สุดหล่อ */
+.login-container {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background);
+}
+
+.login-box {
+  background: var(--card-bg);
+  padding: 3rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+
+.login-box h2 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-main);
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.login-subtitle {
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+  font-size: 1.1rem;
+}
+
+.error-msg {
+  background: #FEE2E2;
+  color: #DC2626;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 12px;
+  background: #F9FAFB;
+  box-sizing: border-box;
+  font-size: 1.1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--primary);
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  margin-top: 1rem;
+}
+
+.auth-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.toggle-auth {
+  margin-top: 2rem;
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.toggle-auth button {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-weight: 600;
+  padding: 0 0.5rem;
+}
+
+.toggle-auth button:hover {
+  text-decoration: underline;
+}

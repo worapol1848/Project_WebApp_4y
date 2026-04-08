@@ -1,0 +1,292 @@
+/* Styled by worapol สุดหล่อ */
+/* Admin Sidebar Layout Global */
+body.admin-active-layout {
+  padding-left: 280px !important;
+  transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.admin-active-layout-collapsed {
+  padding-left: 80px !important;
+}
+
+/* Rest of standard Admin pages need their top padding reduced since we no longer have a top navbar */
+body.admin-active-layout .admin-container,
+body.admin-active-layout .admin-products-container,
+body.admin-active-layout .admin-orders-container {
+  padding-top: 40px !important;
+}
+
+/* Sidebar Container */
+.navbar-admin {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
+  border-bottom: none !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 280px !important;
+  height: 100vh !important;
+  z-index: 2000 !important;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  overflow-x: hidden;
+}
+
+.navbar-admin.collapsed {
+  width: 80px !important;
+}
+
+.nav-container-admin {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+}
+
+.nav-top {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+}
+
+.nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 2rem;
+  padding-left: 0;
+}
+
+.nav-header .lock-btn {
+  background: transparent;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s;
+  position: absolute;
+  right: 0;
+}
+
+.nav-header .lock-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #111;
+}
+
+.nav-header .lock-btn.locked {
+  color: #10B981;
+}
+
+.navbar-admin.collapsed .lock-btn {
+  display: none;
+}
+
+.navbar-admin.collapsed .nav-header {
+  justify-content: center;
+  padding-left: 0;
+}
+
+.nav-logo-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.admin-logo-svg {
+  transition: opacity 0.2s, transform 0.2s;
+  opacity: 1;
+}
+
+.nav-divider {
+  height: 2px;
+  background: rgba(0, 0, 0, 0.15);
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.navbar-admin .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  color: #111;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.navbar-admin .nav-text {
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+
+.navbar-admin.collapsed .nav-text {
+  display: none;
+}
+
+.navbar-admin.collapsed .nav-link {
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.navbar-admin .nav-link:hover {
+  background: rgba(255, 255, 255, 0.6);
+  color: #111;
+}
+
+.navbar-admin .nav-link.active {
+  background: rgba(255, 255, 255, 0.85);
+  color: #111;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.navbar-admin .special-link {
+  margin-top: 1.5rem;
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px dashed rgba(139, 92, 246, 0.3);
+}
+
+.special-link:hover {
+  background: rgba(139, 92, 246, 0.15) !important;
+}
+
+.nav-link svg {
+  opacity: 1;
+}
+
+.nav-link.active svg {
+  opacity: 1;
+}
+
+.nav-bottom {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.admin-nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-profile-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #111;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.admin-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.navbar-admin.collapsed .admin-info {
+  display: none;
+}
+
+.navbar-admin.collapsed .admin-nav-controls {
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.admin-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.admin-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111;
+}
+
+.admin-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  color: #ef4444;
+  border: 1px solid #fecaca;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.navbar-admin.collapsed .nav-bottom {
+  padding: 1.5rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.navbar-admin.collapsed .admin-logout-btn {
+  padding: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.admin-logout-btn:hover {
+  background: #fef2f2;
+}
+
+/* Responsiveness for Sidebar */
+@media (max-width: 1024px) {
+  body.admin-active-layout {
+    padding-left: 0 !important;
+  }
+
+  .navbar-admin {
+    width: 240px !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s ease;
+  }
+
+  /* Standard top navbar is hidden on small screens too unless a hamburger exists, 
+     but assuming admin is primarily desktop for now. */
+}
