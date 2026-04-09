@@ -1,8 +1,35 @@
-# Velin Inventory & E-Commerce System
+# 📦 Velin Inventory System
 
-Velin is a comprehensive web-based platform serving as both an E-Commerce storefront for customers and a robust Inventory and Business Management system for administrators. The platform seamlessly integrates online shopping capabilities with advanced backend management, analytics, biometric authentication, and multi-language support.
+A comprehensive Full-Stack E-commerce and Inventory Management System with Biometric Face Recognition. 
 
-## 🚀 Tech Stack
+---
+
+## 🌟 Key Features
+
+### 👤 Users & Security
+- **Biometric Authentication:** Log in using Face Recognition (powered by Face-api.js) or standard credentials.
+- **Role-based Access Control (RBAC):**
+  - **Super Admin:** Manage admins, access top-level system logs, and modify core settings. (Requires Biometric Face Scan to log in).
+  - **Admin:** Manage inventory, track orders, approve payments, and view sales analytics.
+  - **User (Customer):** Browse products, manage carts, and track order statuses.
+- **Isolated Localization:** User language preferences are bound to the account, loading immediately upon login.
+- **Profile Management:** Address pin-pointing via map integration (Latitude/Longitude).
+
+### 🛒 E-commerce & Logistics
+- **Dynamic Product Catalog:** Real-time stock, promotional carousels, and accurate Brand Filtering (e.g., Nike, Adidas).
+- **Smart Shopping Cart:** Live cart updates and automatic shipping cost calculations (based on delivery region).
+- **Order Tracking:** Complete lifecycle visibility (`Pending` -> `Slip Check` -> `Shipped` -> `Arrived` -> `Delivered`).
+- **Cancellation & Refunds:** In-app workflow for canceling orders, submitting bank details, and verifying refunds.
+- **Historical Snapshots:** Order addresses are locked at checkout; later profile updates won't alter past receipts.
+
+### 📊 Reports & Analytics
+- **Admin Dashboard:** Visual sales data and system metrics metrics.
+- **PDF Generation:** Downloadable, beautifully formatted Order Receipts using jsPDF.
+- **System Activity Logs:** Comprehensive tracking for auditing.
+
+---
+
+## 🛠️ Technology Stack
 
 ### Frontend (User & Admin Portals)
 - **Framework:** React + Vite
@@ -15,111 +42,81 @@ Velin is a comprehensive web-based platform serving as both an E-Commerce storef
 - **Drag & Drop:** `@hello-pangea/dnd`
 - **PDF Generation:** `jspdf`, `jspdf-autotable`
 
-### Backend
+### Backend (Server & Database)
 - **Framework:** Node.js with Express.js
-- **Database:** MySQL
+- **Database:** MySQL (Managed via XAMPP)
 - **ORM:** Sequelize
-- **Authentication:** JSON Web Tokens (JWT) & bcryptjs
-- **File Uploads:** Multer
-- **API Communication:** CORS enabled, centralized routing
+- **Authentication:** JSON Web Token (JWT) & Bcryptjs
+- **File Uploads:** Multer (for slip & product image uploads)
 
-## 🌟 Key Features
+---
 
-### 🛒 Customer E-Commerce Portal
-- **Product Catalog & Discovery:** Clean, modern UI with interactive brand filtering, category browsing, and a dynamic best-selling product carousel.
-- **Cart System:** Fully functional and secure shopping cart exclusively for authenticated users (requires login to add items).
-- **Checkout & Payment:** robust order placement with shipping address tracking (supporting address snapshots so historical orders remain accurate even if profiles are updated).
-- **User Profiles:** order history tracking, wishlist management, and isolated language settings to prevent state leakage between accounts.
-- **Reviews & Ratings:** ability for users to comment and review products.
+## 🚀 Installation & Setup
 
-### 💼 Admin & Inventory Management Dashboard
-- **Role-Based Access Control:** Distinct roles for `Admin` and `Superadmin`.
-- **Biometric Security:** Exclusive `Superadmin` login and registration using Face Scanner logic (`FaceScanner.jsx`).
-- **Comprehensive Dashboard:** Real-time data visualization via Recharts for revenue, sales, and system statistics.
-- **Inventory Control:** full CRUD operations for product catalogs, stock tracking (`AdminInventory`), and image uploads.
-- **Order Management:** Tracking orders from placement to fulfillment.
-- **System Logs & Auditing:** Track user activities and administrative actions (`AdminLogs`).
-- **PDF Reports:** Automatic generation of receipts and business reports.
+### 1. Database Configuration (Using XAMPP)
+1. Open the **XAMPP Control Panel**.
+2. Start both **Apache** and **MySQL** services.
+3. Open your browser and navigate to [http://localhost/phpmyadmin](http://localhost/phpmyadmin).
+4. Create a new database named `velin_inventory`.
+5. Import the `VELIN_database_mysql.sql` file (located in the project root) into the newly created database.
 
-## 📁 Project Structure
+### 2. Backend Setup
+1. Navigate to the `backend` directory.
+2. Create or modify the `.env` file with the following configuration:
+   ```env
+   PORT=5000
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=         # Leave blank if no password is set in XAMPP
+   DB_NAME=velin_inventory
+   JWT_SECRET=super_secret_jwt_key_velin_inventory
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-```
-Velin Web App/
-├── backend/                  # Node.js + Express backend
-│   ├── routes/               # API routes (auth, products, orders, cart, etc.)
-│   ├── models/               # Sequelize DB Models
-│   ├── controllers/          # Business logic
-│   ├── config/               # DB & system configurations
-│   ├── server.js             # Entry point
-│   └── package.json
-├── frontend/                 # React + Vite frontend
+### 3. Frontend Setup
+1. Navigate to the `frontend` directory.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+---
+
+## 🏃 Running the Application
+
+You can easily start the full system (Backend + 2 Frontend Sessions) using the provided batch file:
+
+1. Double-click the **`start_dual_sessions.bat`** file in the project directory.
+2. This will automatically open 3 terminal windows working simultaneously:
+   - **Backend Server:** API running on Port `5000`
+   - **Frontend (Admin Interface):** [http://localhost:5173](http://localhost:5173)
+   - **Frontend (Customer Interface):** [http://localhost:5174](http://localhost:5174)
+
+---
+
+## 📁 Project Structure Overview
+
+```text
+Web App 4y/
+├── backend/            # Express.js API Server
+│   ├── config/         # Database connection setup
+│   ├── routes/         # API endpoints (Auth, Products, Orders, etc.)
+│   ├── middlewares/    # Security and auth tokens filtering
+│   ├── uploads/        # Local storage for images and slips
+│   └── server.js       # Backend entry point
+├── frontend/           # React + Vite Client
 │   ├── src/
-│   │   ├── components/       # Reusable UI components
-│   │   ├── pages/
-│   │   │   ├── admin/        # Admin dashboard, products, revenue, face scanner
-│   │   │   └── user/         # E-commerce store, cart, payment, profile
-│   │   ├── App.jsx           # App routing logic
-│   │   └── main.jsx          # React DOM render
-│   └── package.json
-├── VELIN_database_mysql.sql  # Database schema & initial data
-├── start_app.bat             # Single window startup script
-└── start_dual_sessions.bat   # Startup script for simultaneous dual-role testing
+│   │   ├── pages/      # Pages separated by user roles (Admin vs User)
+│   │   ├── components/ # Reusable UI components
+│   │   ├── assets/     # Static assets, fonts, css
+│   │   └── App.jsx     # Main React Tree
+├── VELIN_database_mysql.sql # MySQL Database Schema + Seed Data
+└── start_dual_sessions.bat  # Quick-start script
 ```
 
-## 🛠️ Setup Instructions
+---
 
-### Prerequisites
-- Node.js (v16+ recommended)
-- MySQL Server (XAMPP/WAMP or standalone)
-
-### 1. Database Setup
-1. Open your MySQL client (e.g., phpMyAdmin, MySQL Workbench).
-2. Create a database named `velin_database` (or match your `.env` configuration).
-3. Import the provided `VELIN_database_mysql.sql` file into the new database.
-
-### 2. Environment Variables (.env)
-You will need `.env` files in both backend and frontend directories (if applicable).
-For `backend/.env`:
-```env
-PORT=5000
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=
-DB_NAME=velin_database
-JWT_SECRET=your_secret_key
-```
-
-### 3. Installation
-Open a terminal and install dependencies for both sides:
-```bash
-# Install backend dependencies
-cd backend
-npm install
-
-# Install frontend dependencies
-cd ../frontend
-npm install
-```
-
-### 4. Running the Application
-
-**Option A: Using Batch Scripts (Windows)**
-- Run `start_app.bat` to launch both backend and frontend in a shared terminal structure.
-- Run `start_dual_sessions.bat` to launch the backend and TWO isolated frontend instances (Ports 5173 and 5174). This is perfect for testing Customer and Admin interactions simultaneously!
-
-**Option B: Manual Start**
-```bash
-# Terminal 1 - Backend
-cd backend
-npm run dev
-
-# Terminal 2 - Frontend
-cd frontend
-npm run dev
-```
-
-## 📝 Recent Updates & Refactoring
-- **Address Snapshotting:** Historical data persistence implemented securely for shipping addresses during checkout.
-- **Cart Security:** Enforced strict authentication checks before allowing users to add anything to their cart.
-- **Admin UI Polish:** shadow-free aesthetics, dynamic sliders, and removal of intrusive language switchers in admin routes.
-- **Scoped Language Isolation:** Fixed state bugs ensuring that logging into different accounts reflects correct locale settings.
+*Note: Allow browser camera permissions to enable Biometric Face Authentication for Super Admin logins.*
