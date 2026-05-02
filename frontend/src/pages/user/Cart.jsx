@@ -139,7 +139,7 @@ const Cart = () => {
 
       {cartItems.length === 0 ? (
         <div className="empty-cart-state">
-          <div className="empty-icon">🛒</div>
+          <div className="empty-icon"></div>
           <p>{t('cart_empty')}</p>
           <button className="go-shopping-btn" onClick={() => navigate('/')}>{t('cart_go_shop')}</button>
         </div>

@@ -33,11 +33,11 @@ export const translations = {
     
     // Auth Modals & Alerts - by worapol สุดหล่อ
     auth_title_order: 'Sign In to Order',
-    auth_msg_order: 'Please sign in or register to place an order. 😊',
+    auth_msg_order: 'Please sign in or register to place an order.',
     auth_title_wish: 'Wishlist',
-    auth_msg_wish: 'Please sign in or register to save to wishlist. 😊',
+    auth_msg_wish: 'Please sign in or register to save to wishlist.',
     auth_title_comment: 'Post a Comment',
-    auth_msg_comment: 'Please sign in to leave a review. 😊',
+    auth_msg_comment: 'Please sign in to leave a review.',
 
     // Navbar - by worapol สุดหล่อ
     nav_home: 'Home',
@@ -670,11 +670,11 @@ export const translations = {
 
     // Auth Modals & Alerts - by worapol สุดหล่อ
     auth_title_order: 'เข้าสู่ระบบเพื่อสั่งซื้อ',
-    auth_msg_order: 'กรุณาเข้าสู่ระบบหรือสมัครสมาชิกก่อนสั่งซื้อสินค้านะครับ 😊',
+    auth_msg_order: 'กรุณาเข้าสู่ระบบหรือสมัครสมาชิกก่อนสั่งซื้อสินค้านะครับ',
     auth_title_wish: 'รายการโปรด',
-    auth_msg_wish: 'กรุณาเข้าสู่ระบบหรือสมัครสมาชิกเพื่อบันทึกรายการโปรดนะครับ 😊',
+    auth_msg_wish: 'กรุณาเข้าสู่ระบบหรือสมัครสมาชิกเพื่อบันทึกรายการโปรดนะครับ',
     auth_title_comment: 'แสดงความคิดเห็น',
-    auth_msg_comment: 'กรุณาเข้าสู่ระบบเพื่อแสดงความคิดเห็นนะครับ 😊',
+    auth_msg_comment: 'กรุณาเข้าสู่ระบบเพื่อแสดงความคิดเห็นนะครับ',
 
     // Navbar - by worapol สุดหล่อ
     nav_home: 'หน้าหลัก',
