@@ -24,22 +24,26 @@ const PromoSlider = ({ products, navigate }) => {
   promoProducts = promoProducts.slice(0, 4); // force 4 faces for the 3D cube - by worapol สุดหล่อ
 
   const [current, setCurrent] = useState(0);
+  const [transitionTime, setTransitionTime] = useState(0.8);
 
   useEffect(() => {
     if (promoProducts.length <= 1) return;
     const timer = setInterval(() => {
+      setTransitionTime(0.8);
       setCurrent((prev) => prev - 1);
     }, 5000);
     return () => clearInterval(timer);
-  }, [promoProducts.length, current]);
+  }, [promoProducts.length]);
 
   const nextSlide = (e) => {
     e.stopPropagation();
+    setTransitionTime(0.8);
     setCurrent((prev) => prev - 1);
   };
 
   const prevSlide = (e) => {
     e.stopPropagation();
+    setTransitionTime(0.8);
     setCurrent((prev) => prev + 1);
   };
 
@@ -52,7 +56,10 @@ const PromoSlider = ({ products, navigate }) => {
     <div className="promo-slider-container featured-card cube-system">
       <div 
         className="promo-cube" 
-        style={{ transform: `translateZ(-50cqw) rotateY(${current * 90}deg)` }}
+        style={{ 
+          transform: `translateZ(-50cqw) rotateY(${current * 90}deg)`,
+          transition: `transform ${transitionTime}s cubic-bezier(0.23, 1, 0.32, 1)`
+        }}
       >
         {promoProducts.map((product, idx) => {
           const imgUrl = product.image_url ? `http://localhost:5000${product.image_url.replace(/\\/g, '/')}` : 'https://via.placeholder.com/800x800?text=No+Image';
@@ -92,7 +99,12 @@ const PromoSlider = ({ products, navigate }) => {
             <button 
               key={idx} 
               className={idx === activeIdx ? 'active' : ''} 
-              onClick={() => setCurrent(c => c - diff)}
+              onClick={() => {
+                const steps = (activeIdx - idx + 4) % 4;
+                if (steps === 0) return;
+                setTransitionTime(0.5 + (steps * 0.3)); 
+                setCurrent(c => c - steps);
+              }}
             />
           );
         })}

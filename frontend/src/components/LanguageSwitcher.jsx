@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import './LanguageSwitcher.css';
 
-const LanguageSwitcher = () => {
+const LanguageSwitcher = ({ up }) => {
   const { language, toggleLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -25,7 +25,7 @@ const LanguageSwitcher = () => {
   };
 
   return (
-    <div className="lang-dropdown-container" ref={dropdownRef}>
+    <div className={`lang-dropdown-container ${up ? 'drop-up' : ''}`} ref={dropdownRef}>
       <button 
         className={`lang-current-btn ${isOpen ? 'active' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
@@ -33,9 +33,10 @@ const LanguageSwitcher = () => {
       >
         <span>{language.toUpperCase()}</span>
         <svg 
-          className={`lang-arrow ${isOpen ? 'rotate' : ''}`}
+          className={`lang-arrow ${isOpen ? (up ? 'rotate-up' : 'rotate') : ''}`}
           width="10" height="10" viewBox="0 0 24 24" fill="none" 
           stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
+          style={{ transform: up ? 'rotate(180deg)' : 'none' }}
         >
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>

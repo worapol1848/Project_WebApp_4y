@@ -1280,9 +1280,3 @@
   color: #EF4444;
   /* PDF red icon color */
 }
-
-/* Pagination adjustment */
-.pagination {
-  margin-top: 0;
-  /* Override previous margin since it's now in bottom-bar */
-}

@@ -27,7 +27,7 @@ const VelinLogo = ({ className = '', textColor = '#FFFFFF', width, height, viewB
       </defs>
       <line x1="44" y1="34" x2="57" y2="6" stroke="url(#logoGradPurpleRed)" strokeWidth="10" strokeLinecap="round" />
       <line x1="32" y1="6" x2="44" y2="34" stroke="url(#logoGradRedPurple)" strokeWidth="10" strokeLinecap="round" />
-      {!iconOnly && <text x="62" y="31" fontFamily="'Poppins', sans-serif" fontSize="22" fontWeight="800" fill={textColor} letterSpacing="3">elin</text>}
+      {!iconOnly && <text x="62" y="31" fontFamily="'Poppins', sans-serif" fontSize="22" fontWeight="800" fill={textColor} letterSpacing="3" style={{ transition: 'opacity 0.2s' }}>elin</text>}
     </svg>
   );
 };

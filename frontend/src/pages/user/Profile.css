@@ -1,4 +1,4 @@
-/* Styled by worapol สุดหล่อ */
+/* profile styles updated by worapol */
 .profile-container {
   max-width: 600px;
   margin: 120px auto 40px;
@@ -505,4 +505,83 @@ input:checked+.slider:before {
 .profile-msg.error {
   background: #ffebee;
   color: #c62828;
+}
+.profile-header-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8faff 0%, #f1f5f9 100%);
+  border-radius: 24px;
+  margin-bottom: 2.5rem;
+  border: 1px solid rgba(0, 122, 255, 0.08);
+}
+
+.profile-image-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  transition: all 0.3s ease;
+}
+
+.profile-image-wrapper:hover {
+  transform: translateY(-5px);
+}
+
+.profile-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #e0f0ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #fff;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.avatar-edit-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #007aff;
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  font-size: 1.2rem;
+}
+
+.profile-header-info {
+  text-align: center;
+}
+
+.profile-header-info h3 {
+  margin: 0 !important;
+  font-size: 1.3rem !important;
+  color: #1a1a1a !important;
+  text-transform: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.profile-header-info p {
+  margin: 0.3rem 0 0;
+  color: #64748b;
+  font-size: 0.95rem;
 }

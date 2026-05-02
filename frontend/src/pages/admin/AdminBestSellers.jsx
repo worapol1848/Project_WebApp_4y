@@ -1,5 +1,6 @@
 // code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from '../../context/LanguageContext';
 import api from '../../services/api';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -33,6 +34,7 @@ const RankBadge = ({ rank }) => {
 };
 
 const AdminBestSellers = () => {
+  const { t } = useLanguage();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -218,7 +220,7 @@ const AdminBestSellers = () => {
     }
   };
 
-  if (loading) return <div className="admin-container">Loading Best Sellers...</div>;
+  if (loading) return <div className="admin-container">{t('adm_loading_best_sellers')}</div>;
 
   const bestSellers = (stats?.bestSellers || []).sort((a, b) => {
     if (b.total_sold !== a.total_sold) {
@@ -238,10 +240,26 @@ const AdminBestSellers = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const getPageNumbers = () => {
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    const pages = [];
+    for (let i = startPage; i <= endPage; i++) {
+      if (i > 0) pages.push(i);
+    }
+    return pages;
+  };
+
   return (
     <div className="admin-container">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <h2 className="dashboard-title" style={{ margin: 0 }}>Top Products Showcase</h2>
+        <h2 className="dashboard-title" style={{ margin: 0 }}>{t('adm_top_products_showcase')}</h2>
         <button
           onClick={handleExportPDF}
           className="export-pdf-btn"
@@ -251,7 +269,7 @@ const AdminBestSellers = () => {
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
-          Print Hub Report
+          {t('adm_print_hub_report')}
         </button>
       </div>
 
@@ -267,7 +285,7 @@ const AdminBestSellers = () => {
               <h4 className="podium-name">{topTwoThree[0].name}</h4>
               <p className="podium-pid">{topTwoThree[0].product_code || 'No ID'}</p>
               <div className="podium-stats">
-                <div className="podium-sales-focus">{topTwoThree[0].total_sold} units</div>
+                <div className="podium-sales-focus">{topTwoThree[0].total_sold} {t('adm_units')}</div>
                 <div className="podium-rev">{formatCurrency(topTwoThree[0].total_revenue)}</div>
               </div>
             </div>
@@ -283,10 +301,10 @@ const AdminBestSellers = () => {
             <p className="podium-pid" style={{ color: '#D97706', fontWeight: 'bold' }}>{topOne.product_code || 'No ID'}</p>
             <p className="podium-brand">{topOne.brand || topOne.category || 'Premium'}</p>
             <div className="podium-stats">
-              <div className="podium-sales-focus premium-sales-focus">{topOne.total_sold} units sold</div>
-              <div className="podium-rev premium-rev">Revenue: {formatCurrency(topOne.total_revenue)}</div>
+              <div className="podium-sales-focus premium-sales-focus">{topOne.total_sold} {t('adm_units_sold')}</div>
+              <div className="podium-rev premium-rev">{t('adm_revenue_label')} {formatCurrency(topOne.total_revenue)}</div>
             </div>
-            <div className="podium-label">Top Performance</div>
+            <div className="podium-label">{t('adm_top_performance')}</div>
           </div>
 
           {/* Top 3 */}
@@ -299,7 +317,7 @@ const AdminBestSellers = () => {
               <h4 className="podium-name">{topTwoThree[1].name}</h4>
               <p className="podium-pid">{topTwoThree[1].product_code || 'No ID'}</p>
               <div className="podium-stats">
-                <div className="podium-sales-focus">{topTwoThree[1].total_sold} units</div>
+                <div className="podium-sales-focus">{topTwoThree[1].total_sold} {t('adm_units')}</div>
                 <div className="podium-rev">{formatCurrency(topTwoThree[1].total_revenue)}</div>
               </div>
             </div>
@@ -313,23 +331,23 @@ const AdminBestSellers = () => {
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px' }}>
               <path d="M12 20v-6M6 20V10M18 20V4" />
             </svg>
-            Full Catalog Performance (Ranked by Sales Volume)
+            {t('adm_full_catalog_performance')}
           </h3>
           <div className="section-content">
             {!bestSellers || bestSellers.length === 0 ? (
-              <p className="no-data">No sales data recorded yet.</p>
+              <p className="no-data">{t('adm_no_sales_data')}</p>
             ) : (
               <div className="bestsellers-table-wrapper">
                 <table className="styled-table">
                   <thead>
                     <tr>
-                      <th style={{ textAlign: 'center', width: '80px' }}>Rank</th>
-                      <th style={{ textAlign: 'center', width: '120px' }}>Product ID</th>
-                      <th style={{ textAlign: 'left' }}>Product Details</th>
-                      <th style={{ textAlign: 'center' }}>Category</th>
-                      <th style={{ textAlign: 'center', width: '120px' }}>Sales Volume</th>
-                      <th style={{ textAlign: 'right', width: '150px' }}>Revenue (Gross)</th>
-                      <th style={{ textAlign: 'center', width: '120px' }}>Status</th>
+                      <th style={{ textAlign: 'center', width: '80px' }}>{t('adm_rank')}</th>
+                      <th style={{ textAlign: 'center', width: '120px' }}>{t('adm_product_id')}</th>
+                      <th style={{ textAlign: 'left' }}>{t('adm_product_details')}</th>
+                      <th style={{ textAlign: 'center' }}>{t('adm_category')}</th>
+                      <th style={{ textAlign: 'center', width: '120px' }}>{t('adm_sales_volume')}</th>
+                      <th style={{ textAlign: 'right', width: '150px' }}>{t('adm_revenue_gross')}</th>
+                      <th style={{ textAlign: 'center', width: '120px' }}>{t('adm_status')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -358,7 +376,7 @@ const AdminBestSellers = () => {
                           <td style={{ textAlign: 'center' }}>
                             <div className="units-pill-prominent">
                               <span className="units-count">{p.total_sold}</span>
-                              <span className="units-label">SOLD</span>
+                              <span className="units-label">{t('adm_sold')}</span>
                             </div>
                           </td>
                           <td style={{ textAlign: 'right' }}>
@@ -366,7 +384,7 @@ const AdminBestSellers = () => {
                           </td>
                           <td style={{ textAlign: 'center' }}>
                             <span className={`status-pill ${absoluteIndex < 3 ? 'status-top' : 'status-stable'}`}>
-                              {absoluteIndex === 0 ? 'Peak' : absoluteIndex < 3 ? 'Top Tier' : 'Stable'}
+                              {absoluteIndex === 0 ? t('adm_status_peak') : absoluteIndex < 3 ? t('adm_status_top_tier') : t('adm_status_stable')}
                             </span>
                           </td>
                         </tr>
@@ -374,40 +392,56 @@ const AdminBestSellers = () => {
                     })}
                   </tbody>
                 </table>
-
-                {totalPages > 1 && (
-                  <div className="pagination" style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem', gap: '8px' }}>
-                    <button
-                      onClick={() => paginate(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="page-btn"
-                    >
-                      Prev
-                    </button>
-                    {[...Array(totalPages)].map((_, i) => (
-                      <button
-                        key={i + 1}
-                        onClick={() => paginate(i + 1)}
-                        className={`page-btn ${currentPage === i + 1 ? 'active' : ''}`}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
-                    <button
-                      onClick={() => paginate(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="page-btn"
-                    >
-                      Next
-                    </button>
-                  </div>
-                )}
               </div>
             )}
           </div>
         </div>
-      </div >
-    </div >
+      </div>
+
+      {/* Pagination Controls - Moved Outside and Added Sliding Window */}
+      {totalPages > 1 && (
+        <div className="pagination">
+          <button
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="page-btn"
+          >
+            {t('adm_prev') || 'Prev'}
+          </button>
+
+          {getPageNumbers().map(pageNum => (
+            <button
+              key={pageNum}
+              onClick={() => paginate(pageNum)}
+              className={`page-btn ${currentPage === pageNum ? 'active' : ''}`}
+            >
+              {pageNum}
+            </button>
+          ))}
+
+          <button
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="page-btn"
+          >
+            {t('adm_next') || 'Next'}
+          </button>
+
+          <div className="page-jump">
+            <span>{t('adm_page_label') || (isThai ? 'หน้า:' : 'Page:')}</span>
+            <select
+              value={currentPage}
+              onChange={(e) => paginate(Number(e.target.value))}
+              className="page-select"
+            >
+              {[...Array(totalPages)].map((_, i) => (
+                <option key={i + 1} value={i + 1}>{i + 1}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

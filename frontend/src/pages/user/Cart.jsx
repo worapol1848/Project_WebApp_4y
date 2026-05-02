@@ -78,7 +78,8 @@ const Cart = () => {
     if (user) {
       try {
         await api.post('/cart', { productId, quantity: newQty, size, replace: true });
-        fetchCart();
+        await fetchCart();
+        window.dispatchEvent(new Event('cartUpdated'));
       } catch (err) {
         showToast(t('error'), 'error');
       }
@@ -97,7 +98,8 @@ const Cart = () => {
     if (user) {
       try {
         await api.delete(`/cart/${productId}/${size}`);
-        fetchCart();
+        await fetchCart();
+        window.dispatchEvent(new Event('cartUpdated'));
       } catch (err) {
         showToast(t('error'), 'error');
       }

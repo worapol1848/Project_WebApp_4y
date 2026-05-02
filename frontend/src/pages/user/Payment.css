@@ -378,9 +378,9 @@
 
 .upload-box {
   width: 100%;
-  border: 2.5px dashed rgba(0, 0, 0, 0.08);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.4);
+  border: 2px dashed #2563EB;
+  border-radius: 16px;
+  background: rgba(37, 99, 235, 0.03);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   cursor: pointer;
@@ -391,15 +391,15 @@
 }
 
 .upload-box:hover {
-  border-color: #111;
-  background: rgba(255, 255, 255, 0.8);
+  border-color: #1e40af;
+  background: rgba(37, 99, 235, 0.08);
   transform: translateY(-2px);
 }
 
 .upload-box.has-file {
   border-style: solid;
   border-color: #10B981;
-  background: rgba(16, 185, 129, 0.03);
+  background: rgba(16, 185, 129, 0.05);
 }
 
 .upload-label {

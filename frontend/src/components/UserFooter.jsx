@@ -55,7 +55,6 @@ const UserFooter = () => {
             <i className='bx bxl-tiktok'></i>
             <i className='bx bxl-youtube'></i>
           </div>
-          <p className="footer-highlight-cta">{t('f_sell_with')}</p>
         </div>
       </div>
 

@@ -4,6 +4,8 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
+const upload = require('../config/upload');
+
 
 // Register User - by worapol สุดหล่อ
 router.post('/register', async (req, res) => {
@@ -42,7 +44,7 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1d' }
     );
 
-    res.json({ token, user: { id: user.id, username: user.username, role: user.role } });
+    res.json({ token, user: { id: user.id, username: user.username, role: user.role, profile_image: user.profile_image } });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -54,7 +56,7 @@ const { verifyToken, isSuperAdmin } = require('../middlewares/authMiddleware');
 router.get('/profile', verifyToken, async (req, res) => {
   try {
     const [rows] = await db.query(
-      'SELECT username, email, full_name, phone, address, sub_district, district, province, postal_code, latitude, longitude, preferred_language FROM users WHERE id = ?',
+      'SELECT username, email, full_name, phone, address, sub_district, district, province, postal_code, latitude, longitude, preferred_language, profile_image FROM users WHERE id = ?',
       [req.user.id]
     );
     if (rows.length === 0) return res.status(404).json({ message: 'User not found' });
@@ -100,6 +102,20 @@ router.put('/profile', verifyToken, async (req, res) => {
       ]
     );
     res.json({ message: 'Profile updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update Profile Image - by worapol สุดหล่อ
+router.put('/profile-image', verifyToken, upload.single('profile_image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+    const imageUrl = `/uploads/${req.file.filename}`;
+    await db.query('UPDATE users SET profile_image = ? WHERE id = ?', [imageUrl, req.user.id]);
+    res.json({ message: 'Profile image updated successfully', profile_image: imageUrl });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

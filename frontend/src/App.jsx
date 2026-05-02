@@ -21,6 +21,7 @@ import Profile from './pages/user/Profile';
 import Cart from './pages/user/Cart';
 import Wishlist from './pages/user/Wishlist';
 import Payment from './pages/user/Payment';
+import OrderSuccess from './pages/user/OrderSuccess';
 import Products from './pages/user/Products';
 import AdminRevenue from './pages/admin/AdminRevenue';
 import AdminBestSellers from './pages/admin/AdminBestSellers';
@@ -72,6 +73,9 @@ function App() {
                 } />
                 <Route path="/payment" element={
                   <ProtectedRoute><UserRoute><Payment /></UserRoute></ProtectedRoute>
+                } />
+                <Route path="/order-success" element={
+                  <ProtectedRoute><UserRoute><OrderSuccess /></UserRoute></ProtectedRoute>
                 } />
                 <Route path="/myorders" element={
                   <ProtectedRoute><UserRoute><MyOrders /></UserRoute></ProtectedRoute>

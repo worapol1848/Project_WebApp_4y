@@ -9,6 +9,7 @@ router.get('/', verifyToken, isAdmin, async (req, res) => {
   try {
     const [products] = await db.query('SELECT COUNT(*) as total FROM products');
     const [orders] = await db.query('SELECT COUNT(*) as total FROM orders');
+    const [deliveredOrders] = await db.query("SELECT COUNT(*) as total FROM orders WHERE status = 'delivered'");
     const [users] = await db.query('SELECT COUNT(*) as total FROM users');
     const [lowStockProducts] = await db.query('SELECT id, name, stock FROM products WHERE CAST(stock AS UNSIGNED) < 5 ORDER BY CAST(stock AS UNSIGNED) ASC');
     const [lowStockSizes] = await db.query(`
@@ -74,6 +75,7 @@ router.get('/', verifyToken, isAdmin, async (req, res) => {
     res.json({
       totalProducts: products[0].total,
       totalOrders: orders[0].total,
+      totalDeliveredOrders: deliveredOrders[0].total || 0,
       totalUsers: users[0].total,
       totalSales: totalSalesData[0].total || 0,
       totalProductsSold: totalProductsSoldData[0].total || 0,

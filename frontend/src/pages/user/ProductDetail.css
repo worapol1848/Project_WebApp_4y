@@ -1282,7 +1282,18 @@
 }
 
 .wishlist-action:hover {
-  color: #ff3b30;
+  color: #ff4b4b;
+  transform: scale(1.1);
+}
+
+.wishlist-action.active {
+  color: #ff4b4b;
+}
+
+.wishlist-action.active svg {
+  fill: #ff4b4b;
+  stroke: #ff4b4b;
+  filter: drop-shadow(0 0 5px rgba(255, 75, 75, 0.3));
 }
 
 .wishlist-count {

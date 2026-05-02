@@ -126,3 +126,32 @@
 .calendar-cell.selected::after {
   background-color: white;
 }
+
+/* Compact Mode - by worapol สุดหล่อ */
+.mini-calendar.compact {
+  padding: 0.5rem;
+  box-shadow: none;
+  border: none;
+  background: transparent;
+}
+
+.mini-calendar.compact .calendar-header {
+  margin-bottom: 0.75rem;
+}
+
+.mini-calendar.compact .cal-month-year {
+  font-size: 0.95rem;
+}
+
+.mini-calendar.compact .calendar-weekdays {
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.mini-calendar.compact .calendar-grid {
+  gap: 4px;
+}
+
+.mini-calendar.compact .calendar-cell {
+  font-size: 0.8rem;
+}

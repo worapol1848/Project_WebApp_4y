@@ -13,6 +13,27 @@ const AdminInventory = () => {
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Pagination - by worapol สุดหล่อ
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const getPageNumbers = () => {
+    const totalPages = Math.ceil(inventory.length / itemsPerPage);
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    const pages = [];
+    for (let i = startPage; i <= endPage; i++) {
+      if (i > 0) pages.push(i);
+    }
+    return pages;
+  };
+
   const handleExportPDF = () => {
     try {
       const doc = new jsPDF('l', 'mm', 'a4');
@@ -229,7 +250,7 @@ const AdminInventory = () => {
               <polyline points="7 10 12 15 17 10"></polyline>
               <line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
-            Export PDF
+            {t('adm_export_pdf') || 'Export PDF'}
           </button>
         </div>
 
@@ -261,7 +282,7 @@ const AdminInventory = () => {
                 <th rowSpan="2">{t('inv_th_product')}</th>
                 <th rowSpan="2">{t('inv_th_price')}</th>
                 <th colSpan="3" className="group-header qty-group">{t('nav_products')} (Qty)</th>
-                <th colSpan="3" className="group-header financial-group">Financial Summary (฿)</th>
+                <th colSpan="3" className="group-header financial-group">{t('adm_financial_summary') || 'Financial Summary (฿)'}</th>
               </tr>
               <tr className="header-sub-row">
                 <th className="sub-th">{t('inv_th_total_qty')}</th>
@@ -273,45 +294,98 @@ const AdminInventory = () => {
               </tr>
             </thead>
             <tbody>
-              {inventory.map((item) => (
-                <tr key={item.id}>
-                  <td>
-                    <div className="inv-product-cell">
-                      <img 
-                        src={item.image_url?.startsWith('/uploads') ? `http://localhost:5000${item.image_url}` : item.image_url} 
-                        alt={item.name} 
-                        className="inv-product-img" 
-                      />
-                      <div className="inv-product-info">
-                        <span className="inv-code">{item.product_code}</span>
-                        <span className="inv-name">{item.name}</span>
-                        <span className="inv-brand">{item.brand} - {item.category}</span>
+              {(() => {
+                const indexOfLastItem = currentPage * itemsPerPage;
+                const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+                const currentItems = inventory.slice(indexOfFirstItem, indexOfLastItem);
+
+                if (currentItems.length === 0) {
+                  return (
+                    <tr>
+                      <td colSpan="8" style={{ textAlign: 'center', padding: '2rem' }}>
+                        {t('nav_no_found')}
+                      </td>
+                    </tr>
+                  );
+                }
+
+                return currentItems.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      <div className="inv-product-cell">
+                        <img 
+                          src={item.image_url?.startsWith('/uploads') ? `http://localhost:5000${item.image_url}` : item.image_url} 
+                          alt={item.name} 
+                          className="inv-product-img" 
+                        />
+                        <div className="inv-product-info">
+                          <span className="inv-code">{item.product_code}</span>
+                          <span className="inv-name">{item.name}</span>
+                          <span className="inv-brand">{item.brand} - {item.category === 'shoe' ? t('nav_shoes') : (item.category === 'apparel' ? t('nav_apparel') : item.category)}</span>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="price-td unit-price-col"><strong>{formatPrice(item.price)}</strong></td>
-                  <td className="center-td"><strong>{item.total_quantity}</strong></td>
-                  <td className="center-td">{item.total_sold}</td>
-                  <td className="center-td">
-                    <span className={`qty-remain-badge ${item.remaining_stock === 0 ? 'out' : ''}`}>
-                      {item.remaining_stock}
-                    </span>
-                  </td>
-                  <td className="right-td highlight-sold">{formatPrice(item.total_sold_revenue)}</td>
-                  <td className="right-td highlight-remain">{formatPrice(item.remaining_value)}</td>
-                  <td className="right-td highlight-total">{formatPrice(item.total_potential_value)}</td>
-                </tr>
-              ))}
-              {inventory.length === 0 && (
-                <tr>
-                  <td colSpan="7" style={{ textAlign: 'center', padding: '2rem' }}>
-                    {t('nav_no_found')}
-                  </td>
-                </tr>
-              )}
+                    </td>
+                    <td className="price-td unit-price-col"><strong>{formatPrice(item.price)}</strong></td>
+                    <td className="center-td"><strong>{item.total_quantity}</strong></td>
+                    <td className="center-td">{item.total_sold}</td>
+                    <td className="center-td">
+                      <span className={`qty-remain-badge ${item.remaining_stock === 0 ? 'out' : ''}`}>
+                        {item.remaining_stock}
+                      </span>
+                    </td>
+                    <td className="right-td highlight-sold">{formatPrice(item.total_sold_revenue || (item.total_sold * item.price) || 0)}</td>
+                    <td className="right-td highlight-remain">{formatPrice(item.remaining_value || (item.remaining_stock * item.price) || 0)}</td>
+                    <td className="right-td highlight-total">{formatPrice(item.total_potential_value || ((item.total_sold + item.remaining_stock) * item.price) || 0)}</td>
+                  </tr>
+                ));
+              })()}
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls - Standardized and Sliding Window */}
+        {inventory.length > itemsPerPage && (
+          <div className="pagination" style={{ marginTop: '1.5rem', justifyContent: 'center' }}>
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="page-btn"
+            >
+              {t('adm_prev') || 'Prev'}
+            </button>
+
+            {getPageNumbers().map(pageNum => (
+              <button
+                key={pageNum}
+                onClick={() => setCurrentPage(pageNum)}
+                className={`page-btn ${currentPage === pageNum ? 'active' : ''}`}
+              >
+                {pageNum}
+              </button>
+            ))}
+
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(inventory.length / itemsPerPage)))}
+              disabled={currentPage === Math.ceil(inventory.length / itemsPerPage)}
+              className="page-btn"
+            >
+              {t('adm_next') || 'Next'}
+            </button>
+
+            <div className="page-jump">
+              <span>{t('adm_page_label') || (useLanguage().language === 'th' ? 'หน้า:' : 'Page:')}</span>
+              <select
+                value={currentPage}
+                onChange={(e) => setCurrentPage(Number(e.target.value))}
+                className="page-select"
+              >
+                {[...Array(Math.ceil(inventory.length / itemsPerPage))].map((_, i) => (
+                  <option key={i + 1} value={i + 1}>{i + 1}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

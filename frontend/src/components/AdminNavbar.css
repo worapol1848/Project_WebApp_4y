@@ -106,22 +106,31 @@ body.admin-active-layout .admin-orders-container {
 }
 
 .admin-logo-svg {
-  transition: opacity 0.2s, transform 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 1;
+}
+
+.navbar-admin.collapsed .admin-logo-svg {
+  transform: scale(1.1);
 }
 
 .nav-divider {
   height: 2px;
-  background: rgba(0, 0, 0, 0.15);
-  margin-bottom: 2rem;
-  width: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0 auto 2rem auto;
+  width: 80%;
+  border-radius: 2px;
+}
+
+.navbar-admin.collapsed .nav-divider {
+  width: 30px;
 }
 
 
 .nav-links {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.65rem;
 }
 
 .navbar-admin .nav-link {
@@ -129,7 +138,7 @@ body.admin-active-layout .admin-orders-container {
   align-items: center;
   gap: 1rem;
   padding: 0.85rem 1rem;
-  color: #111;
+  color: #475569;
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 700;
@@ -149,7 +158,12 @@ body.admin-active-layout .admin-orders-container {
 
 .navbar-admin.collapsed .nav-link {
   justify-content: center;
-  padding: 1rem 0;
+  padding: 0;
+  height: 48px;
+  width: 48px;
+  margin: 0 auto;
+  border-radius: 12px;
+  gap: 0 !important;
 }
 
 .navbar-admin .nav-link:hover {
@@ -167,6 +181,21 @@ body.admin-active-layout .admin-orders-container {
   margin-top: 1.5rem;
   background: rgba(139, 92, 246, 0.08);
   border: 1px dashed rgba(139, 92, 246, 0.3);
+  color: #8B5CF6;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-admin.collapsed .special-link {
+  margin-top: 1.5rem;
+  border-radius: 12px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .special-link:hover {
@@ -174,29 +203,49 @@ body.admin-active-layout .admin-orders-container {
 }
 
 .nav-link svg {
-  opacity: 1;
+  opacity: 0.8;
+  transition: all 0.2s ease;
 }
 
-.nav-link.active svg {
+.nav-link.active svg, .nav-link:hover svg {
   opacity: 1;
 }
 
 .nav-bottom {
   padding: 1.5rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-  background: rgba(0, 0, 0, 0.04);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .admin-nav-controls {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.admin-profile-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.navbar-admin:not(.collapsed) .admin-profile-group {
+  flex: 1;
+}
+
+.navbar-admin.collapsed .admin-profile-group {
+  display: flex;
+  justify-content: center;
+  width: auto;
 }
 
 .admin-profile-circle {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: #111;
   color: white;
@@ -204,7 +253,7 @@ body.admin-active-layout .admin-orders-container {
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
 }
 
 .admin-info {
@@ -212,6 +261,7 @@ body.admin-active-layout .admin-orders-container {
   flex-direction: column;
   min-width: 0;
   overflow: hidden;
+  flex: 1;
 }
 
 .navbar-admin.collapsed .admin-info {
@@ -219,14 +269,16 @@ body.admin-active-layout .admin-orders-container {
 }
 
 .navbar-admin.collapsed .admin-nav-controls {
+  display: flex;
   justify-content: center;
+  width: auto;
   margin-bottom: 1rem;
 }
 
 .admin-label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #6b7280;
+  color: #4B5563;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -241,25 +293,26 @@ body.admin-active-layout .admin-orders-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   width: 100%;
-  background: rgba(255, 255, 255, 0.8);
+  background: #fff;
   color: #ef4444;
-  border: 1px solid #fecaca;
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
-  font-size: 0.95rem;
+  border: 1px solid #fee2e2;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
-  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.05);
 }
 
 .navbar-admin.collapsed .nav-bottom {
-  padding: 1.5rem 0.5rem;
+  padding: 1.5rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1.25rem;
 }
 
 .navbar-admin.collapsed .admin-logout-btn {
@@ -269,10 +322,19 @@ body.admin-active-layout .admin-orders-container {
   border-radius: 12px;
   justify-content: center;
   margin: 0 auto;
+  border: 1px solid #fee2e2;
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .admin-logout-btn:hover {
   background: #fef2f2;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+  border-color: #fecaca;
+}
+
+.admin-logout-btn:active {
+  transform: translateY(0);
 }
 
 /* Responsiveness for Sidebar */
@@ -286,7 +348,4 @@ body.admin-active-layout .admin-orders-container {
     transform: translateX(-100%) !important;
     transition: transform 0.3s ease;
   }
-
-  /* Standard top navbar is hidden on small screens too unless a hamburger exists, 
-     but assuming admin is primarily desktop for now. */
 }

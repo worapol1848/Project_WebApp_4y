@@ -475,16 +475,19 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
-  border: none;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   cursor: pointer;
   padding: 0;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .promo-slider-nav button.active {
-  background: #fff;
-  transform: scale(1.3);
+  background: #2563eb;
+  border-color: #2563eb;
+  transform: scale(1.4);
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
 }
 
 .promo-arrow {
@@ -655,7 +658,12 @@
 
 .wishlist-btn-grid.active {
   background: white;
-  box-shadow: 0 4px 12px rgba(255, 75, 75, 0.15);
+  box-shadow: 0 4px 12px rgba(255, 75, 75, 0.25);
+}
+
+.wishlist-btn-grid.active svg {
+  fill: #ff4b4b;
+  stroke: #ff4b4b;
 }
 
 .wishlist-btn-grid svg {

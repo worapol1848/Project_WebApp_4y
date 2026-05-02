@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import './MiniCalendar.css';
 
-const MiniCalendar = ({ selectedDate, onChange }) => {
+const MiniCalendar = ({ selectedDate, onChange, compact = false }) => {
   // selectedDate is a string 'YYYY-MM-DD' - by worapol สุดหล่อ
   const initialDate = selectedDate ? new Date(selectedDate) : new Date();
 
@@ -95,7 +95,7 @@ const MiniCalendar = ({ selectedDate, onChange }) => {
   const monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
 
   return (
-    <div className="mini-calendar dark-theme">
+    <div className={`mini-calendar dark-theme ${compact ? 'compact' : ''}`}>
       <div className="calendar-header">
         <div className="cal-month-year">
           {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear() + 543}

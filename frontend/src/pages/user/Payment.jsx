@@ -231,7 +231,7 @@ const Payment = () => {
         formData.append('slip', slipFile);
       }
 
-      await api.post('/orders', formData, {
+      const response = await api.post('/orders', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
@@ -243,8 +243,29 @@ const Payment = () => {
       window.dispatchEvent(new Event('cartUpdated'));
 
       setTimeout(() => {
-        navigate('/myorders');
-      }, 1500);
+        navigate('/order-success', {
+          state: {
+            orderId: response.data.orderId,
+            orderItems: cartItems,
+            subtotal: cartSubtotal,
+            discount: cartDiscount,
+            shippingFee: shippingFee,
+            shippingMethod: shippingMethod,
+            total: totalPrice,
+            shippingAddress: {
+              full_name: profile?.full_name,
+              phone: profile?.phone,
+              address: profile?.address,
+              sub_district: profile?.sub_district,
+              district: profile?.district,
+              province: profile?.province,
+              postal_code: profile?.postal_code,
+              latitude: profile?.latitude,
+              longitude: profile?.longitude,
+            }
+          }
+        });
+      }, 500);
     } catch (err) {
       const errorMsg = err.response?.data?.error || err.response?.data?.message || t('pay_failed');
       showToast(errorMsg, "error");

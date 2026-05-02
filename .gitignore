@@ -1,7 +1,9 @@
 node_modules/
 .env
-add_comments.js
-fix_comments.js
 .DS_Store
 dist/
 build/
+backend/uploads/*
+!backend/uploads/.gitkeep
+frontend/node_modules/
+backend/node_modules/

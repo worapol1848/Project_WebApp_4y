@@ -23,6 +23,7 @@ const UserNavbar = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [currentUser, setCurrentUser] = useState(user);
   const [filters, setFilters] = useState({ brands: [], categories: [], productTypes: [] });
   
   // Price Slider State - by worapol สุดหล่อ
@@ -74,11 +75,23 @@ const UserNavbar = () => {
   useEffect(() => {
     updateCartCount();
     updateWishlistCount();
+    
+    const handleProfileUpdate = () => {
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      setCurrentUser(storedUser);
+    };
+
     window.addEventListener('cartUpdated', updateCartCount);
     window.addEventListener('wishlistUpdated', updateWishlistCount);
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    
+    // Initial sync
+    setCurrentUser(user);
+
     return () => {
       window.removeEventListener('cartUpdated', updateCartCount);
       window.removeEventListener('wishlistUpdated', updateWishlistCount);
+      window.removeEventListener('profileUpdated', handleProfileUpdate);
     };
   }, [user]);
 
@@ -338,17 +351,45 @@ const UserNavbar = () => {
               {/* User Profile */}
               <div className="user-dropdown-container" ref={userMenuRef}>
                 <button className="user-menu-trigger" onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                  <span className="user-name">{user.username}</span>
+                  {currentUser?.profile_image ? (
+                    <img 
+                      src={`http://localhost:5000${currentUser.profile_image}`} 
+                      alt="" 
+                      className="nav-user-avatar"
+                      style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #ddd' }}
+                    />
+                  ) : (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  )}
+                  <span className="user-name">{currentUser?.username || user?.username}</span>
                 </button>
                 {isUserMenuOpen && (
                   <div className="user-dropdown-menu">
                     <div className="dropdown-header">
-                      <p className="dropdown-user-role">{t('nav_user_acc')}</p>
-                      <p className="dropdown-user-name">{user.username}</p>
+                      <div className="dropdown-user-intro" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        {currentUser?.profile_image ? (
+                          <img 
+                            src={`http://localhost:5000${currentUser.profile_image}`} 
+                            alt="" 
+                            className="dropdown-avatar" 
+                            style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
+                          />
+                        ) : (
+                          <div className="dropdown-avatar-placeholder" style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                              <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                          </div>
+                        )}
+                        <div className="dropdown-user-details">
+                          <p className="dropdown-user-role" style={{ margin: 0, fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('nav_user_acc')}</p>
+                          <p className="dropdown-user-name" style={{ margin: 0, fontSize: '1rem', fontWeight: '700', color: '#1e293b' }}>{currentUser?.username || user?.username}</p>
+                        </div>
+                      </div>
                     </div>
                     <div className="dropdown-divider"></div>
                     {(user.role === 'admin' || user.role === 'superadmin') && (

@@ -1,5 +1,6 @@
 // code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect, useContext } from 'react';
+import { useLanguage } from '../../context/LanguageContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { AuthContext } from '../../context/AuthContext';
@@ -11,6 +12,8 @@ const AdminProductDetail = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { user } = useContext(AuthContext);
+  const { t } = useLanguage();
+  const isThai = useLanguage().language === 'th';
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [mainImage, setMainImage] = useState(null);
@@ -354,7 +357,7 @@ const AdminProductDetail = () => {
   };
 
   if (loading) {
-    return <div className="product-detail-loading">Loading Product Details...</div>;
+    return <div className="product-detail-loading">{t('adm_loading_product_details') || 'Loading Product Details...'}</div>;
   }
 
   if (!product) return null;
@@ -367,7 +370,7 @@ const AdminProductDetail = () => {
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
-          <span>Back</span>
+          <span>{t('back')}</span>
         </button>
       </div>
 
@@ -414,13 +417,13 @@ const AdminProductDetail = () => {
           <div className="product-info-wrapper">
             <div className="product-meta">
               {product.brand && <span className="meta-brand">{product.brand}</span>}
-              {product.product_code && <span className="meta-code">Code: {product.product_code}</span>}
+              {product.product_code && <span className="meta-code">{t('adm_code_label')} {product.product_code}</span>}
             </div>
 
             <h1 className="product-title">{product.name}</h1>
 
             {product.category && (
-              <p className="product-category-label">Category: {product.category}</p>
+              <p className="product-category-label">{t('adm_category_label')} {product.category === 'shoe' ? t('nav_shoes') : (product.category === 'apparel' ? t('nav_apparel') : product.category)}</p>
             )}
 
             <div className="product-price-row">
@@ -438,7 +441,7 @@ const AdminProductDetail = () => {
                 )}
               </div>
               <span className={`product-status ${product.stock === 0 ? 'out-stock' : product.stock < 5 ? 'low-stock' : 'in-stock'}`}>
-                {product.stock === 0 ? 'Out of Stock' : `In Stock (${product.stock})`}
+                {product.stock === 0 ? t('adm_out_of_stock') : `${t('adm_in_stock')} (${product.stock})`}
               </span>
             </div>
 
@@ -462,12 +465,12 @@ const AdminProductDetail = () => {
 
             {product.sizes && product.sizes.length > 0 && (
               <div className="product-sizes-section">
-                <h3>Available Sizes</h3>
+                <h3>{t('adm_available_sizes')}</h3>
                 <div className="size-options-grid">
                   {product.sizes.map(s => (
                     <div key={s.id} className={`size-option ${s.stock === 0 ? 'sold-out' : ''}`}>
                       <span className="size-name">{s.size}</span>
-                      <span className={`size-qty ${Number(s.stock) < 5 ? 'qty-low' : 'qty-good'}`}>{s.stock} left</span>
+                      <span className={`size-qty ${Number(s.stock) < 5 ? 'qty-low' : 'qty-good'}`}>{s.stock} {t('adm_units_left')}</span>
                     </div>
                   ))}
                 </div>
@@ -479,12 +482,12 @@ const AdminProductDetail = () => {
         {/* Bottom: Description & Actions */}
         <div className="product-detail-bottom">
           <div className="product-description-container">
-            <h2 className="section-heading">Product Details</h2>
+            <h2 className="section-heading">{t("adm_product_details_section")}</h2>
             <div className="product-description-content">
               {product.description ? (
                 <p>{product.description}</p>
               ) : (
-                <p className="no-desc">No description available for this product.</p>
+                <p className="no-desc">{t("adm_no_description")}</p>
               )}
             </div>
           </div>
@@ -517,14 +520,14 @@ const AdminProductDetail = () => {
 
             return (
               <div className="size-guide-section">
-                <h2 className="section-heading">Size Guide (ตารางเทียบไซส์)</h2>
+                <h2 className="section-heading">{t("adm_size_guide_title")}</h2>
                 <div className="size-guide-table-wrapper">
                   <table className="size-guide-table">
                     <thead>
                       <tr>
-                        <th>Size (ไซส์)</th>
-                        {guideData.some(s => s.chest_cm) && <th>Chest (รอบอก)</th>}
-                        {guideData.some(s => s.size_cm) && <th>Length (ความยาว)</th>}
+                        <th>{t("size")} ({isThai ? "ไซส์" : "Size"})</th>
+                        {guideData.some(s => s.chest_cm) && <th>{t("adm_form_chest_label") || (isThai ? "รอบอก (Chest)" : "Chest")}</th>}
+                        {guideData.some(s => s.size_cm) && <th>{t("adm_form_length_label") || (isThai ? "ความยาว (Length)" : "Length")}</th>}
                         {extraColumns.map(col => (
                           <th key={col}>{extraColOptions.find(o => o.key === col)?.label || col.toUpperCase()}</th>
                         ))}
@@ -551,7 +554,7 @@ const AdminProductDetail = () => {
           {/* Admin Comments Section (View Only) */}
           <div className="product-comments-container" style={{ marginTop: '3rem' }}>
             <div className="comments-header-row">
-              <h2 className="section-heading" style={{ marginBottom: '1rem' }}>Customer Reviews</h2>
+              <h2 className="section-heading" style={{ marginBottom: '1rem' }}>{t("adm_customer_reviews")}</h2>
             </div>
 
             <div className="comments-list">
@@ -576,15 +579,15 @@ const AdminProductDetail = () => {
                   </div>
                 ))
               ) : (
-                <p className="no-comments" style={{ color: '#888', fontStyle: 'italic' }}>ยังไม่มีความคิดเห็นสำหรับสินค้านี้</p>
+                <p className="no-comments" style={{ color: '#888', fontStyle: 'italic' }}>{t("adm_no_reviews")}</p>
               )}
             </div>
           </div>
 
           {user?.role === 'admin' && (
             <div className="product-actions-bottom-right">
-              <button className="action-btn edit-btn" onClick={handleEdit}>Edit</button>
-              <button className="action-btn delete-btn" onClick={handleDelete}>Delete</button>
+              <button className="action-btn edit-btn" onClick={handleEdit}>{t("edit")}</button>
+              <button className="action-btn delete-btn" onClick={handleDelete}>{t("delete")}</button>
             </div>
           )}
         </div>
@@ -593,13 +596,13 @@ const AdminProductDetail = () => {
       {showModal && (
         <div className="admin-product-overlay">
           <div className="admin-wide-modal-content">
-            <h3 style={{ marginBottom: '1.5rem', fontWeight: 700 }}>Edit Product Details</h3>
+            <h3 style={{ marginBottom: '1.5rem', fontWeight: 700 }}>{t('adm_edit_product_details')}</h3>
             <form onSubmit={handleSubmit}>
               <div className="modal-grid">
                 {/* Column 1: Basic Info */}
                 <div className="modal-col">
                   <div className="form-group">
-                    <label>Product Name</label>
+                    <label>{t("adm_product_name")}</label>
                     <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
                   </div>
 
@@ -642,7 +645,7 @@ const AdminProductDetail = () => {
                   </div>
 
                   <div className="form-group" style={{ marginTop: '1rem' }}>
-                    <label>Manage Gallery (The first image is the cover, use ◀ ▶ to reorder)</label>
+                    <label>{t('adm_manage_gallery_desc')}</label>
                     <div className="image-preview-grid">
                       {galleryImages.map((img, index) => (
                         <div key={img.id} className={`preview-item ${index === 0 ? 'is-primary' : ''}`}>
@@ -660,7 +663,7 @@ const AdminProductDetail = () => {
                     <div className="upload-container">
                       <input type="file" name="images" id="modal-images-upload" multiple accept="image/*" onChange={handleInputChange} style={{ display: 'none' }} />
                       <label htmlFor="modal-images-upload" className="upload-label">
-                        <span>+ Add Photos</span>
+                        <span>+ {t('adm_add_photos')}</span>
                       </label>
                     </div>
                   </div>

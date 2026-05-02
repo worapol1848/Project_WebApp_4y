@@ -5,11 +5,14 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import api from '../../services/api';
 import { useToast } from '../../context/ToastContext';
+import { useLanguage } from '../../context/LanguageContext';
+import './AdminDashboard.css';
 import './AdminProducts.css';
 
 const AdminProducts = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { t } = useLanguage();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -38,9 +41,10 @@ const AdminProducts = () => {
   const [customColumnInput, setCustomColumnInput] = useState('');
   const [customColumns, setCustomColumns] = useState([]);
 
+  const isThai = useLanguage().language === 'th';
   const predefinedExtraColOptions = sizeType === 'shoe'
-    ? [{ key: 'size_cm', label: 'Length (ความยาว)' }, { key: 'uk', label: 'UK' }, { key: 'us', label: 'US' }, { key: 'eu', label: 'EU' }, { key: 'usw', label: 'USW' }, { key: 'jp', label: 'JP' }]
-    : [{ key: 'chest_cm', label: 'Chest (รอบอก)' }, { key: 'size_cm', label: 'Length (ความยาว)' }, { key: 'height', label: 'Height (ส่วนสูง)' }, { key: 'waist', label: 'Waist (เอว)' }, { key: 'hip', label: 'Hip (สะโพก)' }];
+    ? [{ key: 'size_cm', label: isThai ? 'ความยาว (Length)' : 'Length' }, { key: 'uk', label: 'UK' }, { key: 'us', label: 'US' }, { key: 'eu', label: 'EU' }, { key: 'usw', label: 'USW' }, { key: 'jp', label: 'JP' }]
+    : [{ key: 'chest_cm', label: isThai ? 'รอบอก (Chest)' : 'Chest' }, { key: 'size_cm', label: isThai ? 'ความยาว (Length)' : 'Length' }, { key: 'height', label: isThai ? 'ส่วนสูง (Height)' : 'Height' }, { key: 'waist', label: isThai ? 'เอว (Waist)' : 'Waist' }, { key: 'hip', label: isThai ? 'สะโพก (Hip)' : 'Hip' }];
 
   const extraColOptions = [...predefinedExtraColOptions, ...customColumns];
 
@@ -353,7 +357,7 @@ const AdminProducts = () => {
     setIsDuplicating(false);
     setFormData({ name: '', description: '', price: '', discount_percent: 0, product_code: '', category: '', brand: '', images: [] });
 
-    // Default to shoe with default sizes for Size Guide only - by worapol สุดหล่อ
+    // Default to shoe with default sizes for {t('adm_form_size_guide')} only - by worapol สุดหล่อ
     const defaultShoe = ['38', '39', '40', '41', '42', '43', '44', '45'];
     setSizes([]);
     setSizeGuide(defaultShoe.map(size => ({ size, size_cm: '', chest_cm: '' })));
@@ -580,16 +584,16 @@ const AdminProducts = () => {
 
       // Determine Report Title based on filters - by worapol สุดหล่อ
       let reportTitle = "PRODUCT INVENTORY AUDIT";
-      let statusLabel = "OFFICIAL STOCK RECORD";
+      let statusLabel = "OFFICIAL {t('adm_table_stock')} RECORD";
       let accentColor = [79, 70, 229]; 
 
       if (showLowStockOnly || showLowSizeStockOnly) {
-        reportTitle = "CRITICAL STOCK ALERT REPORT";
+        reportTitle = "CRITICAL {t('adm_table_stock')} ALERT REPORT";
         statusLabel = "URGENT REPLENISHMENT REQUIRED";
         accentColor = [220, 38, 38]; 
       }
 
-      // --- BRANDING & HEADER --- - by worapol สุดหล่อ
+      // --- {t('adm_table_brand')}ING & HEADER --- - by worapol สุดหล่อ
       doc.setFillColor(...accentColor);
       doc.rect(14, 15, 2, 25, 'F');
 
@@ -777,12 +781,28 @@ const AdminProducts = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  if (loading) return <div>Loading Products...</div>;
+  const getPageNumbers = () => {
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    const pages = [];
+    for (let i = startPage; i <= endPage; i++) {
+      if (i > 0) pages.push(i);
+    }
+    return pages;
+  };
+
+  if (loading) return <div>{t('loading')}</div>;
 
   return (
     <div className="admin-products-container">
       <div className="header-actions">
-        <h2>Manage Products</h2>
+        <h2>{t('adm_manage_products')}</h2>
         <div className="header-actions-right">
           {/* Custom Filter Button */}
           <div className="filter-wrapper" style={{ position: 'relative' }}>
@@ -793,7 +813,7 @@ const AdminProducts = () => {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
               </svg>
-              Filter {(selectedBrands.length + selectedCategories.length + selectedColors.length + (showDiscountOnly ? 1 : 0) + (priceRange > 0 ? 1 : 0) + (stockRange > 0 ? 1 : 0)) > 0 && `(${(selectedBrands.length + selectedCategories.length + selectedColors.length + (showDiscountOnly ? 1 : 0) + (priceRange > 0 ? 1 : 0) + (stockRange > 0 ? 1 : 0))})`}
+              {t('adm_filter')} {(selectedBrands.length + selectedCategories.length + selectedColors.length + (showDiscountOnly ? 1 : 0) + (priceRange > 0 ? 1 : 0) + (stockRange > 0 ? 1 : 0)) > 0 && `(${(selectedBrands.length + selectedCategories.length + selectedColors.length + (showDiscountOnly ? 1 : 0) + (priceRange > 0 ? 1 : 0) + (stockRange > 0 ? 1 : 0))})`}
             </button>
 
             {showFilterDropdown && (
@@ -977,7 +997,7 @@ const AdminProducts = () => {
                   <line x1="12" y1="9" x2="12" y2="13"></line>
                   <line x1="12" y1="17" x2="12.01" y2="17"></line>
                 </svg>
-                Total {'<'} 5
+                {t('adm_total_low') || 'Total < 5'}
               </>
             )}
           </button>
@@ -1001,10 +1021,10 @@ const AdminProducts = () => {
               alignItems: 'center',
               gap: '6px'
             }}
-            title="Filter Low Size Stock (< 5)"
+            title={isThai ? "กรองสินค้าที่มีไซส์สต็อกต่ำกว่า 5" : "Filter Low Size Stock (< 5)"}
           >
             {showLowSizeStockOnly ? (
-              <><span>✕</span> All Sizes</>
+              <><span>✕</span> {t('adm_all_sizes') || 'All Sizes'}</>
             ) : (
               <>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1012,19 +1032,19 @@ const AdminProducts = () => {
                   <line x1="12" y1="9" x2="12" y2="13"></line>
                   <line x1="12" y1="17" x2="12.01" y2="17"></line>
                 </svg>
-                Size {'<'} 5
+                {t('adm_size_low') || 'Size < 5'}
               </>
             )}
           </button>
           <input
             type="text"
-            placeholder="Search products..."
+            placeholder={t('adm_search_products') || "Search products..."}
             className="search-input"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <button className="add-btn" onClick={() => { resetForm(); setShowModal(true); }}>
-            + Add Product
+            {t('adm_add_product') || '+ Add Product'}
           </button>
         </div>
       </div>
@@ -1033,17 +1053,17 @@ const AdminProducts = () => {
         <table className="products-table">
           <thead>
             <tr>
-              <th>Image</th>
-              <th>Code</th>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Brand</th>
-              <th>Price</th>
-              <th>Discount</th>
-              <th>Final Price</th>
-              <th>Sizes</th>
-              <th>Stock</th>
-              <th>Actions</th>
+              <th>{t('adm_table_image') || 'adm_table_image'}</th>
+              <th>{t('adm_table_code') || 'adm_table_code'}</th>
+              <th>{t('adm_table_name') || 'adm_table_name'}</th>
+              <th>{t('adm_table_category') || 'adm_table_category'}</th>
+              <th>{t('adm_table_brand') || 'adm_table_brand'}</th>
+              <th>{t('adm_table_price') || 'adm_table_price'}</th>
+              <th>{t('adm_table_discount') || 'adm_table_discount'}</th>
+              <th>{t('adm_table_final_price') || 'FINAL PRICE'}</th>
+              <th>{t('adm_table_sizes') || 'adm_table_sizes'}</th>
+              <th>{t('adm_table_stock') || 'adm_table_stock'}</th>
+              <th>{t('adm_table_actions') || 'adm_table_actions'}</th>
             </tr>
           </thead>
           <tbody>
@@ -1054,7 +1074,7 @@ const AdminProducts = () => {
                 </td>
                 <td>{p.product_code || '-'}</td>
                 <td>{p.name}</td>
-                <td>{p.category || '-'}</td>
+                <td>{p.category === 'shoe' ? t('nav_shoes') : (p.category === 'apparel' ? t('nav_apparel') : (p.category || '-'))}</td>
                 <td>{p.brand || '-'}</td>
                 <td style={{ fontWeight: '600' }}>฿{Number(p.price).toLocaleString()}</td>
                 <td style={{ color: p.discount_percent > 0 ? '#EF4444' : '#666', fontWeight: '700' }}>
@@ -1083,9 +1103,9 @@ const AdminProducts = () => {
                 </td>
                 <td className="actions-cell">
                   <div className="action-buttons">
-                    <button className="duplicate-btn" onClick={(e) => { e.stopPropagation(); handleDuplicate(p); }}>Add Product Color</button>
-                    <button className="edit-btn" onClick={(e) => { e.stopPropagation(); openEdit(p); }}>Edit</button>
-                    <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDelete(p.id); }}>Delete</button>
+                    <button className="duplicate-btn" onClick={(e) => { e.stopPropagation(); handleDuplicate(p); }}>{t('adm_add_color') || 'adm_add_color'}</button>
+                    <button className="edit-btn" onClick={(e) => { e.stopPropagation(); openEdit(p); }}>{t('edit') || 'Edit'}</button>
+                    <button className="delete-btn" onClick={(e) => { e.stopPropagation(); handleDelete(p.id); }}>{t('delete') || 'Delete'}</button>
                   </div>
                 </td>
               </tr>
@@ -1104,10 +1124,11 @@ const AdminProducts = () => {
               <line x1="16" y1="17" x2="8" y2="17"></line>
               <polyline points="10 9 9 9 8 9"></polyline>
             </svg>
-            Print PDF Report
+            {t('adm_print_report') || 'Print PDF Report'}
           </button>
         </div>
 
+        {/* Pagination Controls - Moved Outside and Standardized */}
         {totalPages > 1 && (
           <div className="pagination">
             <button
@@ -1115,16 +1136,16 @@ const AdminProducts = () => {
               disabled={currentPage === 1}
               className="page-btn"
             >
-              Prev
+              {t('adm_prev') || 'Prev'}
             </button>
 
-            {[...Array(totalPages)].map((_, index) => (
+            {getPageNumbers().map(pageNum => (
               <button
-                key={index + 1}
-                onClick={() => paginate(index + 1)}
-                className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
+                key={pageNum}
+                onClick={() => paginate(pageNum)}
+                className={`page-btn ${currentPage === pageNum ? 'active' : ''}`}
               >
-                {index + 1}
+                {pageNum}
               </button>
             ))}
 
@@ -1133,11 +1154,11 @@ const AdminProducts = () => {
               disabled={currentPage === totalPages}
               className="page-btn"
             >
-              Next
+              {t('adm_next') || 'Next'}
             </button>
 
             <div className="page-jump">
-              <span>Page:</span>
+              <span>{t('adm_page_label') || (isThai ? 'หน้า:' : 'Page:')}</span>
               <select
                 value={currentPage}
                 onChange={(e) => paginate(Number(e.target.value))}
@@ -1155,26 +1176,26 @@ const AdminProducts = () => {
       {showModal && (
         <div className="admin-product-overlay">
           <div className="admin-wide-modal-content">
-            <h3>{editingId ? 'Edit Product' : (isDuplicating ? 'Add Product Color' : 'Add Product')}</h3>
+            <h3>{editingId ? (t('adm_edit_product') || 'adm_edit_product') : (isDuplicating ? (t('adm_add_color') || 'adm_add_color') : (t('adm_add_product') || 'Add Product'))}</h3>
             <form onSubmit={handleSubmit}>
               <div className="modal-grid">
                 {/* Column 1: Basic Info */}
                 <div className="modal-col">
                   <div className="form-group">
-                    <label>Name</label>
+                    <label>{t('adm_form_name') || 'Name'}</label>
                     <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
                   </div>
                   <div className="form-row">
                     <div className="form-group">
-                      <label>Product Code</label>
+                      <label>{t('adm_form_code') || 'adm_form_code'}</label>
                       <input type="text" name="product_code" value={formData.product_code} onChange={handleInputChange} />
                     </div>
                     <div className="form-group">
-                      <label>Price (฿)</label>
+                      <label>{t('adm_form_price') || 'adm_form_price'}</label>
                       <input type="number" name="price" value={formData.price} onChange={handleInputChange} min="0" step="0.01" required />
                     </div>
                     <div className="form-group">
-                      <label>Discount (%)</label>
+                      <label>{t('adm_form_discount') || 'adm_form_discount'}</label>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <input type="number" name="discount_percent" value={formData.discount_percent} onChange={handleInputChange} min="0" max="100" />
                         {formData.price && formData.discount_percent > 0 && (
@@ -1187,26 +1208,26 @@ const AdminProducts = () => {
                   </div>
                   <div className="form-row">
                     <div className="form-group">
-                      <label>Category</label>
+                      <label>{t('adm_form_category') || 'Category'}</label>
                       <input type="text" name="category" value={formData.category} onChange={handleInputChange} />
                     </div>
                     <div className="form-group">
-                      <label>Brand</label>
+                      <label>{t('adm_form_brand') || 'Brand'}</label>
                       <input type="text" name="brand" value={formData.brand} onChange={handleInputChange} />
                     </div>
                   </div>
                   <div className="form-group">
-                    <label>Description</label>
+                    <label>{t('adm_form_desc') || 'Description'}</label>
                     <textarea name="description" value={formData.description} onChange={handleInputChange} rows="5" required></textarea>
                   </div>
 
                   <div className="form-group" style={{ marginTop: '1rem' }}>
-                    <label>Manage Gallery (First is cover, use ◀ ▶)</label>
+                    <label>{t('adm_form_gallery') || 'adm_form_gallery'} ({t('adm_form_gallery_hint') || 'First is cover, use ◀ ▶'})</label>
                     <div className="image-preview-grid">
                       {galleryImages.map((img, index) => (
                         <div key={img.id} className={`preview-item ${index === 0 ? 'is-primary' : ''}`}>
                           <img src={img.isNew ? img.image_url : `http://localhost:5000${img.image_url}`} alt="Gallery" />
-                          {index === 0 && <div className="primary-badge">Cover</div>}
+                          {index === 0 && <div className="primary-badge">{t('adm_form_cover') || 'Cover'}</div>}
                           <div className="image-reorder-controls">
                             <button type="button" onClick={() => moveImage(index, -1)} disabled={index === 0}>◀</button>
                             <button type="button" onClick={() => moveImage(index, 1)} disabled={index === galleryImages.length - 1}>▶</button>
@@ -1219,7 +1240,7 @@ const AdminProducts = () => {
                     <div className="upload-container">
                       <input type="file" name="images" id="images-upload-modal" multiple accept="image/*" onChange={handleInputChange} style={{ display: 'none' }} />
                       <label htmlFor="images-upload-modal" className="upload-label">
-                        <span>+ Add Photos</span>
+                        <span>{t('adm_form_add_photos') || '+ Add Photos'}</span>
                       </label>
                     </div>
                   </div>
@@ -1232,9 +1253,9 @@ const AdminProducts = () => {
                   <div className="management-container">
                     <div className="management-header">
                       <div className="header-with-toggle">
-                        <h3>Stock</h3>
+                        <h3>{t('adm_form_stock') || 'Stock'}</h3>
                       </div>
-                      <button type="button" className="btn-add-entry" onClick={handleAddSize}>+ Add Stock</button>
+                      <button type="button" className="btn-add-entry" onClick={handleAddSize}>{t('adm_form_add_stock') || '+ Add Stock'}</button>
                     </div>
 
 
@@ -1242,10 +1263,10 @@ const AdminProducts = () => {
                       {sizes.length > 0 && (
                         <div className={`entry-grid-header ${sizeType === 'apparel' ? 'apparel-stock' : 'shoe-stock'}`} style={{ gridTemplateColumns: `30px 1fr ${activeExtraColumns.includes('chest_cm') ? '1fr ' : ''}${activeExtraColumns.includes('size_cm') ? '1fr ' : ''}1fr 44px` }}>
                           <span></span>
-                          <span>Size (ไซส์)</span>
+                          <span>{t('size') || 'Size'}</span>
                           {activeExtraColumns.includes('chest_cm') && <span>Chest (รอบอก/{lengthUnit === 'in' ? 'นิ้ว' : 'cm'})</span>}
                           {activeExtraColumns.includes('size_cm') && <span>Length (ความยาว/{sizeType === 'shoe' ? 'cm' : 'นิ้ว'})</span>}
-                          <span>Stock (จำนวน)</span>
+                          <span>{t('adm_form_stock') || 'Stock'}</span>
                           <span></span>
                         </div>
                       )}
@@ -1279,11 +1300,11 @@ const AdminProducts = () => {
                     </div>
                   </div>
 
-                  {/* กล่องใหญ่ที่ 2: ตารางเทียบไซส์ (Size Guide) */}
+                  {/* กล่องใหญ่ที่ 2: ตารางเทียบไซส์ ({t('adm_form_size_guide')}) */}
                   <div className="management-container">
                     <div className="management-header">
                       <div className="header-with-toggle">
-                        <h3>ตารางไซส์</h3>
+                        <h3>{t('adm_form_size_guide') || 'adm_form_size_guide'}</h3>
                         <div className="size-type-toggle">
                           <button type="button" className={`type-btn ${sizeType === 'shoe' ? 'active' : ''}`} onClick={() => handleTypeChange('shoe')}>Shoes</button>
                           <button type="button" className={`type-btn ${sizeType === 'apparel' ? 'active' : ''}`} onClick={() => handleTypeChange('apparel')}>Apparel</button>
@@ -1312,7 +1333,7 @@ const AdminProducts = () => {
                             </div>
                           </div>
                         )}
-                        <button type="button" className="btn-add-entry" onClick={handleAddGuide}>+ Add Guide Entry</button>
+                        <button type="button" className="btn-add-entry" onClick={handleAddGuide}>{t('adm_form_add_guide') || 'adm_form_add_guide'}</button>
                       </div>
                     </div>
 
@@ -1369,8 +1390,8 @@ const AdminProducts = () => {
               </div>
 
               <div className="modal-actions">
-                <button type="button" className="cancel-btn" onClick={() => setShowModal(false)}>Cancel</button>
-                <button type="submit" className="save-btn">{editingId ? 'Save Changes' : (isDuplicating ? 'Add Product Color' : 'Add Product')}</button>
+                <button type="button" className="cancel-btn" onClick={() => setShowModal(false)}>{t('adm_form_cancel') || 'adm_form_cancel'}</button>
+                <button type="submit" className="save-btn">{editingId ? (t('adm_form_save') || 'adm_form_save') : (isDuplicating ? (t('adm_add_color') || 'adm_add_color') : (t('adm_add_product') || 'Add Product'))}</button>
               </div>
             </form>
           </div>

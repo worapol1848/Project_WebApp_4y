@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `longitude` decimal(11,8) DEFAULT NULL,
   `face_descriptor` text DEFAULT NULL,
   `preferred_language` varchar(5) DEFAULT 'en',
+  `profile_image` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -94,6 +95,15 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `bank_account_number` varchar(255) DEFAULT NULL,
   `shipping_method` varchar(50) DEFAULT 'ems',
   `shipping_fee` decimal(10,2) DEFAULT 0.00,
+  `shipping_full_name` varchar(100) DEFAULT NULL,
+  `shipping_phone` varchar(20) DEFAULT NULL,
+  `shipping_address` text DEFAULT NULL,
+  `shipping_sub_district` varchar(100) DEFAULT NULL,
+  `shipping_district` varchar(100) DEFAULT NULL,
+  `shipping_province` varchar(100) DEFAULT NULL,
+  `shipping_postal_code` varchar(10) DEFAULT NULL,
+  `shipping_latitude` decimal(10,8) DEFAULT NULL,
+  `shipping_longitude` decimal(11,8) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE

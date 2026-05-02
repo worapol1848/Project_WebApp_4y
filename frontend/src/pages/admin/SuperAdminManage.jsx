@@ -8,9 +8,12 @@ import {
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../services/api';
+import { useLanguage } from '../../context/LanguageContext';
 
 const SuperAdminManage = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
+  const isThai = useLanguage().language === 'th';
   const location = useLocation();
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -110,7 +113,7 @@ const SuperAdminManage = () => {
     if (formData.role === 'superadmin') {
       const currentAdmin = admins.find(a => a.id === editingAdmin?.id);
       if (!currentAdmin || !currentAdmin.hasFaceData) {
-        showAlert('Security Requirement', 'ไม่สามารถปรับเป็น Super Admin ได้: เนื่องจากผู้ใช้งานคนนี้ยังไม่มีข้อมูลใบหน้าในระบบ กรุณาลงทะเบียนใบหน้าก่อนครับ');
+        showAlert(t('adm_security_req') || 'Security Requirement', t('adm_superadmin_face_required'));
         return;
       }
     }
@@ -118,37 +121,37 @@ const SuperAdminManage = () => {
     try {
       if (editingAdmin) {
         await api.put(`/auth/admins/${editingAdmin.id}`, formData);
-        showAlert('Success', 'อัปเดตข้อมูลแอดมินเรียบร้อยแล้ว');
+        showAlert('Success', t('adm_admin_updated'));
       } else {
         await api.post('/auth/admins', formData);
-        showAlert('Success', 'เพิ่มแอดมินใหม่เรียบร้อยแล้ว');
+        showAlert('Success', t('adm_admin_added'));
       }
       handleCloseModal();
       fetchAdmins();
     } catch (err) {
-      showAlert('Error', err.response?.data?.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+      showAlert(t('error'), err.response?.data?.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
     }
   };
 
   const handleDelete = async (id) => {
-    showConfirm('Confirm Deletion', 'คุณแน่ใจหรือไม่ที่จะลบเจ้าหน้าที่คนนี้ออกจากระบบ? การดำเนินการนี้ไม่สามารถย้อนกลับได้', async () => {
+    showConfirm(t('adm_confirm_delete') || 'Confirm Deletion', t('adm_delete_admin_confirm'), async () => {
       try {
         await api.delete(`/auth/admins/${id}`);
         fetchAdmins();
       } catch (err) {
-        showAlert('Error', err.response?.data?.message || 'ไม่สามารถลบข้อมูลได้');
+        showAlert(t('error'), err.response?.data?.message || 'ไม่สามารถลบข้อมูลได้');
       }
     });
   };
 
   const handleResetFace = async (id, username) => {
-    showConfirm('Reset Biometrics', `คุณแน่ใจหรือไม่ที่จะรีเซ็ตข้อมูลใบหน้าของ ${username}? เจ้าหน้าที่จะต้องสแกนใบหน้าใหม่ในการเข้าใช้ครั้งถัดไป`, async () => {
+    showConfirm(t('adm_reset_biometrics') || 'Reset Biometrics', t('adm_reset_face_confirm', { username }), async () => {
       try {
         await api.put(`/auth/admins/${id}/reset-face`);
         fetchAdmins();
-        showAlert('Reset Successful', 'รีเซ็ตข้อมูลใบหน้าเรียบร้อยแล้ว');
+        showAlert(t('success'), t('adm_reset_success'));
       } catch (err) {
-        showAlert('Error', 'เกิดข้อผิดพลาดในการรีเซ็ตข้อมูลใบหน้า');
+        showAlert(t('error'), t('adm_reset_face_error') || 'เกิดข้อผิดพลาดในการรีเซ็ตข้อมูลใบหน้า');
       }
     });
   };
@@ -171,10 +174,10 @@ const SuperAdminManage = () => {
       <Box sx={{ width: '100%', maxWidth: '1200px', mb: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
           <Typography variant="h4" fontWeight="1000" sx={{ color: '#111827', mb: 0.5, letterSpacing: '-0.5px' }}>
-            Workforce Management
+            {t('adm_workforce_mgmt')}
           </Typography>
           <Typography variant="body1" sx={{ color: '#6B7280', fontWeight: '500' }}>
-            Personnel security and role assignment
+            {t('adm_workforce_desc')}
           </Typography>
         </Box>
         <Button
@@ -192,7 +195,7 @@ const SuperAdminManage = () => {
             '&:hover': { bgcolor: '#f9fafb', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }
           }}
         >
-          Back to Dashboard
+          {t('back')}
         </Button>
       </Box>
 
@@ -206,7 +209,7 @@ const SuperAdminManage = () => {
               </Box>
               <Box>
                 <Typography variant="h3" fontWeight="900" sx={{ color: '#111827' }}>{totalAdmins}</Typography>
-                <Typography variant="body2" sx={{ color: '#6B7280', fontWeight: '600' }}>Total Personnel</Typography>
+                <Typography variant="body2" sx={{ color: '#6B7280', fontWeight: '600' }}>{t('adm_total_personnel')}</Typography>
               </Box>
             </CardContent>
           </Card>
@@ -219,7 +222,7 @@ const SuperAdminManage = () => {
               </Box>
               <Box>
                 <Typography variant="h3" fontWeight="900" sx={{ color: '#111827' }}>{superAdmins}</Typography>
-                <Typography variant="body2" sx={{ color: '#6B7280', fontWeight: '600' }}>Super Admins</Typography>
+                <Typography variant="body2" sx={{ color: '#6B7280', fontWeight: '600' }}>{t('adm_super_admins')}</Typography>
               </Box>
             </CardContent>
           </Card>
@@ -232,7 +235,7 @@ const SuperAdminManage = () => {
               </Box>
               <Box>
                 <Typography variant="h3" fontWeight="900" sx={{ color: '#111827' }}>{registeredFaces}</Typography>
-                <Typography variant="body2" sx={{ color: '#6B7280', fontWeight: '600' }}>Biometrics Registered</Typography>
+                <Typography variant="body2" sx={{ color: '#6B7280', fontWeight: '600' }}>{t('adm_biometrics_registered')}</Typography>
               </Box>
             </CardContent>
           </Card>
@@ -252,8 +255,8 @@ const SuperAdminManage = () => {
         <Box sx={{ p: 5 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 5 }}>
             <Box>
-              <Typography variant="h5" fontWeight="900" sx={{ color: '#111827' }}>Personnel Access List</Typography>
-              <Typography variant="body2" sx={{ color: '#6B7280' }}>All registered administrators and their security levels</Typography>
+              <Typography variant="h5" fontWeight="900" sx={{ color: '#111827' }}>{t('adm_personnel_access_list')}</Typography>
+              <Typography variant="body2" sx={{ color: '#6B7280' }}>{t('adm_personnel_access_desc')}</Typography>
             </Box>
             <Button
               onClick={() => handleOpenModal()}
@@ -269,7 +272,7 @@ const SuperAdminManage = () => {
                 '&:hover': { boxShadow: '0 20px 25px -5px rgba(0,0,0,0.15)' }
               }}
             >
-              Add New Admin
+              {t('adm_add_new_admin')}
             </Button>
           </Box>
 
@@ -277,17 +280,17 @@ const SuperAdminManage = () => {
             {loading ? (
               <Box sx={{ py: 15, textAlign: 'center' }}>
                 <CircularProgress size={50} sx={{ color: '#111827' }} />
-                <Typography sx={{ mt: 2, color: '#6B7280', fontWeight: '600' }}>Loading security data...</Typography>
+                <Typography sx={{ mt: 2, color: '#6B7280', fontWeight: '600' }}>{t('loading')}</Typography>
               </Box>
             ) : (
               <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 12px' }}>
                 <thead>
                   <tr style={{ textAlign: 'left' }}>
                     <th style={{ padding: '0 20px', color: '#9CA3AF', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>ID</th>
-                    <th style={{ padding: '0 20px', color: '#9CA3AF', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Personnel</th>
-                    <th style={{ padding: '0 20px', color: '#9CA3AF', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Permissions</th>
-                    <th style={{ padding: '0 20px', color: '#9CA3AF', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Biometrics</th>
-                    <th style={{ padding: '0 20px', color: '#9CA3AF', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px', textAlign: 'right' }}>Management</th>
+                    <th style={{ padding: '0 20px', color: '#9CA3AF', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>{t('adm_table_personnel')}</th>
+                    <th style={{ padding: '0 20px', color: '#9CA3AF', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>{t('adm_table_permissions')}</th>
+                    <th style={{ padding: '0 20px', color: '#9CA3AF', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>{t('adm_table_biometrics')}</th>
+                    <th style={{ padding: '0 20px', color: '#9CA3AF', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px', textAlign: 'right' }}>{t('adm_table_management')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -299,7 +302,7 @@ const SuperAdminManage = () => {
                       <td style={{ padding: '24px 20px' }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                           <Typography fontWeight="900" sx={{ color: '#111827', fontSize: '1.05rem' }}>{admin.username}</Typography>
-                          <Typography sx={{ color: '#6B7280', fontSize: '0.85rem' }}>{admin.email || 'No email provided'}</Typography>
+                          <Typography sx={{ color: '#6B7280', fontSize: '0.85rem' }}>{admin.email || t('adm_no_email_provided') || 'No email provided'}</Typography>
                         </Box>
                       </td>
                       <td style={{ padding: '24px 20px' }}>
@@ -325,18 +328,18 @@ const SuperAdminManage = () => {
                           admin.hasFaceData ? (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#10B981', bgcolor: '#ECFDF5', px: 2, py: 0.8, borderRadius: '12px', width: 'fit-content' }}>
                               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                              <Typography sx={{ fontSize: '0.75rem', fontWeight: '1000' }}>REGISTERED</Typography>
+                              <Typography sx={{ fontSize: '0.75rem', fontWeight: '1000' }}>{t('adm_biometrics_registered_badge')}</Typography>
                             </Box>
                           ) : (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#EF4444', bgcolor: '#FEF2F2', px: 2, py: 0.8, borderRadius: '12px', width: 'fit-content' }}>
                               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                              <Typography sx={{ fontSize: '0.75rem', fontWeight: '1000' }}>REQUIRED</Typography>
+                              <Typography sx={{ fontSize: '0.75rem', fontWeight: '1000' }}>{t('adm_biometrics_required')}</Typography>
                             </Box>
                           )
                         ) : (
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#64748B', bgcolor: '#F1F5F9', px: 2, py: 0.8, borderRadius: '12px', width: 'fit-content' }}>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                            <Typography sx={{ fontSize: '0.75rem', fontWeight: '800' }}>STANDARD</Typography>
+                            <Typography sx={{ fontSize: '0.75rem', fontWeight: '800' }}>{t('adm_biometrics_standard')}</Typography>
                           </Box>
                         )}
                       </td>
@@ -344,12 +347,12 @@ const SuperAdminManage = () => {
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
                           {admin.role === 'superadmin' && (
                             <>
-                              <Tooltip title="Reset Face Data">
+                              <Tooltip title={t('adm_reset_face_data') || 'Reset Face Data'}>
                                 <IconButton onClick={() => handleResetFace(admin.id, admin.username)} sx={{ color: '#F59E0B', bgcolor: '#fff', '&:hover': { bgcolor: '#FFFBEB' } }}>
                                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
                                 </IconButton>
                               </Tooltip>
-                              <Tooltip title="Scan Face Now">
+                              <Tooltip title={t('adm_scan_face_now') || 'Scan Face Now'}>
                                 <IconButton
                                   onClick={() => navigate(`/superadmin/face-scan/${admin.id}`)}
                                   sx={{ color: '#10B981', bgcolor: '#fff', '&:hover': { bgcolor: '#ECFDF5' } }}
@@ -359,12 +362,12 @@ const SuperAdminManage = () => {
                               </Tooltip>
                             </>
                           )}
-                          <Tooltip title="Edit Profile">
+                          <Tooltip title={t('edit')}>
                             <IconButton onClick={() => handleOpenModal(admin)} sx={{ color: '#6366F1', bgcolor: '#fff', '&:hover': { bgcolor: '#F5F5FF' } }}>
                               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                             </IconButton>
                           </Tooltip>
-                          <Tooltip title="Delete Account">
+                          <Tooltip title={t('delete')}>
                             <IconButton
                               onClick={() => handleDelete(admin.id)}
                               sx={{
@@ -408,9 +411,9 @@ const SuperAdminManage = () => {
         }}>
           <Box>
             <Typography variant="h5" fontWeight="1000" sx={{ color: '#111827' }}>
-              {editingAdmin ? 'Edit Personnel' : 'Create New Access'}
+              {editingAdmin ? `${t('edit')} ${t('adm_table_personnel')}` : t('adm_add_new_admin')}
             </Typography>
-            <Typography variant="body2" sx={{ color: '#6B7280' }}>Configure security credentials</Typography>
+            <Typography variant="body2" sx={{ color: '#6B7280' }}>{t('adm_workforce_desc')}</Typography>
           </Box>
           <IconButton onClick={handleCloseModal} sx={{ color: '#9CA3AF' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -420,7 +423,7 @@ const SuperAdminManage = () => {
         <form onSubmit={handleSubmit}>
           <DialogContent sx={{ px: 3, pt: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
             <TextField
-              label="Username"
+              label={t('username')}
               name="username"
               fullWidth
               value={formData.username}
@@ -430,7 +433,7 @@ const SuperAdminManage = () => {
               InputProps={{ sx: { borderRadius: '16px', fontWeight: 'bold' } }}
             />
             <TextField
-              label="Email Address"
+              label={t('email')}
               name="email"
               type="email"
               fullWidth
@@ -440,7 +443,7 @@ const SuperAdminManage = () => {
               InputProps={{ sx: { borderRadius: '16px', fontWeight: 'bold' } }}
             />
             <TextField
-              label={editingAdmin ? "New Password (Leave blank for no change)" : "Access Password"}
+              label={editingAdmin ? (isThai ? "รหัสผ่านใหม่ (เว้นว่างไว้หากไม่ต้องการเปลี่ยน)" : "New Password (Leave blank for no change)") : (t('adm_form_password') || 'Access Password')}
               name="password"
               type="password"
               fullWidth
@@ -451,16 +454,16 @@ const SuperAdminManage = () => {
               InputProps={{ sx: { borderRadius: '16px', fontWeight: 'bold' } }}
             />
             <FormControl fullWidth variant="outlined">
-              <InputLabel sx={{ fontWeight: 'bold' }}>Security Role</InputLabel>
+              <InputLabel sx={{ fontWeight: 'bold' }}>{t('adm_table_permissions')}</InputLabel>
               <Select
                 name="role"
                 value={formData.role}
-                label="Security Role"
+                label={t('adm_table_permissions')}
                 onChange={handleChange}
                 sx={{ borderRadius: '16px', fontWeight: 'bold' }}
               >
-                <MenuItem value="admin" sx={{ fontWeight: 'bold' }}>Standard Admin (Store Ops)</MenuItem>
-                <MenuItem value="superadmin" sx={{ fontWeight: 'bold' }}>Super Admin (System Core)</MenuItem>
+                <MenuItem value="admin" sx={{ fontWeight: 'bold' }}>{t('adm_role_admin') || 'Standard Admin'}</MenuItem>
+                <MenuItem value="superadmin" sx={{ fontWeight: 'bold' }}>{t('adm_role_superadmin') || 'Super Admin'}</MenuItem>
               </Select>
             </FormControl>
 
@@ -501,13 +504,13 @@ const SuperAdminManage = () => {
                       '&:hover': { bgcolor: '#6D28D9' }
                     }}
                   >
-                    Initiate Biometric Scan
+                    {t('adm_initiate_scan')}
                   </Button>
                 ) : (
                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5 }}>
                     <Box sx={{ color: '#10B981', display: 'flex', alignItems: 'center', gap: 1 }}>
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                      <Typography fontWeight="900" fontSize="0.9rem">ACTIVE BIOMETRIC LOGIN</Typography>
+                      <Typography fontWeight="900" fontSize="0.9rem">{t('adm_active_biometric_login')}</Typography>
                     </Box>
                     <Button
                       size="small"
@@ -521,7 +524,7 @@ const SuperAdminManage = () => {
                         '&:hover': { textDecoration: 'none', bgcolor: 'transparent' }
                       }}
                     >
-                      Update / Re-scan Face Data
+                      {t('adm_update_rescan')}
                     </Button>
                   </Box>
                 )}
@@ -531,7 +534,7 @@ const SuperAdminManage = () => {
 
           <DialogActions sx={{ p: 4, pt: 2, gap: 2 }}>
             <Button onClick={handleCloseModal} sx={{ color: '#6B7280', fontWeight: '900', textTransform: 'none' }}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               type="submit"
@@ -546,7 +549,7 @@ const SuperAdminManage = () => {
                 boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
                 '&:hover': { boxShadow: '0 20px 25px -5px rgba(0,0,0,0.15)' }
               }}>
-              {editingAdmin ? 'Update Credentials' : 'Create Access Token'}
+              {editingAdmin ? t('adm_update_credentials') : t('adm_create_access_token')}
             </Button>
           </DialogActions>
         </form>
@@ -584,7 +587,7 @@ const SuperAdminManage = () => {
               onClick={() => setConfirmDialog({ ...confirmDialog, open: false })}
               sx={{ color: '#6B7280', fontWeight: '800', textTransform: 'none', borderRadius: '14px', py: 1.5 }}
             >
-              ยกเลิก
+              {t('cancel')}
             </Button>
           )}
           <Button
@@ -605,7 +608,7 @@ const SuperAdminManage = () => {
               '&:hover': { bgcolor: confirmDialog.title === 'Error' ? '#DC2626' : '#000', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.15)' }
             }}
           >
-            {confirmDialog.isAlert ? 'ตกลง' : 'ยืนยัน'}
+            {confirmDialog.isAlert ? (t('ok') || 'ตกลง') : (t('confirm') || 'ยืนยัน')}
           </Button>
         </DialogActions>
       </Dialog>

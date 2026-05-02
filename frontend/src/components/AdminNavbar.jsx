@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import VelinLogo from './VelinLogo';
+import LanguageSwitcher from './LanguageSwitcher';
 import './AdminNavbar.css';
 
 const AdminNavbar = () => {
@@ -57,17 +58,19 @@ const AdminNavbar = () => {
             <Link to="/admin" className="nav-logo-link">
               <VelinLogo className="admin-logo-svg" textColor="#111111" iconOnly={isCollapsed} width={isCollapsed ? undefined : 114} height={isCollapsed ? undefined : 38} />
             </Link>
-            <button className={`lock-btn ${isLocked ? 'locked' : ''}`} onClick={() => setIsLocked(!isLocked)} title={isLocked ? "Unlock Sidebar" : "Lock Sidebar Open"}>
-              {isLocked ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-              ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
-                </svg>
-              )}
-            </button>
+            {!isCollapsed && (
+              <button className={`lock-btn ${isLocked ? 'locked' : ''}`} onClick={() => setIsLocked(!isLocked)} title={isLocked ? "Unlock Sidebar" : "Lock Sidebar Open"}>
+                {isLocked ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                  </svg>
+                )}
+              </button>
+            )}
           </div>
           
 
@@ -85,13 +88,13 @@ const AdminNavbar = () => {
                   <div 
                     className={`nav-link ${location.pathname.includes('/admin/product') || location.pathname.includes('/admin/inventory') ? 'active' : ''}`} 
                     onClick={() => setIsProductsOpen(!isProductsOpen)}
-                    style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                    style={{ cursor: 'pointer', display: 'flex', justifyContent: isCollapsed ? 'center' : 'space-between', alignItems: 'center' }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: isCollapsed ? '0' : '1rem' }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                       <span className="nav-text" style={{ fontSize: '1rem', fontWeight: '500' }}>{t('adm_products')}</span>
                     </div>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isProductsOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', opacity: isCollapsed ? 0 : 1 }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isProductsOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', display: isCollapsed ? 'none' : 'block' }}>
                       <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
                   </div>
@@ -107,7 +110,12 @@ const AdminNavbar = () => {
                   )}
                 </div>
                 <Link to="/admin/orders" className={`nav-link ${location.pathname.includes('/admin/order') ? 'active' : ''}`} title={t('adm_orders')}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="1" y="3" width="15" height="13" />
+                    <polyline points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                    <circle cx="5.5" cy="18.5" r="2.5" />
+                    <circle cx="18.5" cy="18.5" r="2.5" />
+                  </svg>
                   <span className="nav-text">{t('adm_orders')}</span>
                 </Link>
                 <Link to="/admin/revenue" className={`nav-link ${location.pathname.includes('/admin/revenue') ? 'active' : ''}`} title={t('adm_revenue')}>
@@ -152,11 +160,20 @@ const AdminNavbar = () => {
 
         <div className="nav-bottom">
           <div className="admin-nav-controls">
-            <div className="admin-profile-circle">{user.username.charAt(0).toUpperCase()}</div>
-            <div className="admin-info">
-              <span className="admin-label">{user.role === 'superadmin' ? 'Super Admin' : 'Admin'}</span>
-              <span className="admin-name">{user.username}</span>
+            <div className="admin-profile-group">
+              <div className="admin-profile-circle">{user.username.charAt(0).toUpperCase()}</div>
+              {!isCollapsed && (
+                <div className="admin-info">
+                  <span className="admin-label">{user.role === 'superadmin' ? t('adm_role_super') : t('adm_role_admin')}</span>
+                  <span className="admin-name">{user.username}</span>
+                </div>
+              )}
             </div>
+            {!isCollapsed && (
+              <div className="admin-lang-container">
+                <LanguageSwitcher up={true} />
+              </div>
+            )}
           </div>
           <button className="admin-logout-btn" onClick={handleLogout} title={t('nav_logout')}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>

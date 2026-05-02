@@ -8,11 +8,13 @@ import {
 } from 'recharts';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { useLanguage } from '../../context/LanguageContext';
 import './AdminDashboard.css';
 
 const CHART_COLORS = ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#3B82F6', '#8B5CF6'];
 
 const AdminRevenue = () => {
+  const { t } = useLanguage();
   const today = new Date().toISOString().split('T')[0];
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -40,7 +42,6 @@ const AdminRevenue = () => {
       const reportId = `REV-${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}-${Math.floor(1000 + Math.random() * 9000)}`;
 
       // --- BRANDING & HEADER --- - by worapol สุดหล่อ
-      // Sidebar accent line - by worapol สุดหล่อ
       doc.setFillColor(79, 70, 229); // Indigo 600 - by worapol สุดหล่อ
       doc.rect(14, 15, 2, 25, 'F');
 
@@ -55,7 +56,6 @@ const AdminRevenue = () => {
       doc.text('Official Financial Units & Inventory Analysis', 20, 31);
       doc.text('123 Business Parkway, Suite 500, Bangkok, TH', 20, 36);
 
-      // Report Title - Centered logic - by worapol สุดหล่อ
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(31, 41, 55);
@@ -68,12 +68,10 @@ const AdminRevenue = () => {
       doc.text(`Generated: ${reportDate} | ${reportTime}`, 283, 41, { align: 'right' });
       doc.text(`Source: Admin Dashboard / Revenue Breakdown`, 283, 46, { align: 'right' });
 
-      // Horizontal Divider - by worapol สุดหล่อ
       doc.setDrawColor(229, 231, 235);
       doc.setLineWidth(0.5);
       doc.line(14, 48, 283, 48);
 
-      // Metadata Info - by worapol สุดหล่อ
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(31, 41, 55);
@@ -86,7 +84,6 @@ const AdminRevenue = () => {
       doc.setFont('helvetica', 'normal');
       doc.text('System Administrator - VELLIN ERP Hub', 45, 60);
 
-      // --- DATA PREPARATION --- - by worapol สุดหล่อ
       const selectedData = revenueDetails
         .filter(item => selectedProducts.includes(item.product_name))
         .sort((a, b) => parseFloat(b.total_revenue) - parseFloat(a.total_revenue));
@@ -100,14 +97,13 @@ const AdminRevenue = () => {
         { content: `THB ${Number(item.total_revenue || 0).toLocaleString()}`, styles: { halign: 'right' } }
       ]);
 
-      // --- TABLE DESIGN --- - by worapol สุดหล่อ
       autoTable(doc, {
         startY: 65,
         head: [['Product ID', 'Product Description', 'Last Sold', 'Brand', 'Category', 'Units Sold', 'Total Revenue']],
         body: exportData,
         theme: 'grid',
         headStyles: {
-          fillColor: [31, 41, 55], // Deep Slate 800 - by worapol สุดหล่อ
+          fillColor: [31, 41, 55],
           textColor: 255,
           fontSize: 9,
           fontStyle: 'bold',
@@ -135,12 +131,10 @@ const AdminRevenue = () => {
         margin: { top: 65, bottom: 40 }
       });
 
-      // --- TOTALS & SUMMARY --- - by worapol สุดหล่อ
       const totalRevenue = selectedData.reduce((sum, item) => sum + parseFloat(item.total_revenue), 0);
       const totalUnits = selectedData.reduce((sum, item) => sum + parseInt(item.total_quantity), 0);
       const finalY = doc.lastAutoTable.finalY || 150;
 
-      // Summary Box - by worapol สุดหล่อ
       const summaryBoxY = finalY + 10;
       doc.setFillColor(248, 250, 252);
       doc.rect(203, summaryBoxY, 80, 22, 'F');
@@ -158,16 +152,12 @@ const AdminRevenue = () => {
       doc.text('NET REVENUE (THB):', 208, summaryBoxY + 16);
       doc.text(`THB ${totalRevenue.toLocaleString()}`, 278, summaryBoxY + 16, { align: 'right' });
 
-      // --- SIGNATURE SECTION --- - by worapol สุดหล่อ
       const signatureY = finalY + 45;
-      
-      // Prevent signature from overlaying the summary - by worapol สุดหล่อ
       const safeSignatureY = signatureY < 165 ? 165 : signatureY;
 
       doc.setDrawColor(203, 213, 225);
       doc.setLineWidth(0.3);
       
-      // Admin Signature - by worapol สุดหล่อ
       doc.line(14, safeSignatureY, 84, safeSignatureY);
       doc.setFontSize(8);
       doc.setFont('helvetica', 'italic');
@@ -175,18 +165,16 @@ const AdminRevenue = () => {
       doc.text('Authorized Signature (Administrator)', 14, safeSignatureY + 5);
       doc.text(`Signed Date: ${today.toLocaleDateString()} ________________`, 14, safeSignatureY + 10);
 
-      // Financial Officer Signature - by worapol สุดหล่อ
       doc.line(213, safeSignatureY, 283, safeSignatureY);
       doc.text('Reporting Officer Approval', 213, safeSignatureY + 5);
       doc.text(`Signed Date: ${today.toLocaleDateString()} ________________`, 213, safeSignatureY + 10);
 
-      // --- FOOTER & PERSISTENT ELEMENTS --- - by worapol สุดหล่อ
       const pageCount = doc.internal.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
         doc.setDrawColor(229, 231, 235);
         doc.setLineWidth(0.5);
-        doc.line(14, 198, 283, 198); // Landscape Footer line - by worapol สุดหล่อ
+        doc.line(14, 198, 283, 198);
 
         doc.setFontSize(8);
         doc.setTextColor(107, 114, 128);
@@ -195,10 +183,8 @@ const AdminRevenue = () => {
         doc.text(`Page ${i} of ${pageCount}`, 283, 204, { align: 'right' });
       }
 
-      // Save PDF - by worapol สุดหล่อ
       doc.save(`Vellin_Revenue_Audit_${new Date().toISOString().split('T')[0]}.pdf`);
 
-      // 🔍 LOG ACTION to Activity Logs - by worapol สุดหล่อ
       try {
         await api.post('/logs/manual', {
           action: 'Export PDF',
@@ -340,7 +326,7 @@ const AdminRevenue = () => {
   const [fetchingDetails, setFetchingDetails] = useState(true);
   const [tableLimit, setTableLimit] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 5; // Reduced to 5 as requested - by worapol สุดหล่อ
   const [selectedProducts, setSelectedProducts] = useState([]);
 
   const [monthlyReport, setMonthlyReport] = useState([]);
@@ -386,6 +372,23 @@ const AdminRevenue = () => {
       setFetchingDetails(false);
       setCurrentPage(1); // Reset to first page on new fetch - by worapol สุดหล่อ
     }
+  };
+
+  const getPageNumbers = () => {
+    const totalPages = Math.ceil(revenueDetails.length / itemsPerPage);
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    const pages = [];
+    for (let i = startPage; i <= endPage; i++) {
+      if (i > 0) pages.push(i);
+    }
+    return pages;
   };
 
   const fetchBrands = async () => {
@@ -523,7 +526,7 @@ const AdminRevenue = () => {
     }
   };
 
-  if (loading) return <div className="admin-container">Loading Reports...</div>;
+  if (loading) return <div className="admin-container">{t('loading') || 'Loading Reports...'}</div>;
 
   const calcTrend = (current, previous) => {
     if (!previous || previous === 0) return current > 0 ? { val: '+100', dir: 'up' } : { val: '0.0', dir: 'flat' };
@@ -539,7 +542,7 @@ const AdminRevenue = () => {
 
   return (
     <div className="admin-container">
-      <h2 className="dashboard-title">Revenue Performance Hub</h2>
+      <h2 className="dashboard-title">{t('adm_revenue_hub') || 'Revenue Performance Hub'}</h2>
 
       <div className="revenue-split-layout">
         {/* Left Sidebar: Controls and Quick Stats */}
@@ -549,7 +552,7 @@ const AdminRevenue = () => {
             {/* Today's Revenue Card */}
             <div className="section-card" style={{ padding: '1.5rem', borderLeft: '4px solid #F59E0B' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <p style={{ color: '#64748B', fontSize: '0.85rem', fontWeight: '600', textTransform: 'uppercase', margin: 0 }}>Today's Revenue</p>
+                <p style={{ color: '#64748B', fontSize: '0.85rem', fontWeight: '600', textTransform: 'uppercase', margin: 0 }}>{t('adm_todays_revenue') || "Today's Revenue"}</p>
                 <div style={{
                   padding: '4px 8px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px',
                   backgroundColor: todayTrend.dir === 'up' ? '#D1FAE5' : todayTrend.dir === 'down' ? '#FEE2E2' : '#F1F5F9',
@@ -563,13 +566,13 @@ const AdminRevenue = () => {
               <p style={{ fontSize: '2rem', fontWeight: '800', color: '#1E293B', margin: '0.5rem 0' }}>
                 ฿{Number(stats?.todaySales || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
-              <p style={{ fontSize: '0.8rem', color: '#94A3B8', margin: 0 }}>vs yesterday (฿{Number(stats?.yesterdaySales || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})</p>
+              <p style={{ fontSize: '0.8rem', color: '#94A3B8', margin: 0 }}>{t('adm_vs_yesterday') || 'vs yesterday'} (฿{Number(stats?.yesterdaySales || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})</p>
             </div>
 
             {/* This Month's Revenue Card */}
             <div className="section-card" style={{ padding: '1.5rem', borderLeft: '4px solid #6366F1' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <p style={{ color: '#64748B', fontSize: '0.85rem', fontWeight: '600', textTransform: 'uppercase', margin: 0 }}>This Month</p>
+                <p style={{ color: '#64748B', fontSize: '0.85rem', fontWeight: '600', textTransform: 'uppercase', margin: 0 }}>{t('adm_this_month') || 'This Month'}</p>
                 <div style={{
                   padding: '4px 8px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px',
                   backgroundColor: monthTrend.dir === 'up' ? '#D1FAE5' : monthTrend.dir === 'down' ? '#FEE2E2' : '#F1F5F9',
@@ -583,17 +586,17 @@ const AdminRevenue = () => {
               <p style={{ fontSize: '2rem', fontWeight: '800', color: '#1E293B', margin: '0.5rem 0' }}>
                 ฿{Number(stats?.thisMonthSales || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
-              <p style={{ fontSize: '0.8rem', color: '#94A3B8', margin: 0 }}>vs last month (฿{Number(stats?.lastMonthSales || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})</p>
+              <p style={{ fontSize: '0.8rem', color: '#94A3B8', margin: 0 }}>{t('adm_vs_last_month') || 'vs last month'} (฿{Number(stats?.lastMonthSales || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})</p>
             </div>
 
             {/* Lifetime Overview Row */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '0.5rem' }}>
               <div className="section-card" style={{ padding: '1.25rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-                <p style={{ color: '#64748B', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', margin: '0 0 0.5rem 0' }}>Lifetime Revenue</p>
+                <p style={{ color: '#64748B', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', margin: '0 0 0.5rem 0' }}>{t('adm_lifetime_revenue') || 'Lifetime Revenue'}</p>
                 <p style={{ fontSize: '1.2rem', fontWeight: '800', color: '#10B981', margin: 0 }}>฿{Number(stats?.totalSales || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
               </div>
               <div className="section-card" style={{ padding: '1.25rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-                <p style={{ color: '#64748B', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', margin: '0 0 0.5rem 0' }}>Total Items</p>
+                <p style={{ color: '#64748B', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', margin: '0 0 0.5rem 0' }}>{t('adm_total_items_sold') || 'Total Items'}</p>
                 <p style={{ fontSize: '1.2rem', fontWeight: '800', color: '#3B82F6', margin: 0 }}>{Number(stats?.totalProductsSold || 0).toLocaleString()}</p>
               </div>
             </div>
@@ -604,27 +607,27 @@ const AdminRevenue = () => {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle' }}>
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
-              Daily Sales Calendar
+              {t('adm_daily_sales_cal') || 'Daily Sales Calendar'}
             </h3>
             <div className="daily-calendar-wrapper" style={{ margin: '0 0 2.5rem 0' }}>
               <MiniCalendar selectedDate={selectedDate} onChange={(newDate) => setSelectedDate(newDate)} />
             </div>
             <div className="daily-stats-inset" style={{ padding: '1rem' }}>
-              <div className="inset-row"><span className="inset-label">Sales:</span><span className="inset-value price" style={{ fontSize: '1.1rem' }}>฿{Number(dailyStats?.sales || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-              <div className="inset-row"><span className="inset-label">Orders:</span><span className="inset-value">{Number(dailyStats?.orderCount || 0).toLocaleString()} items</span></div>
+              <div className="inset-row"><span className="inset-label">{t('nav_price') || 'Sales'}:</span><span className="inset-value price" style={{ fontSize: '1.1rem' }}>฿{Number(dailyStats?.sales || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+              <div className="inset-row"><span className="inset-label">{t('adm_orders') || 'Orders'}:</span><span className="inset-value">{Number(dailyStats?.orderCount || 0).toLocaleString()} {t('adm_units') || 'items'}</span></div>
             </div>
 
             <div className="time-analysis-box" style={{ marginTop: '1.5rem', background: '#F8FAFC', borderRadius: '12px', padding: '15px' }}>
               <h4 style={{ fontSize: '0.9rem', color: '#1E293B', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-                Peak Hours ({selectedDate})
+                {t('adm_peak_hours') || 'Peak Hours'} ({selectedDate})
               </h4>
               <div className="table-container" style={{ width: '100%', overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
                   <thead>
                     <tr style={{ borderBottom: '2px solid #E2E8F0', textAlign: 'left' }}>
-                      <th style={{ padding: '8px 4px', color: '#64748B', fontWeight: '600' }}>Time Slot</th>
-                      <th style={{ padding: '8px 4px', color: '#64748B', fontWeight: '600', textAlign: 'right' }}>Revenue</th>
+                      <th style={{ padding: '8px 4px', color: '#64748B', fontWeight: '600' }}>{t('adm_date') || 'Time Slot'}</th>
+                      <th style={{ padding: '8px 4px', color: '#64748B', fontWeight: '600', textAlign: 'right' }}>{t('adm_revenue') || 'Revenue'}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -640,7 +643,7 @@ const AdminRevenue = () => {
                         ))
                     ) : (
                       <tr>
-                        <td colSpan="2" style={{ padding: '20px 0', color: '#94A3B8', textAlign: 'center', fontStyle: 'italic' }}>No sales data.</td>
+                        <td colSpan="2" style={{ padding: '20px 0', color: '#94A3B8', textAlign: 'center', fontStyle: 'italic' }}>{t('adm_no_sales_data') || 'No sales data.'}</td>
                       </tr>
                     )}
                   </tbody>
@@ -657,10 +660,10 @@ const AdminRevenue = () => {
               <div className="chart-title-group">
                 <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: '800', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2.5"><path d="M12 20V10M18 20V4M6 20v-4" /></svg>
-                  Revenue Statistics Analysis (THB)
+                  {t('adm_revenue_stats') || 'Revenue Statistics Analysis'} (THB)
                 </h3>
                 <p style={{ margin: '6px 0 0 0', fontSize: '0.875rem', color: '#64748B', fontWeight: '500', opacity: 0.8 }}>
-                  Viewing Status: <span style={{ color: '#4F46E5', fontWeight: '700' }}>{chartView === 'week' ? 'Weekly Summary' : `Monthly Performance Breakdown (${selectedYear})`}</span>
+                  {t('adm_status') || 'Viewing Status'}: <span style={{ color: '#4F46E5', fontWeight: '700' }}>{chartView === 'week' ? (t('adm_forecast_7_days') || 'Weekly Summary') : `${t('adm_trend_year') || 'Monthly Performance Breakdown'} (${selectedYear})`}</span>
                 </p>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
@@ -676,8 +679,8 @@ const AdminRevenue = () => {
                   </button>
                 </div>
                 <div className="chart-view-toggle">
-                  <button className={`toggle-btn ${chartView === 'week' ? 'active' : ''}`} onClick={() => setChartView('week')}>Week</button>
-                  <button className={`toggle-btn ${chartView === 'year' && !showYearDropdown ? 'active' : ''}`} onClick={() => setChartView('year')}>Month</button>
+                  <button className={`toggle-btn ${chartView === 'week' ? 'active' : ''}`} onClick={() => setChartView('week')}>{t('week') || 'Week'}</button>
+                  <button className={`toggle-btn ${chartView === 'year' && !showYearDropdown ? 'active' : ''}`} onClick={() => setChartView('year')}>{t('month') || 'Month'}</button>
                   <div className="custom-dropdown-container">
                     <button className={`toggle-btn year-toggle ${chartView === 'year' ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); setShowYearDropdown(!showYearDropdown); }}>
                       {selectedYear}
@@ -694,7 +697,7 @@ const AdminRevenue = () => {
               </div>
             </div>
             <div className="chart-container" style={{ width: '100%', height: 400, marginTop: '1.5rem' }}>
-              {fetchingStats ? <div className="chart-loading">Loading chart data...</div> : (
+              {fetchingStats ? <div className="chart-loading">{t('loading') || 'Loading chart data...'}</div> : (
                 <ResponsiveContainer width="100%" height="100%">
                   {renderMainChart()}
                 </ResponsiveContainer>
@@ -709,21 +712,21 @@ const AdminRevenue = () => {
                 <line x1="12" y1="8" x2="12" y2="16"></line>
                 <line x1="8" y1="12" x2="16" y2="12"></line>
               </svg>
-              Revenue Strategy Summary
+              {t('adm_revenue_strategy') || 'Revenue Strategy Summary'}
             </h3>
             <div className="summary-inset-box" style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', padding: '2rem' }}>
               <div style={{ textAlign: 'center' }}>
-                <span className="summary-inset-label" style={{ display: 'block', marginBottom: '8px' }}>Total Sales Revenue:</span>
+                <span className="summary-inset-label" style={{ display: 'block', marginBottom: '8px' }}>{t('adm_total_sales_revenue') || 'Total Sales Revenue'}:</span>
                 <span className="summary-inset-value revenue" style={{ fontSize: '1.8rem' }}>฿{Number(stats?.totalSales || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
               <div style={{ width: '1px', height: '50px', background: '#E2E8F0' }}></div>
               <div style={{ textAlign: 'center' }}>
-                <span className="summary-inset-label" style={{ display: 'block', marginBottom: '8px' }}>Total Items Sold:</span>
+                <span className="summary-inset-label" style={{ display: 'block', marginBottom: '8px' }}>{t('adm_total_items_sold') || 'Total Items Sold'}:</span>
                 <span className="summary-inset-value items" style={{ fontSize: '1.8rem' }}>{Number(stats?.totalProductsSold || 0).toLocaleString()}</span>
               </div>
             </div>
             <p style={{ fontSize: '0.9rem', color: '#64748B', marginTop: '1.5rem', lineHeight: '1.6', textAlign: 'left', background: '#F8FAFC', padding: '15px', borderRadius: '12px', borderLeft: '4px solid #F59E0B' }}>
-              This summary represents the accumulated performance across all business cycles. Use the chart above to identify growth trends and peak performance months. Your store is currently showing stable growth patterns.
+              {t('adm_revenue_summary_desc') || 'This summary represents the accumulated performance across all business cycles. Use the chart above to identify growth trends and peak performance months. Your store is currently showing stable growth patterns.'}
             </p>
           </div>
 
@@ -733,7 +736,7 @@ const AdminRevenue = () => {
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
                   <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                 </svg>
-                Detailed Revenue Breakdown
+                {t('adm_revenue_breakdown') || 'Detailed Revenue Breakdown'}
               </h3>
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -760,7 +763,7 @@ const AdminRevenue = () => {
                         setShowBrandDropdown(!showBrandDropdown);
                       }}
                     >
-                      <span>{selectedBrand === 'All' ? 'All Brands' : selectedBrand}</span>
+                      <span>{selectedBrand === 'All' ? (t('adm_all_brands') || 'All Brands') : selectedBrand}</span>
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ transition: 'transform 0.2s', transform: showBrandDropdown ? 'rotate(180deg)' : 'rotate(0)' }}>
                         <path d="M6 9l6 6 6-6" />
                       </svg>
@@ -776,7 +779,7 @@ const AdminRevenue = () => {
                               setShowBrandDropdown(false);
                             }}
                           >
-                            {b === 'All' ? 'All Brands' : b}
+                            {b === 'All' ? (t('adm_all_brands') || 'All Brands') : b}
                           </div>
                         ))}
                       </div>
@@ -808,7 +811,7 @@ const AdminRevenue = () => {
                     <polyline points="7 10 12 15 17 10"></polyline>
                     <line x1="12" y1="15" x2="12" y2="3"></line>
                   </svg>
-                  Export PDF
+                  {t('adm_export_pdf') || 'Export PDF'}
                 </button>
               </div>
             </div>
@@ -824,20 +827,19 @@ const AdminRevenue = () => {
                         style={{ cursor: 'pointer', transform: 'scale(1.2)' }}
                       />
                     </th>
-                    <th style={{ padding: '15px 10px', color: '#64748B', fontWeight: '600', width: '120px' }}>Product ID</th>
-                    <th style={{ padding: '15px 10px', color: '#64748B', fontWeight: '600' }}>Product Name</th>
-                    <th style={{ padding: '15px 10px', color: '#64748B', fontWeight: '600' }}>Last Sold</th>
-                    <th style={{ padding: '15px 10px', color: '#64748B', fontWeight: '600' }}>Category</th>
-                    <th style={{ padding: '15px 10px', color: '#64748B', fontWeight: '600', textAlign: 'right' }}>Units Sold</th>
-                    <th style={{ padding: '15px 10px', color: '#64748B', fontWeight: '600', textAlign: 'right' }}>Revenue contribution</th>
+                    <th style={{ padding: '15px 10px', color: '#64748B', fontWeight: '600', width: '120px' }}>{t('adm_product_id') || 'Product ID'}</th>
+                    <th style={{ padding: '15px 10px', color: '#64748B', fontWeight: '600' }}>{t('adm_table_name') || 'Product Name'}</th>
+                    <th style={{ padding: '15px 10px', color: '#64748B', fontWeight: '600' }}>{t('adm_last_sold') || 'Last Sold'}</th>
+                    <th style={{ padding: '15px 10px', color: '#64748B', fontWeight: '600' }}>{t('adm_category') || 'Category'}</th>
+                    <th style={{ padding: '15px 10px', color: '#64748B', fontWeight: '600', textAlign: 'right' }}>{t('adm_sold') || 'Units Sold'}</th>
+                    <th style={{ padding: '15px 10px', color: '#64748B', fontWeight: '600', textAlign: 'right' }}>{t('adm_revenue_contribution') || 'Revenue contribution'}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {fetchingDetails ? (
-                    <tr><td colSpan="6" style={{ padding: '30px', textAlign: 'center', color: '#94A3B8' }}>Fetching revenue data...</td></tr>
+                    <tr><td colSpan="6" style={{ padding: '30px', textAlign: 'center', color: '#94A3B8' }}>{t('loading') || 'Fetching revenue data...'}</td></tr>
                   ) : revenueDetails.length > 0 ? (
                     (() => {
-                      const itemsPerPage = 10; // Define items per page - by worapol สุดหล่อ
                       const indexOfLast = currentPage * itemsPerPage;
                       const indexOfFirst = indexOfLast - itemsPerPage;
                       const currentItems = revenueDetails.slice(indexOfFirst, indexOfLast);
@@ -904,38 +906,58 @@ const AdminRevenue = () => {
                       });
                     })()
                   ) : (
-                    <tr><td colSpan="7" style={{ padding: '30px', textAlign: 'center', color: '#94A3B8' }}>No revenue data found for this selection.</td></tr>
+                    <tr><td colSpan="7" style={{ padding: '30px', textAlign: 'center', color: '#94A3B8' }}>{t('adm_no_revenue_data') || 'No revenue data found for this selection.'}</td></tr>
                   )}
                 </tbody>
               </table>
             </div>
-
-            {/* Pagination for Revenue Details */}
+            {/* Pagination Controls - Integrated inside the card with refined spacing */}
             {!fetchingDetails && revenueDetails.length > itemsPerPage && (
-              <div className="pagination" style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem', gap: '8px' }}>
+              <div className="pagination" style={{ 
+                marginTop: '1rem', 
+                paddingTop: '1.25rem', 
+                borderTop: '1px solid #F1F5F9', 
+                justifyContent: 'flex-end',
+                paddingBottom: '0.5rem'
+              }}>
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                   className="page-btn"
                 >
-                  Prev
+                  {t('adm_prev') || 'Prev'}
                 </button>
-                {Array.from({ length: Math.ceil(revenueDetails.length / itemsPerPage) }, (_, i) => (
+
+                {getPageNumbers().map(pageNum => (
                   <button
-                    key={i + 1}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={`page-btn ${currentPage === i + 1 ? 'active' : ''}`}
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`page-btn ${currentPage === pageNum ? 'active' : ''}`}
                   >
-                    {i + 1}
+                    {pageNum}
                   </button>
                 ))}
+
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(revenueDetails.length / itemsPerPage)))}
                   disabled={currentPage === Math.ceil(revenueDetails.length / itemsPerPage)}
                   className="page-btn"
                 >
-                  Next
+                  {t('adm_next') || 'Next'}
                 </button>
+
+                <div className="page-jump">
+                  <span>{t('adm_page_label') || (useLanguage().language === 'th' ? 'หน้า:' : 'Page:')}</span>
+                  <select
+                    value={currentPage}
+                    onChange={(e) => setCurrentPage(Number(e.target.value))}
+                    className="page-select"
+                  >
+                    {[...Array(Math.ceil(revenueDetails.length / itemsPerPage))].map((_, i) => (
+                      <option key={i + 1} value={i + 1}>{i + 1}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             )}
           </div>
@@ -946,9 +968,9 @@ const AdminRevenue = () => {
               <div className="chart-title-group">
                 <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                  Monthly Daily Performance Log
+                  {t('adm_monthly_performance_log') || 'Monthly Daily Performance Log'}
                 </h3>
-                <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#64748B' }}>Breakdown of sales and units sold for each day in a month</p>
+                <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#64748B' }}>{t('adm_monthly_desc') || 'Breakdown of sales and units sold for each day in a month'}</p>
               </div>
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                 <div className="chart-view-toggle">
@@ -970,7 +992,7 @@ const AdminRevenue = () => {
                   style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 16px', background: '#4F46E5', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '0.85rem', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(79,70,229,0.2)' }}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  Export PDF
+                  {t('adm_export_pdf') || 'Export PDF'}
                 </button>
               </div>
             </div>
@@ -1004,10 +1026,10 @@ const AdminRevenue = () => {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
                 <thead style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 10 }}>
                   <tr style={{ borderBottom: '2px solid #E2E8F0', textAlign: 'left' }}>
-                    <th style={{ padding: '12px 10px', color: '#64748B' }}>Date</th>
-                    <th style={{ padding: '12px 10px', color: '#64748B', textAlign: 'right' }}>Orders</th>
-                    <th style={{ padding: '12px 10px', color: '#64748B', textAlign: 'right' }}>Units Sold</th>
-                    <th style={{ padding: '12px 10px', color: '#64748B', textAlign: 'right' }}>Daily Revenue</th>
+                    <th style={{ padding: '12px 10px', color: '#64748B' }}>{t('adm_date') || 'Date'}</th>
+                    <th style={{ padding: '12px 10px', color: '#64748B', textAlign: 'right' }}>{t('adm_orders') || 'Orders'}</th>
+                    <th style={{ padding: '12px 10px', color: '#64748B', textAlign: 'right' }}>{t('adm_units_sold_items') || 'Units Sold'}</th>
+                    <th style={{ padding: '12px 10px', color: '#64748B', textAlign: 'right' }}>{t('adm_revenue') || 'Daily Revenue'}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1026,7 +1048,7 @@ const AdminRevenue = () => {
                         </tr>
                       ))}
                       <tr style={{ backgroundColor: '#F8FAFC', fontWeight: '800' }}>
-                        <td style={{ padding: '15px 10px' }}>MONTHLY TOTAL</td>
+                        <td style={{ padding: '15px 10px' }}>{t('adm_monthly_total') || 'MONTHLY TOTAL'}</td>
                         <td style={{ padding: '15px 10px', textAlign: 'right' }}>{Number(monthlyReport.reduce((s, r) => s + r.order_count, 0)).toLocaleString()}</td>
                         <td style={{ padding: '15px 10px', textAlign: 'right', color: '#3B82F6' }}>{Number(monthlyReport.reduce((s, r) => s + parseInt(r.total_items || 0), 0)).toLocaleString()} items</td>
                         <td style={{ padding: '15px 10px', textAlign: 'right', color: '#10B981', fontSize: '1.1rem' }}>
@@ -1035,7 +1057,7 @@ const AdminRevenue = () => {
                       </tr>
                     </>
                   ) : (
-                    <tr><td colSpan="4" style={{ padding: '40px', textAlign: 'center', color: '#94A3B8', fontStyle: 'italic' }}>No sales data found for {reportMonth}/{reportYear}.</td></tr>
+                    <tr><td colSpan="4" style={{ padding: '40px', textAlign: 'center', color: '#94A3B8', fontStyle: 'italic' }}>{t('adm_no_sales_data_period') || `No sales data found for ${reportMonth}/${reportYear}.`}</td></tr>
                   )}
                 </tbody>
               </table>

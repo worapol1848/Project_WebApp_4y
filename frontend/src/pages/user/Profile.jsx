@@ -65,7 +65,8 @@ const Profile = () => {
   const { t } = useLanguage();
   const [profile, setProfile] = useState({
     username: '', email: '', full_name: '', phone: '',
-    address: '', sub_district: '', district: '', province: '', postal_code: ''
+    address: '', sub_district: '', district: '', province: '', postal_code: '',
+    profile_image: ''
   });
   const { showToast } = useToast();
   const [passwords, setPasswords] = useState({
@@ -83,6 +84,7 @@ const Profile = () => {
   // Core Map State - by worapol สุดหล่อ
   const [mapCoords, setMapCoords] = useState([13.7367, 100.5231]);
   const searchTimeout = useRef(null);
+  const fileInputRef = useRef(null);
 
   // State for editing address in modal - by worapol สุดหล่อ
   const [editAddress, setEditAddress] = useState({});
@@ -175,19 +177,67 @@ const Profile = () => {
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('profile_image', file);
+
+    try {
+      const res = await api.put('/auth/profile-image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setProfile(prev => ({ ...prev, profile_image: res.data.profile_image }));
+      showToast(t('prof_success'));
+      const localUser = JSON.parse(localStorage.getItem('user') || '{}');
+      localUser.profile_image = res.data.profile_image;
+      localStorage.setItem('user', JSON.stringify(localUser));
+      window.dispatchEvent(new Event('profileUpdated'));
+    } catch (err) {
+      showToast(t('error'), 'error');
+    }
+  };
+
   if (loading) return <div className="profile-container" style={{ marginTop: '120px' }}>{t('loading')}...</div>;
 
   return (
     <div className="profile-container">
       <h2>{t('prof_title')}</h2>
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem' }}>
-        <div style={{ background: '#e0f0ff', padding: '1.5rem', borderRadius: '50%', boxShadow: '0 8px 25px rgba(0,122,255,0.15)' }}>
-          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
+      
+      <div className="profile-header-card">
+        <div 
+          className="profile-image-wrapper" 
+          onClick={() => fileInputRef.current.click()}
+          style={{ cursor: 'pointer' }}
+        >
+          {profile.profile_image ? (
+            <img src={`http://localhost:5000${profile.profile_image}`} alt="Profile" className="profile-avatar-img" />
+          ) : (
+            <div className="profile-avatar-placeholder">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+          )}
+          <div className="avatar-edit-badge">
+            <i className='bx bxs-camera'></i>
+          </div>
+        </div>
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          style={{ display: 'none' }} 
+          accept="image/*" 
+          onChange={handleImageUpload} 
+        />
+        <div className="profile-header-info">
+          <h3>{profile.full_name || profile.username}</h3>
+          <p>{profile.email}</p>
         </div>
       </div>
+
       <div className="profile-section">
         <h3>{t('prof_account_info')}</h3>
         <div className="form-group"><label>{t('username')}</label><div className="read-only-text">{profile.username}</div></div>

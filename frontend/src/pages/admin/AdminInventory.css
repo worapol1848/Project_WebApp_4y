@@ -23,6 +23,8 @@
   margin: 0 0 0.5rem 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  line-height: 1.4;
+  white-space: normal;
 }
 
 .stat-card .stat-value {
@@ -198,11 +200,16 @@
 }
 
 .table-responsive {
-  overflow-x: hidden;
+  overflow-x: auto;
+  margin-top: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .inventory-split-table {
   width: 100%;
+  border-collapse: collapse;
+  min-width: 1100px; /* Ensure enough space for all columns */
 }
 
 .inventory-split-table th, 
@@ -254,11 +261,18 @@
 .admin-table th:nth-child(6),
 .admin-table td:nth-child(6),
 .admin-table th:nth-child(7),
-.admin-table td:nth-child(7) {
-  min-width: 150px; /* Values */
+.admin-table td:nth-child(7),
+.admin-table th:nth-child(8),
+.admin-table td:nth-child(8) {
+  min-width: 150px; /* Increased for Thai currency labels */
   font-weight: 600;
   text-align: right;
-  white-space: nowrap;
+}
+
+.inventory-split-table thead th {
+  white-space: normal; /* Allow headers to wrap */
+  word-break: break-word;
+  line-height: 1.2;
 }
 
 /* Target numbers to look aligned */
