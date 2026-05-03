@@ -9,12 +9,12 @@ const NavbarSwitcher = () => {
   const { user } = useContext(AuthContext);
   const location = useLocation();
 
-  if (['/login', '/register'].includes(location.pathname)) {
+  if (['/login', '/register'].includes(location.pathname) || location.pathname.includes('/face-scan')) {
     return null;
   }
 
   // Admin navbar for admin and superadmin routes - by worapol สุดหล่อ
-  if (location.pathname.startsWith('/admin') || location.pathname.startsWith('/superadmin')) {
+  if ((location.pathname.startsWith('/admin') || location.pathname.startsWith('/superadmin')) && !location.pathname.includes('/face-scan')) {
     if (user && (user.role === 'admin' || user.role === 'superadmin')) {
       return <AdminNavbar />;
     }

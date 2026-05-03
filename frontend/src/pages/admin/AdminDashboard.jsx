@@ -107,26 +107,72 @@ const AdminDashboard = () => {
     <div className="admin-container">
       <h2 className="dashboard-title">{t('adm_dashboard')} {t('adm_overview')}</h2>
 
-      <div className="stats-grid">
+      {/* Main Stats Row - by worapol สุดหล่อ */}
+      <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
         <div className="stat-card minimal-card">
           <div className="stat-icon icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
           <p className="stat-value">{Number(stats?.totalProducts || 0).toLocaleString()}</p>
-          <h3 className="stat-label">{t('adm_products')}</h3>
+          <h3 className="stat-label">{t('adm_products') || 'Products'}</h3>
         </div>
+
         <div className="stat-card minimal-card">
-          <div className="stat-icon icon-yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg></div>
-          <p className="stat-value">{Number(stats?.totalDeliveredOrders || 0).toLocaleString()}</p>
-          <h3 className="stat-label">{t('adm_delivered_orders')}</h3>
-        </div>
-        <div className="stat-card minimal-card">
-          <div className="stat-icon icon-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+          <div className="stat-icon" style={{ color: '#8B5CF6' }}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
           <p className="stat-value">{Number(stats?.totalUsers || 0).toLocaleString()}</p>
-          <h3 className="stat-label">{t('adm_customer')}</h3>
+          <h3 className="stat-label">{t('adm_customer') || 'Customers'}</h3>
         </div>
-        <div className="stat-card minimal-card">
-          <div className="stat-icon icon-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></div>
-          <p className="stat-value">฿{Number(stats?.totalSales || 0).toLocaleString()}</p>
-          <h3 className="stat-label">{t('adm_revenue')}</h3>
+      </div>
+
+      {/* Order Status Combined Block - by worapol สุดหล่อ */}
+      <div className="section-card order-status-block" style={{ marginBottom: '2.5rem', padding: '1.5rem 2rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #F1F5F9', paddingBottom: '1rem' }}>
+          <h3 style={{ margin: 0, display: 'flex', alignItems: 'center' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2" style={{ marginRight: '10px' }}>
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+            {t('adm_orders') || 'Orders Overview'}
+          </h3>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 500 }}>{t('adm_total_orders') || 'Total Orders'}</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1E293B' }}>{Number(stats?.totalOrders || 0).toLocaleString()}</div>
+          </div>
+        </div>
+        
+        <div className="order-stats-container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem' }}>
+          <div className="order-status-item">
+            <div className="status-label-group">
+              <div className="status-dot" style={{ background: '#10B981' }}></div>
+              <span className="status-text">{t('adm_delivered_orders') || 'Completed'}</span>
+            </div>
+            <div className="status-value-group">
+              <span className="status-number">{Number(stats?.totalDeliveredOrders || 0).toLocaleString()}</span>
+              <span className="status-unit">{t('adm_units') || 'Orders'}</span>
+            </div>
+            <div className="status-progress-bg"><div className="status-progress-bar" style={{ width: `${(stats?.totalDeliveredOrders / stats?.totalOrders) * 100}%`, background: '#10B981' }}></div></div>
+          </div>
+
+          <div className="order-status-item">
+            <div className="status-label-group">
+              <div className="status-dot" style={{ background: '#F59E0B' }}></div>
+              <span className="status-text">{t('adm_pending_orders') || 'Pending'}</span>
+            </div>
+            <div className="status-value-group">
+              <span className="status-number">{Number(stats?.totalPendingOrders || 0).toLocaleString()}</span>
+              <span className="status-unit">{t('adm_units') || 'Orders'}</span>
+            </div>
+            <div className="status-progress-bg"><div className="status-progress-bar" style={{ width: `${(stats?.totalPendingOrders / stats?.totalOrders) * 100}%`, background: '#F59E0B' }}></div></div>
+          </div>
+
+          <div className="order-status-item">
+            <div className="status-label-group">
+              <div className="status-dot" style={{ background: '#3B82F6' }}></div>
+              <span className="status-text">{t('adm_shipped_orders') || 'Remaining'}</span>
+            </div>
+            <div className="status-value-group">
+              <span className="status-number">{Number(stats?.totalShippedOrders || 0).toLocaleString()}</span>
+              <span className="status-unit">{t('adm_units') || 'Orders'}</span>
+            </div>
+            <div className="status-progress-bg"><div className="status-progress-bar" style={{ width: `${(stats?.totalShippedOrders / stats?.totalOrders) * 100}%`, background: '#3B82F6' }}></div></div>
+          </div>
         </div>
       </div>
 
@@ -166,6 +212,30 @@ const AdminDashboard = () => {
               </AreaChart>
             </ResponsiveContainer>
           )}
+        </div>
+      </div>
+
+      {/* Revenue Summary Block - by worapol สุดหล่อ */}
+      <div className="section-card revenue-summary-block" style={{ marginBottom: '2.5rem', padding: '2rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem' }}>
+          <div style={{ width: '45px', height: '45px', background: '#FDF2F8', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '15px' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EC4899" strokeWidth="2">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline>
+            </svg>
+          </div>
+          <h3 style={{ margin: 0 }}>{t('adm_revenue_hub') || 'Revenue Performance Hub'}</h3>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-around', background: '#F8FAFC', borderRadius: '20px', padding: '2rem', border: '1px solid #F1F5F9' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 600, marginBottom: '0.5rem' }}>{t('adm_lifetime_revenue') || 'Gross Revenue'}</div>
+            <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#10B981', letterSpacing: '-1px' }}>฿{Number(stats?.totalSales || 0).toLocaleString()}</div>
+          </div>
+          <div style={{ width: '1px', background: '#E2E8F0', height: '60px', alignSelf: 'center' }}></div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 600, marginBottom: '0.5rem' }}>{t('adm_total_items_sold') || 'Inventory Velocity'}</div>
+            <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#1E293B', letterSpacing: '-1px' }}>{Number(stats?.totalProductsSold || 0).toLocaleString()} <span style={{ fontSize: '1rem', color: '#94A3B8', fontWeight: 500 }}>{t('adm_items') || 'Items'}</span></div>
+          </div>
         </div>
       </div>
 
@@ -304,29 +374,6 @@ const AdminDashboard = () => {
             <div className="inset-row"><span className="inset-label">{t('adm_revenue_target')}</span><span className="inset-value price">฿{Number(dailyStats?.sales || 0).toLocaleString()}</span></div>
             <div className="inset-row"><span className="inset-label">{t('adm_order_volume')}</span><span className="inset-value">{Number(dailyStats?.orderCount || 0).toLocaleString()} {t('adm_units')}</span></div>
           </div>
-        </div>
-
-        {/* Lifetime Summary */}
-        <div className="section-card">
-          <h3>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
-              <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line>
-            </svg>
-            {t('adm_lifetime_analytics')}
-          </h3>
-          <div className="summary-inset-box">
-            <div className="summary-inset-row">
-              <span className="summary-inset-label">{t('adm_gross_revenue')}</span>
-              <span className="summary-inset-value revenue" style={{ fontSize: '1.6rem' }}>฿{Number(stats?.totalSales || 0).toLocaleString()}</span>
-            </div>
-            <div className="summary-inset-row">
-              <span className="summary-inset-label">{t('adm_inventory_velocity')}</span>
-              <span className="summary-inset-value items" style={{ fontSize: '1.2rem' }}>{Number(stats?.totalProductsSold || 0).toLocaleString()} {t('adm_items_sold')}</span>
-            </div>
-          </div>
-          <p style={{ marginTop: '1.5rem', fontSize: '0.85rem', color: '#64748B', lineHeight: '1.5' }}>
-            {t('adm_lifetime_desc')}
-          </p>
         </div>
       </div>
     </div>

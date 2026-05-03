@@ -1,31 +1,44 @@
 // code in this file is written by worapol สุดหล่อ
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   Button, TextField, Select, MenuItem, FormControl, InputLabel,
   CircularProgress, Box, Typography, IconButton, Tooltip,
-  Paper, Grid, Card, CardContent, Divider, Fade, Grow
+  Paper, Grid, Card, CardContent, Divider, Fade, Grow, Avatar,
+  InputAdornment
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../services/api';
 import { useLanguage } from '../../context/LanguageContext';
+import { AuthContext } from '../../context/AuthContext';
 
 const SuperAdminManage = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const isThai = useLanguage().language === 'th';
+  const { user, setUser } = useContext(AuthContext);
   const location = useLocation();
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [editingAdmin, setEditingAdmin] = useState(null);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Form State - by worapol สุดหล่อ
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
-    role: 'admin'
+    oldPassword: '',
+    confirmPassword: '',
+    role: 'admin',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    profileImageFile: null,
+    profileImagePreview: null
   });
 
   const fetchAdmins = async () => {
@@ -33,8 +46,10 @@ const SuperAdminManage = () => {
       setLoading(true);
       const res = await api.get('/auth/admins');
       setAdmins(res.data);
+      return res.data;
     } catch (err) {
       console.error('Fetch admins error:', err);
+      return null;
     } finally {
       setLoading(false);
     }
@@ -51,15 +66,51 @@ const SuperAdminManage = () => {
     if (editId && admins.length > 0) {
       const targetAdmin = admins.find(a => a.id === parseInt(editId));
       if (targetAdmin) {
-        // Open modal - by worapol สุดหล่อ
         setEditingAdmin(targetAdmin);
-        // Force form data to be superadmin since they just scanned - by worapol สุดหล่อ
-        setFormData({
-          username: targetAdmin.username,
-          email: targetAdmin.email || '',
-          password: '',
-          role: 'superadmin' // Force superadmin after scan - by worapol สุดหล่อ
-        });
+
+        // Retrieve temp form data if it exists - by worapol สุดหล่อ
+        const savedFormDataStr = sessionStorage.getItem('tempAdminFormData');
+        let savedFormData = null;
+        if (savedFormDataStr) {
+          try {
+            savedFormData = JSON.parse(savedFormDataStr);
+            sessionStorage.removeItem('tempAdminFormData'); // clear it
+          } catch (e) {
+            console.error('Error parsing temp form data', e);
+          }
+        }
+
+        if (savedFormData) {
+          // Restore user's filled data - by worapol สุดหล่อ
+          setFormData({
+            ...savedFormData,
+            role: 'superadmin', // Force superadmin after scan
+            profileImagePreview: targetAdmin.profile_image ? `http://localhost:5000${targetAdmin.profile_image}` : null
+          });
+        } else {
+          // Fallback to database data - by worapol สุดหล่อ
+          let fName = '';
+          let lName = '';
+          if (targetAdmin.full_name) {
+            const parts = targetAdmin.full_name.split(' ');
+            fName = parts[0] || '';
+            lName = parts.slice(1).join(' ') || '';
+          }
+          setFormData({
+            username: targetAdmin.username,
+            email: targetAdmin.email || '',
+            password: '',
+            oldPassword: '',
+            confirmPassword: '',
+            role: 'superadmin',
+            firstName: fName,
+            lastName: lName,
+            phone: targetAdmin.phone || '',
+            profileImageFile: null,
+            profileImagePreview: targetAdmin.profile_image ? `http://localhost:5000${targetAdmin.profile_image}` : null
+          });
+        }
+        
         setOpenModal(true);
         // Remove the query param once handled - by worapol สุดหล่อ
         navigate(location.pathname, { replace: true });
@@ -67,14 +118,35 @@ const SuperAdminManage = () => {
     }
   }, [location.search, admins, navigate, location.pathname]);
 
+  const handleScanFace = () => {
+    // Save form data to session storage before navigating away
+    sessionStorage.setItem('tempAdminFormData', JSON.stringify(formData));
+    navigate(`/superadmin/face-scan/${editingAdmin.id}`);
+  };
+
   const handleOpenModal = (admin = null) => {
     if (admin) {
+      let fName = '';
+      let lName = '';
+      if (admin.full_name) {
+        const parts = admin.full_name.split(' ');
+        fName = parts[0] || '';
+        lName = parts.slice(1).join(' ') || '';
+      }
+
       setEditingAdmin(admin);
       setFormData({
         username: admin.username,
         email: admin.email || '',
         password: '',
-        role: admin.role
+        oldPassword: '',
+        confirmPassword: '',
+        role: admin.role,
+        firstName: fName,
+        lastName: lName,
+        phone: admin.phone || '',
+        profileImageFile: null,
+        profileImagePreview: admin.profile_image ? `http://localhost:5000${admin.profile_image}` : null
       });
     } else {
       setEditingAdmin(null);
@@ -82,10 +154,20 @@ const SuperAdminManage = () => {
         username: '',
         email: '',
         password: '',
-        role: 'admin'
+        oldPassword: '',
+        confirmPassword: '',
+        role: 'admin',
+        firstName: '',
+        lastName: '',
+        phone: '',
+        profileImageFile: null,
+        profileImagePreview: null
       });
     }
     setOpenModal(true);
+    setShowOldPassword(false);
+    setShowPassword(false);
+    setShowConfirmPassword(false);
   };
 
   const handleCloseModal = () => {
@@ -94,6 +176,17 @@ const SuperAdminManage = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({
+        ...formData,
+        profileImageFile: file,
+        profileImagePreview: URL.createObjectURL(file)
+      });
+    }
   };
 
   const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', onConfirm: null, isAlert: false });
@@ -109,6 +202,26 @@ const SuperAdminManage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Field validation for new admin
+    if (!editingAdmin) {
+      if (!formData.firstName || !formData.lastName || !formData.phone || !formData.email || !formData.username || !formData.password || !formData.confirmPassword) {
+        showAlert(t('error'), isThai ? 'กรุณากรอกข้อมูลให้ครบถ้วนทุกช่องเพื่อเพิ่มแอดมินใหม่' : 'Please fill in all required fields.');
+        return;
+      }
+    }
+
+    // Password validation
+    if (formData.password || formData.confirmPassword) {
+      if (formData.password !== formData.confirmPassword) {
+        showAlert(t('error'), isThai ? 'รหัสผ่านใหม่ไม่ตรงกัน' : 'New passwords do not match.');
+        return;
+      }
+      if (editingAdmin && !formData.oldPassword) {
+        showAlert(t('error'), isThai ? 'กรุณากรอกรหัสผ่านปัจจุบันก่อนทำการเปลี่ยนรหัสผ่านใหม่' : 'Current password is required to change password.');
+        return;
+      }
+    }
+
     // Strict Rule: Cannot be Super Admin without Face Data - by worapol สุดหล่อ
     if (formData.role === 'superadmin') {
       const currentAdmin = admins.find(a => a.id === editingAdmin?.id);
@@ -119,15 +232,48 @@ const SuperAdminManage = () => {
     }
 
     try {
+      const submitData = new FormData();
+      submitData.append('username', formData.username);
+      submitData.append('email', formData.email);
+      submitData.append('role', formData.role);
+      
+      if (formData.password) {
+        submitData.append('password', formData.password);
+        if (editingAdmin && formData.oldPassword) {
+          submitData.append('old_password', formData.oldPassword);
+        }
+      }
+      
+      const fullName = [formData.firstName, formData.lastName].filter(Boolean).join(' ');
+      if (fullName) submitData.append('full_name', fullName);
+      if (formData.phone) submitData.append('phone', formData.phone);
+      if (formData.profileImageFile) {
+        submitData.append('profile_image', formData.profileImageFile);
+      }
+
       if (editingAdmin) {
-        await api.put(`/auth/admins/${editingAdmin.id}`, formData);
+        await api.put(`/auth/admins/${editingAdmin.id}`, submitData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         showAlert('Success', t('adm_admin_updated'));
       } else {
-        await api.post('/auth/admins', formData);
+        await api.post('/auth/admins', submitData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         showAlert('Success', t('adm_admin_added'));
       }
       handleCloseModal();
-      fetchAdmins();
+      const newAdminsList = await fetchAdmins();
+      
+      // Update self in AuthContext if we edited our own profile - by worapol สุดหล่อ
+      if (editingAdmin && user && editingAdmin.id === user.id && newAdminsList) {
+        const updatedSelf = newAdminsList.find(a => a.id === user.id);
+        if (updatedSelf) {
+          const newUser = { ...user, ...updatedSelf };
+          setUser(newUser);
+          localStorage.setItem('user', JSON.stringify(newUser));
+        }
+      }
     } catch (err) {
       showAlert(t('error'), err.response?.data?.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
     }
@@ -410,7 +556,7 @@ const SuperAdminManage = () => {
           borderBottom: '1.5px solid #F3F4F6'
         }}>
           <Box>
-            <Typography variant="h5" fontWeight="1000" sx={{ color: '#111827' }}>
+            <Typography variant="h5" fontWeight="1000" sx={{ color: '#111827', textTransform: 'capitalize' }}>
               {editingAdmin ? `${t('edit')} ${t('adm_table_personnel')}` : t('adm_add_new_admin')}
             </Typography>
             <Typography variant="body2" sx={{ color: '#6B7280' }}>{t('adm_workforce_desc')}</Typography>
@@ -422,6 +568,67 @@ const SuperAdminManage = () => {
 
         <form onSubmit={handleSubmit}>
           <DialogContent sx={{ px: 3, pt: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            
+            {/* Avatar Upload */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+              <Box sx={{ position: 'relative' }}>
+                <Avatar
+                  src={formData.profileImagePreview}
+                  sx={{ width: 100, height: 100, border: '3px solid #E5E7EB', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', fontSize: '2.5rem', fontWeight: 'bold' }}
+                >
+                  {formData.username?.charAt(0).toUpperCase() || 'A'}
+                </Avatar>
+                <input
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  id="icon-button-file"
+                  type="file"
+                  onChange={handleImageChange}
+                />
+                <label htmlFor="icon-button-file">
+                  <IconButton
+                    color="primary"
+                    aria-label="upload picture"
+                    component="span"
+                    sx={{ position: 'absolute', bottom: -5, right: -5, bgcolor: '#fff', boxShadow: 2, '&:hover': { bgcolor: '#f3f4f6' } }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  </IconButton>
+                </label>
+              </Box>
+            </Box>
+
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <TextField
+                label={isThai ? "ชื่อจริง" : "First Name"}
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                InputProps={{ sx: { borderRadius: '16px', fontWeight: 'bold' } }}
+              />
+              <TextField
+                label={isThai ? "นามสกุล" : "Last Name"}
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                InputProps={{ sx: { borderRadius: '16px', fontWeight: 'bold' } }}
+              />
+            </Box>
+
+            <TextField
+              label={isThai ? "เบอร์โทร" : "Phone Number"}
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              fullWidth
+              variant="outlined"
+              InputProps={{ sx: { borderRadius: '16px', fontWeight: 'bold' } }}
+            />
+
             <TextField
               label={t('username')}
               name="username"
@@ -442,17 +649,84 @@ const SuperAdminManage = () => {
               variant="outlined"
               InputProps={{ sx: { borderRadius: '16px', fontWeight: 'bold' } }}
             />
-            <TextField
-              label={editingAdmin ? (isThai ? "รหัสผ่านใหม่ (เว้นว่างไว้หากไม่ต้องการเปลี่ยน)" : "New Password (Leave blank for no change)") : (t('adm_form_password') || 'Access Password')}
-              name="password"
-              type="password"
-              fullWidth
-              value={formData.password}
-              onChange={handleChange}
-              required={!editingAdmin}
-              variant="outlined"
-              InputProps={{ sx: { borderRadius: '16px', fontWeight: 'bold' } }}
-            />
+            {editingAdmin && (
+              <TextField
+                label={isThai ? "รหัสผ่านปัจจุบัน (เว้นว่างไว้หากไม่ต้องการเปลี่ยนรหัสผ่าน)" : "Current Password (Leave blank to keep current)"}
+                name="oldPassword"
+                type={showOldPassword ? "text" : "password"}
+                fullWidth
+                value={formData.oldPassword}
+                onChange={handleChange}
+                variant="outlined"
+                InputProps={{ 
+                  sx: { borderRadius: '16px', fontWeight: 'bold' },
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowOldPassword(!showOldPassword)} edge="end">
+                        {showOldPassword ? (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                        ) : (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+              />
+            )}
+            
+            {(!editingAdmin || formData.oldPassword) && (
+              <>
+                <TextField
+                  label={editingAdmin ? (isThai ? "รหัสผ่านใหม่" : "New Password") : (t('adm_form_password') || 'Password')}
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  fullWidth
+                  value={formData.password}
+                  onChange={handleChange}
+                  required={!editingAdmin || !!formData.oldPassword}
+                  variant="outlined"
+                  InputProps={{ 
+                    sx: { borderRadius: '16px', fontWeight: 'bold' },
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                          {showPassword ? (
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                          ) : (
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
+                <TextField
+                  label={isThai ? "ยืนยันรหัสผ่าน" : "Confirm Password"}
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  fullWidth
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required={!editingAdmin || !!formData.oldPassword}
+                  variant="outlined"
+                  InputProps={{ 
+                    sx: { borderRadius: '16px', fontWeight: 'bold' },
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
+                          {showConfirmPassword ? (
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                          ) : (
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </>
+            )}
             <FormControl fullWidth variant="outlined">
               <InputLabel sx={{ fontWeight: 'bold' }}>{t('adm_table_permissions')}</InputLabel>
               <Select
@@ -493,7 +767,7 @@ const SuperAdminManage = () => {
                   <Button
                     variant="contained"
                     startIcon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>}
-                    onClick={() => navigate(`/superadmin/face-scan/${editingAdmin.id}`)}
+                    onClick={handleScanFace}
                     sx={{
                       bgcolor: '#7C3AED',
                       color: '#fff',
@@ -514,7 +788,7 @@ const SuperAdminManage = () => {
                     </Box>
                     <Button
                       size="small"
-                      onClick={() => navigate(`/superadmin/face-scan/${editingAdmin.id}`)}
+                      onClick={handleScanFace}
                       sx={{ 
                         color: '#6366F1', 
                         textTransform: 'none', 
@@ -564,10 +838,10 @@ const SuperAdminManage = () => {
         <DialogContent sx={{ textAlign: 'center', pt: 4 }}>
           <Box sx={{
             width: 64, height: 64, borderRadius: '50%',
-            bgcolor: confirmDialog.title === 'Error' ? '#FEF2F2' : '#F0F9FF',
+            bgcolor: confirmDialog.title === t('error') ? '#FEF2F2' : '#F0F9FF',
             display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 3
           }}>
-            {confirmDialog.title === 'Error' ? (
+            {confirmDialog.title === t('error') ? (
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
             ) : (
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
@@ -598,7 +872,7 @@ const SuperAdminManage = () => {
               setConfirmDialog({ ...confirmDialog, open: false });
             }}
             sx={{
-              bgcolor: confirmDialog.title === 'Error' ? '#EF4444' : '#111827',
+              bgcolor: confirmDialog.title === t('error') ? '#EF4444' : '#111827',
               color: '#fff',
               borderRadius: '16px',
               fontWeight: '1000',

@@ -5,6 +5,7 @@ import { AuthContext } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import VelinLogo from './VelinLogo';
 import LanguageSwitcher from './LanguageSwitcher';
+import { Avatar } from '@mui/material';
 import './AdminNavbar.css';
 
 const AdminNavbar = () => {
@@ -17,8 +18,8 @@ const AdminNavbar = () => {
   const [isProductsOpen, setIsProductsOpen] = React.useState(
     location.pathname.includes('/admin/product') || location.pathname.includes('/admin/inventory')
   );
-
   const isCollapsed = !isLocked && !isHovered;
+  const isSuperAdminView = location.pathname.startsWith('/superadmin') || location.pathname.includes('/admin/logs');
 
   const handleLogout = () => {
     logout();
@@ -76,7 +77,7 @@ const AdminNavbar = () => {
 
           <div className="nav-divider"></div>
           <div className="nav-links">
-            {!location.pathname.startsWith('/superadmin') && (
+            {!isSuperAdminView && (
               <>
                 <Link to="/admin" className={`nav-link ${location.pathname === '/admin' ? 'active' : ''}`} title={t('adm_dashboard')}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -126,15 +127,10 @@ const AdminNavbar = () => {
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                   <span className="nav-text">{t('adm_bestsellers')}</span>
                 </Link>
-                {user.role === 'superadmin' && (
-                  <Link to="/admin/logs" className={`nav-link ${location.pathname.includes('/admin/logs') ? 'active' : ''}`} title={t('adm_logs')}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                    <span className="nav-text">{t('adm_logs')}</span>
-                  </Link>
-                )}
+
 
                 {user.role === 'superadmin' && (
-                  <Link to="/superadmin/face-scan" className="nav-link special-link" title={t('adm_personnel')}>
+                  <Link to="/superadmin/face-scan?redirect=/superadmin/manage" className="nav-link special-link" title={t('adm_personnel')}>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                     <span className="nav-text" style={{ color: '#8B5CF6', fontWeight: '800' }}>{t('adm_personnel')}</span>
                   </Link>
@@ -142,11 +138,15 @@ const AdminNavbar = () => {
               </>
             )}
 
-            {location.pathname.startsWith('/superadmin') && user.role === 'superadmin' && (
+            {isSuperAdminView && user.role === 'superadmin' && (
               <>
                 <Link to="/superadmin/manage" className={`nav-link ${location.pathname === '/superadmin/manage' ? 'active' : ''}`} title={t('adm_manage')}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                   <span className="nav-text">{t('adm_manage')}</span>
+                </Link>
+                <Link to="/admin/logs" className={`nav-link ${location.pathname.includes('/admin/logs') ? 'active' : ''}`} title={t('adm_logs')}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                  <span className="nav-text">{t('adm_logs')}</span>
                 </Link>
                 <div className="nav-divider"></div>
                 <Link to="/admin" className="nav-link" title={t('adm_sales_dash')}>
@@ -161,7 +161,12 @@ const AdminNavbar = () => {
         <div className="nav-bottom">
           <div className="admin-nav-controls">
             <div className="admin-profile-group">
-              <div className="admin-profile-circle">{user.username.charAt(0).toUpperCase()}</div>
+              <Avatar 
+                src={user.profile_image ? `http://localhost:5000${user.profile_image}` : null} 
+                sx={{ width: 40, height: 40, fontWeight: 'bold', fontSize: '1.2rem', bgcolor: '#111827', color: '#fff' }}
+              >
+                {user.username.charAt(0).toUpperCase()}
+              </Avatar>
               {!isCollapsed && (
                 <div className="admin-info">
                   <span className="admin-label">{user.role === 'superadmin' ? t('adm_role_super') : t('adm_role_admin')}</span>

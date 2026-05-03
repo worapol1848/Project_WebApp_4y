@@ -9,8 +9,14 @@ router.get('/', verifyToken, isAdmin, async (req, res) => {
   try {
     const [products] = await db.query('SELECT COUNT(*) as total FROM products');
     const [orders] = await db.query('SELECT COUNT(*) as total FROM orders');
+    
+    // Separate order counts by status - by worapol สุดหล่อ
     const [deliveredOrders] = await db.query("SELECT COUNT(*) as total FROM orders WHERE status = 'delivered'");
-    const [users] = await db.query('SELECT COUNT(*) as total FROM users');
+    const [pendingOrders] = await db.query("SELECT COUNT(*) as total FROM orders WHERE status = 'pending'");
+    const [shippedOrders] = await db.query("SELECT COUNT(*) as total FROM orders WHERE status = 'shipped'");
+    const [failedOrders] = await db.query("SELECT COUNT(*) as total FROM orders WHERE status IN ('cancelled', 'refunded')");
+
+    const [users] = await db.query("SELECT COUNT(*) as total FROM users WHERE role = 'user'");
     const [lowStockProducts] = await db.query('SELECT id, name, stock FROM products WHERE CAST(stock AS UNSIGNED) < 5 ORDER BY CAST(stock AS UNSIGNED) ASC');
     const [lowStockSizes] = await db.query(`
       SELECT p.id, p.name, sz.size, sz.stock 
@@ -76,6 +82,9 @@ router.get('/', verifyToken, isAdmin, async (req, res) => {
       totalProducts: products[0].total,
       totalOrders: orders[0].total,
       totalDeliveredOrders: deliveredOrders[0].total || 0,
+      totalPendingOrders: pendingOrders[0].total || 0,
+      totalShippedOrders: shippedOrders[0].total || 0,
+      totalFailedOrders: failedOrders[0].total || 0,
       totalUsers: users[0].total,
       totalSales: totalSalesData[0].total || 0,
       totalProductsSold: totalProductsSoldData[0].total || 0,
@@ -264,6 +273,27 @@ router.get('/monthly-report', verifyToken, isAdmin, async (req, res) => {
       GROUP BY DATE(o.created_at)
       ORDER BY date ASC
     `, [targetMonth, targetYear]);
+
+    res.json(reportData);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET recent daily revenue for sidebar history (last 30 entries) - by worapol สุดหล่อ
+router.get('/recent-daily-revenue', verifyToken, isAdmin, async (req, res) => {
+  try {
+    const [reportData] = await db.query(`
+      SELECT 
+        DATE(o.created_at) as date,
+        SUM(o.total_amount) as daily_revenue,
+        COUNT(DISTINCT o.id) as order_count
+      FROM orders o
+      WHERE o.status = 'delivered'
+      GROUP BY DATE(o.created_at)
+      ORDER BY date DESC
+      LIMIT 30
+    `);
 
     res.json(reportData);
   } catch (err) {

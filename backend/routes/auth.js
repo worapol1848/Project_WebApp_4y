@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 const upload = require('../config/upload');
+const { logAdminAction } = require('../utils/logger');
 
 
 // Register User - by worapol สุดหล่อ
@@ -167,7 +168,7 @@ router.put('/face-data', verifyToken, async (req, res) => {
 // Get all admins - by worapol สุดหล่อ
 router.get('/admins', verifyToken, isSuperAdmin, async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT id, username, role, email, (face_descriptor IS NOT NULL) as hasFaceData FROM users WHERE role IN ("admin", "superadmin")');
+    const [rows] = await db.query('SELECT id, username, role, email, full_name, phone, profile_image, (face_descriptor IS NOT NULL) as hasFaceData FROM users WHERE role IN ("admin", "superadmin")');
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -186,8 +187,9 @@ router.put('/admins/:id/face-data', verifyToken, isSuperAdmin, async (req, res) 
 });
 
 // Add new admin - by worapol สุดหล่อ
-router.post('/admins', verifyToken, isSuperAdmin, async (req, res) => {
-  const { username, password, email, role } = req.body;
+router.post('/admins', verifyToken, isSuperAdmin, upload.single('profile_image'), async (req, res) => {
+  const { username, password, email, role, full_name, phone } = req.body;
+  const profile_image = req.file ? `/uploads/${req.file.filename}` : null;
   try {
     const [existing] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
     if (existing.length > 0) return res.status(400).json({ message: 'Username already exists' });
@@ -195,10 +197,11 @@ router.post('/admins', verifyToken, isSuperAdmin, async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    await db.query(
-      'INSERT INTO users (username, password, email, role) VALUES (?, ?, ?, ?)',
-      [username, hashedPassword, email, role || 'admin']
+    const [result] = await db.query(
+      'INSERT INTO users (username, password, email, role, full_name, phone, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [username, hashedPassword, email, role || 'admin', full_name || null, phone || null, profile_image]
     );
+    await logAdminAction(req.user.id, 'CREATE', 'ADMIN', result.insertId, { username, role });
     res.status(201).json({ message: 'Admin added successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -206,12 +209,32 @@ router.post('/admins', verifyToken, isSuperAdmin, async (req, res) => {
 });
 
 // Update admin - by worapol สุดหล่อ
-router.put('/admins/:id', verifyToken, isSuperAdmin, async (req, res) => {
-  const { username, email, role, password } = req.body;
+router.put('/admins/:id', verifyToken, isSuperAdmin, upload.single('profile_image'), async (req, res) => {
+  const { username, email, role, password, old_password, full_name, phone } = req.body;
   const adminId = req.params.id;
+  const profile_image = req.file ? `/uploads/${req.file.filename}` : null;
+  
   try {
-    let query = 'UPDATE users SET username = ?, email = ?, role = ?';
-    let params = [username, email, role];
+    if (password) {
+      if (!old_password) {
+        return res.status(400).json({ message: 'Current password is required to set a new password.' });
+      }
+      const [existing] = await db.query('SELECT password FROM users WHERE id = ?', [adminId]);
+      if (existing.length === 0) return res.status(404).json({ message: 'Admin not found.' });
+      
+      const validPassword = await bcrypt.compare(old_password, existing[0].password);
+      if (!validPassword) {
+        return res.status(400).json({ message: 'Incorrect current password.' });
+      }
+    }
+
+    let query = 'UPDATE users SET username = ?, email = ?, role = ?, full_name = ?, phone = ?';
+    let params = [username, email, role, full_name || null, phone || null];
+
+    if (profile_image) {
+      query += ', profile_image = ?';
+      params.push(profile_image);
+    }
 
     // Clear face data if role is changed to something other than superadmin - by worapol สุดหล่อ
     if (role !== 'superadmin') {
@@ -229,6 +252,7 @@ router.put('/admins/:id', verifyToken, isSuperAdmin, async (req, res) => {
     params.push(adminId);
 
     await db.query(query, params);
+    await logAdminAction(req.user.id, 'UPDATE', 'ADMIN', adminId, { username, role, full_name });
     res.json({ message: 'Admin updated successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -243,7 +267,11 @@ router.delete('/admins/:id', verifyToken, isSuperAdmin, async (req, res) => {
     if (parseInt(adminId) === req.user.id) {
       return res.status(400).json({ message: 'Not allowed to delete yourself' });
     }
+    const [adminCheck] = await db.query('SELECT username FROM users WHERE id = ?', [adminId]);
+    const usernameToDelete = adminCheck.length > 0 ? adminCheck[0].username : 'Unknown';
+    
     await db.query('DELETE FROM users WHERE id = ?', [adminId]);
+    await logAdminAction(req.user.id, 'DELETE', 'ADMIN', adminId, { username: usernameToDelete });
     res.json({ message: 'Admin deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });

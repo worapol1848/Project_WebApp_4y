@@ -333,6 +333,8 @@ const AdminRevenue = () => {
   const [reportMonth, setReportMonth] = useState(new Date().getMonth() + 1);
   const [reportYear, setReportYear] = useState(new Date().getFullYear());
   const [fetchingReport, setFetchingReport] = useState(false);
+  const [historyPage, setHistoryPage] = useState(1); 
+  const [recentHistory, setRecentHistory] = useState([]); // New state for sidebar history - by worapol สุดหล่อ
 
   const fetchMonthlyReport = async (month, year) => {
     setFetchingReport(true);
@@ -342,6 +344,13 @@ const AdminRevenue = () => {
     } catch (err) { console.error(err); } finally { setFetchingReport(false); }
   };
 
+  const fetchRecentHistory = async () => {
+    try {
+      const res = await api.get('/dashboard/recent-daily-revenue');
+      setRecentHistory(res.data);
+    } catch (err) { console.error(err); }
+  };
+
   useEffect(() => {
     fetchMonthlyReport(reportMonth, reportYear);
   }, [reportMonth, reportYear]);
@@ -349,6 +358,7 @@ const AdminRevenue = () => {
   useEffect(() => {
     fetchStats();
     fetchBrands();
+    fetchRecentHistory(); // Fetch on mount - by worapol สุดหล่อ
   }, []);
 
   useEffect(() => {
@@ -650,6 +660,65 @@ const AdminRevenue = () => {
                 </table>
               </div>
             </div>
+          </div>
+
+          {/* New Daily Revenue History Widget - by worapol สุดหล่อ */}
+          <div className="section-card" style={{ padding: '1.75rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.1rem' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle', marginRight: '8px' }}>
+                  <path d="M12 20V10M18 20V4M6 20v-4" />
+                </svg>
+                {t('adm_daily_revenue_history') || 'Daily Revenue Log'}
+              </h3>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button 
+                  onClick={() => setHistoryPage(p => Math.max(1, p - 1))}
+                  disabled={historyPage === 1}
+                  style={{ padding: '4px', border: '1px solid #E2E8F0', borderRadius: '6px', background: 'white', cursor: historyPage === 1 ? 'not-allowed' : 'pointer', opacity: historyPage === 1 ? 0.5 : 1 }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <button 
+                  onClick={() => setHistoryPage(p => Math.min(Math.ceil(recentHistory.length / 5), p + 1))}
+                  disabled={historyPage >= Math.ceil(recentHistory.length / 5)}
+                  style={{ padding: '4px', border: '1px solid #E2E8F0', borderRadius: '6px', background: 'white', cursor: historyPage >= Math.ceil(recentHistory.length / 5) ? 'not-allowed' : 'pointer', opacity: historyPage >= Math.ceil(recentHistory.length / 5) ? 0.5 : 1 }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {recentHistory.length > 0 ? (
+                recentHistory
+                  .slice((historyPage - 1) * 5, historyPage * 5)
+                  .map((day, idx) => (
+                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 15px', background: '#F8FAFC', borderRadius: '12px', border: '1px solid #F1F5F9' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#1E293B' }}>
+                          {new Date(day.date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', color: '#64748B' }}>{day.order_count} {t('adm_orders') || 'Orders'}</span>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <span style={{ fontSize: '1rem', fontWeight: '800', color: '#10B981' }}>฿{Number(day.daily_revenue || 0).toLocaleString()}</span>
+                      </div>
+                    </div>
+                  ))
+              ) : (
+                <div style={{ padding: '2rem', textAlign: 'center', color: '#94A3B8', fontStyle: 'italic', fontSize: '0.9rem' }}>
+                  {t('adm_no_sales_data') || 'No sales data found.'}
+                </div>
+              )}
+            </div>
+            {recentHistory.length > 5 && (
+              <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                <span style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 600 }}>
+                  Page {historyPage} of {Math.ceil(recentHistory.length / 5)}
+                </span>
+              </div>
+            )}
           </div>
         </aside>
 

@@ -2,108 +2,101 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { useLanguage } from '../../context/LanguageContext';
-import {
-  TextField,
-  Button,
-  Box,
-  Typography,
-  Container,
-  Paper,
-  Link,
-  Alert
-} from "@mui/material";
 import { useToast } from '../../context/ToastContext';
+import { useLanguage } from '../../context/LanguageContext';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box } from '@mui/material';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
-
+  const [showFaceScanWarning, setShowFaceScanWarning] = useState(false);
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const { t } = useLanguage();
-  const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
     try {
       const user = await login(username, password);
-      showToast(`${t('auth_login_success')}, ${user.username}!`);
-      if (user.role === 'admin') navigate('/admin');
-      else navigate('/');
+      
+      const role = (user.role || '').toLowerCase();
+      
+      if (role === 'superadmin') {
+        // Delay toast for superadmin until face scan is complete - by worapol สุดหล่อ
+        setShowFaceScanWarning(true);
+      } else {
+        showToast(`${t('auth_login_success')}, ${user.username}!`);
+        if (role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/');
+        }
+      }
     } catch (err) {
-      setError(err.response?.data?.message || t('auth_login_failed'));
+      showToast(err.response?.data?.message || t('auth_login_failed'), 'error');
     }
   };
 
+  const handleProceedToScan = () => {
+    setShowFaceScanWarning(false);
+    navigate('/superadmin/face-scan');
+  };
+
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ mt: 8, mb: 4 }}>
-        <Paper elevation={6} sx={{ p: 4, borderRadius: 4 }}>
-          <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 800, color: '#1F2937' }}>
-            {t('auth_welcome')}
+    <div className="login-container">
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder={t('auth_username')}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder={t('auth_password')}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit">{t('auth_sign_in')}</button>
+      </form>
+
+      {/* Face Scan Warning Dialog - by worapol สุดหล่อ */}
+      <Dialog 
+        open={showFaceScanWarning} 
+        onClose={() => setShowFaceScanWarning(false)}
+        PaperProps={{ sx: { borderRadius: '24px', p: 2, maxWidth: '400px' } }}
+      >
+        <DialogTitle sx={{ fontWeight: 800, textAlign: 'center', color: '#1F2937' }}>
+          การยืนยันตัวตนระดับสูง
+        </DialogTitle>
+        <DialogContent>
+          <Typography align="center" sx={{ color: '#4B5563', fontSize: '1.1rem', mb: 2 }}>
+            ระบบตรวจพบสิทธิ์ **Super Admin**
           </Typography>
-          <Typography variant="body2" align="center" sx={{ mb: 3, color: '#6B7280' }}>
-            {t('auth_sign_in_desc')}
+          <Typography align="center" sx={{ color: '#6B7280' }}>
+            คุณต้องทำการสแกนใบหน้าเพื่อเข้าสู่ระบบจัดการ หากสแกนหน้าไม่ผ่านจะไม่สามารถเข้าใช้งานได้
           </Typography>
-
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-
-          <form onSubmit={handleLogin}>
-            <TextField
-              label={t('auth_username')}
-              fullWidth
-              margin="normal"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              required
-              variant="outlined"
-            />
-            <TextField
-              label={t('auth_password')}
-              type="password"
-              fullWidth
-              margin="normal"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              variant="outlined"
-            />
-
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              size="large"
-              sx={{
-                mt: 3,
-                mb: 2,
-                py: 1.5,
-                borderRadius: 2,
-                bgcolor: '#10B981',
-                '&:hover': { bgcolor: '#059669' },
-                textTransform: 'none',
-                fontSize: '1.1rem',
-                fontWeight: 600
-              }}
-            >
-              {t('auth_sign_in')}
-            </Button>
-
-            <Box sx={{ textAlign: 'center', mt: 2 }}>
-              <Typography variant="body2" color="text.secondary">
-                {t('auth_dont_have_acc')}{' '}
-                <Link href="/register" sx={{ color: '#10B981', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
-                  {t('auth_register_now')}
-                </Link>
-              </Typography>
-            </Box>
-          </form>
-        </Paper>
-      </Box>
-    </Container>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
+          <Button 
+            variant="contained" 
+            onClick={handleProceedToScan}
+            sx={{ 
+              bgcolor: '#10B981', 
+              '&:hover': { bgcolor: '#059669' },
+              px: 4, 
+              py: 1.5, 
+              borderRadius: '12px',
+              fontWeight: 700,
+              fontSize: '1rem'
+            }}
+          >
+            เริ่มการสแกนใบหน้า
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 };
 

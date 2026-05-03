@@ -131,7 +131,23 @@ const AdminProducts = () => {
     data.append('description', formData.description);
     data.append('price', formData.price);
     data.append('discount_percent', formData.discount_percent || 0);
-    data.append('product_code', formData.product_code);
+    let finalProductCode = formData.product_code;
+    if (!finalProductCode) {
+      const brandPart = (formData.brand || 'GEN').substring(0, 2).toUpperCase();
+      const namePart = (formData.name || 'PRD')
+        .split(' ')
+        .filter(w => w.length > 0)
+        .map(w => w[0])
+        .join('')
+        .toUpperCase();
+      
+      // If initials are too short, take more chars from the name
+      const nameCode = namePart.length >= 2 ? namePart : (formData.name || 'PRD').substring(0, 3).toUpperCase();
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      finalProductCode = `${brandPart}${nameCode}-${randomNum}`;
+    }
+
+    data.append('product_code', finalProductCode);
     data.append('category', formData.category);
     data.append('brand', formData.brand);
 
@@ -997,7 +1013,7 @@ const AdminProducts = () => {
                   <line x1="12" y1="9" x2="12" y2="13"></line>
                   <line x1="12" y1="17" x2="12.01" y2="17"></line>
                 </svg>
-                {t('adm_total_low') || 'Total < 5'}
+                {t('adm_total_low') || 'Stock < 5'}
               </>
             )}
           </button>
