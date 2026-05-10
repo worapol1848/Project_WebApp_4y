@@ -1000,6 +1000,7 @@ export const translations = {
     adm_total_orders: 'ออเดอร์ทั้งหมดในระบบ',
     adm_bestsellers: 'สินค้าขายดี',
     adm_logs: 'ประวัติการใช้งาน',
+    adm_personnel: 'จัดการบุคลากร',
     adm_manage: 'จัดการแอดมิน',
     adm_sales_dash: 'หน้าขายสินค้า',
     adm_inventory_summary: 'สรุปคลังสินค้า',
