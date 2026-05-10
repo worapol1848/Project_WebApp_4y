@@ -81,6 +81,7 @@ package "Velin System Boundary" {
   usecase "สแกนใบหน้า (AI FaceID)" as UC18
   usecase "บริหารจัดการแอดมินและสิทธิ์" as UC19
   usecase "ตรวจสอบประวัติ Audit Logs (JSON)" as UC20
+  usecase "อัปโหลดหลักฐานการโอนเงินคืน" as UC25
 }
 
 ' โยงเส้น GST
@@ -106,6 +107,7 @@ ADM --> UC14
 ADM --> UC16
 ADM --> UC17
 ADM --> UC21
+ADM --> UC25
 
 ' โยงเส้น SAD
 SAD --> UC18
@@ -557,71 +559,71 @@ ADM --> P24 : ตรวจสอบ/ลบรีวิว
 ### 6.1 ขั้นตอนการตรวจสอบสลิปเงินอัตโนมัติ
 
 ```plantuml
-  @startuml
-  ' Diagram by worapol สุดหล่อ
-  skinparam DefaultFontName Tahoma
-  skinparam sequenceGroupFontSize 15
-  skinparam sequenceGroupHeaderFontSize 13
-  autonumber
+@startuml
+' Diagram by worapol สุดหล่อ
+skinparam DefaultFontName Tahoma
+skinparam sequenceGroupFontSize 15
+skinparam sequenceGroupHeaderFontSize 13
+autonumber
 
-  actor "Customer" as CUS
-  participant "Mobile App\n(Frontend)" as APP
-  participant "Express API\n(Backend)" as API
-  participant "Image Engine\n(Multer)" as IMG
-  database "MySQL\n(Database)" as DB
-  actor "Admin" as ADM
+actor "Customer" as CUS
+participant "Mobile App\n(Frontend)" as APP
+participant "Express API\n(Backend)" as API
+participant "Image Engine\n(Multer)" as IMG
+database "MySQL\n(Database)" as DB
+actor "Admin" as ADM
 
-  CUS -> APP : อัปโหลดสลิปการโอนเงิน
-  APP -> API : POST /api/upload-slip (image file)
-  API -> IMG : บันทึกไฟล์ลงโฟลเดอร์ /uploads/slips
-  IMG --> API : คืนค่า Path ของไฟล์
-  API -> DB : บันทึกข้อมูลการชำระเงิน (สถานะ: รอตรวจสอบ)
-  DB --> API : สำเร็จ (Success)
-  API --> APP : แสดงสถานะ "รอการตรวจสอบ"
-  note right of APP: ฝั่ง User รอผลการตรวจสอบ
+CUS -> APP : อัปโหลดสลิปการโอนเงิน
+APP -> API : POST /api/upload-slip (image file)
+API -> IMG : บันทึกไฟล์ลงโฟลเดอร์ /uploads/slips
+IMG --> API : คืนค่า Path ของไฟล์
+API -> DB : บันทึกข้อมูลการชำระเงิน (สถานะ: รอตรวจสอบ)
+DB --> API : สำเร็จ (Success)
+API --> APP : แสดงสถานะ "รอการตรวจสอบ"
+note right of APP: ฝั่ง User รอผลการตรวจสอบ
 
   == ขั้นตอนการตรวจสอบโดย Admin ==
 
-  ADM -> API : เรียกดูรายการแจ้งชำระเงิน (รายรายการ)
-  API -> DB : SELECT * FROM orders WHERE status='pending'
-  DB --> API : ข้อมูลคำสั่งซื้อและลิงก์รูปสลิป
-  API --> ADM : แสดงหน้าข้อมูลรายการนั้นๆ (ไม่ใช่หน้า Dashboard รวม)
+ADM -> API : เรียกดูรายการแจ้งชำระเงิน (รายรายการ)
+API -> DB : SELECT * FROM orders WHERE status='pending'
+DB --> API : ข้อมูลคำสั่งซื้อและลิงก์รูปสลิป
+API --> ADM : แสดงหน้าข้อมูลรายการนั้นๆ (ไม่ใช่หน้า Dashboard รวม)
 
-  ADM -> ADM : ตรวจสอบยอดเงินจริงใน App ธนาคาร
+ADM -> ADM : ตรวจสอบยอดเงินจริงใน App ธนาคาร
 
-  alt ตรวจสอบผ่าน
-      ADM -> API : ยืนยันยอดเงิน (Verify Order)
-      API -> DB : UPDATE orders SET status='shipped', slip_verified=1
-      DB --> API : สำเร็จ (Success)
-      API --> ADM : อัปเดตหน้าจอสำเร็จ
-      API -> CUS : แจ้งเตือน: ตรวจสอบสลิปผ่านแล้ว
-  else ตรวจสอบไม่ผ่าน
-      ADM -> API : แจ้งผลไม่ผ่าน (ระบุเหตุผล: เงินผิด/ไม่พอ)
-      API -> DB : UPDATE orders SET status='cancelled'
-      DB --> API : สำเร็จ (Success)
-      API --> ADM : แจ้งเตือนส่งถึง User สำเร็จ
-      API -> CUS : แจ้งเตือน: ไม่ผ่านเนื่องจาก [ระบุเหตุผล]
-      
-      alt ลูกค้าขอคืนเงิน
-          CUS -> APP : ส่งข้อมูลบัญชีธนาคารเพื่อขอคืนเงิน
-          APP -> API : ส่งคำขอคืนเงิน (ระบุเลขบัญชี)
-          API -> DB : บันทึกข้อมูลเลขบัญชีลงใน Order
-          DB --> API : สำเร็จ
-          
-          ADM -> API : ตรวจสอบข้อมูลบัญชีลูกค้า
-          API --> ADM : แสดงข้อมูลเลขบัญชีธนาคาร
-          ADM -> ADM : ดำเนินการโอนเงินคืน (ภายนอกระบบ)
-          ADM -> API : ยืนยันการโอนเงินคืน (อัปโหลดหลักฐานการโอน)
-          API -> IMG : บันทึกไฟล์หลักฐานคืนเงิน (/uploads/refunds)
-          IMG --> API : คืนค่า Path ของไฟล์
-          API -> DB : UPDATE orders SET status='refunded', refund_slip_url='...'
-          DB --> API : สำเร็จ
-          API -> CUS : แจ้งเตือน: คืนเงินสำเร็จพร้อมหลักฐาน
-      else ไม่ขอคืนเงิน (ปล่อยรายการ)
-          CUS -> CUS : ยอมรับผลและจบรายการ (โดนปล่อย)
-      end
-  end
-  @enduml
+alt ตรวจสอบผ่าน
+    ADM -> API : ยืนยันยอดเงิน (Verify Order)
+    API -> DB : UPDATE orders SET status='shipped', slip_verified=1
+    DB --> API : สำเร็จ (Success)
+    API --> ADM : อัปเดตหน้าจอสำเร็จ
+    API -> CUS : แจ้งเตือน: ตรวจสอบสลิปผ่านแล้ว
+else ตรวจสอบไม่ผ่าน
+    ADM -> API : แจ้งผลไม่ผ่าน (ระบุเหตุผล: เงินผิด/ไม่พอ)
+    API -> DB : UPDATE orders SET status='cancelled'
+    DB --> API : สำเร็จ (Success)
+    API --> ADM : แจ้งเตือนส่งถึง User สำเร็จ
+    API -> CUS : แจ้งเตือน: ไม่ผ่านเนื่องจาก [ระบุเหตุผล]
+    
+    alt ลูกค้าขอคืนเงิน
+        CUS -> APP : ส่งข้อมูลบัญชีธนาคารเพื่อขอคืนเงิน
+        APP -> API : ส่งคำขอคืนเงิน (ระบุเลขบัญชี)
+        API -> DB : บันทึกข้อมูลเลขบัญชีลงใน Order
+        DB --> API : สำเร็จ
+        
+        ADM -> API : ตรวจสอบข้อมูลบัญชีลูกค้า
+        API --> ADM : แสดงข้อมูลเลขบัญชีธนาคาร
+        ADM -> ADM : ดำเนินการโอนเงินคืน (ภายนอกระบบ)
+        ADM -> API : ยืนยันการโอนเงินคืน (อัปโหลดหลักฐานการโอน)
+        API -> IMG : บันทึกไฟล์หลักฐานคืนเงิน (/uploads/refunds)
+        IMG --> API : คืนค่า Path ของไฟล์
+        API -> DB : UPDATE orders SET status='refunded', refund_slip_url='...'
+        DB --> API : สำเร็จ
+        API -> CUS : แจ้งเตือน: คืนเงินสำเร็จพร้อมหลักฐาน
+    else ไม่ขอคืนเงิน (ปล่อยรายการ)
+        CUS -> CUS : ยอมรับผลและจบรายการ (โดนปล่อย)
+    end
+end
+@enduml
 ```
 
 ### 6.2 ขั้นตอนการทำงานของ AI FaceID (Enrollment & Auth Sequence)
