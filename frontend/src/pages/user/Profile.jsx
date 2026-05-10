@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import api from '../../services/api';
 import { AuthContext } from '../../context/AuthContext';
@@ -9,7 +8,7 @@ import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-lea
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// Fix for Leaflet default icon issues in React - by worapol สุดหล่อ
+
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 let DefaultIcon = L.icon({
@@ -20,20 +19,20 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// Component to handle map movement programmatically (e.g., searching) - by worapol สุดหล่อ
+
 const MapController = ({ targetCoords, zoom }) => {
   const map = useMap();
   useEffect(() => {
     if (targetCoords) {
       map.setView(targetCoords, zoom);
-      // Ensure Leaflet recalculates size if container was hidden/resized - by worapol สุดหล่อ
+      
       setTimeout(() => map.invalidateSize(), 100);
     }
   }, [targetCoords, map, zoom]);
   return null;
 };
 
-// Main Map Logic Component - by worapol สุดหล่อ
+
 const MapLogic = ({ coords, setCoords, onManualMove }) => {
   useMapEvents({
     click(e) {
@@ -81,15 +80,15 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [hasMovedManually, setHasMovedManually] = useState(false);
 
-  // Core Map State - by worapol สุดหล่อ
+  
   const [mapCoords, setMapCoords] = useState([13.7367, 100.5231]);
   const searchTimeout = useRef(null);
   const fileInputRef = useRef(null);
 
-  // State for editing address in modal - by worapol สุดหล่อ
+  
   const [editAddress, setEditAddress] = useState({});
 
-  // Target for MapController (only changes when we WANT map to jump) - by worapol สุดหล่อ
+  
   const [targetCoords, setTargetCoords] = useState(null);
   const lastSearchQuery = useRef('');
 
@@ -103,7 +102,7 @@ const Profile = () => {
       if (data && data.length > 0) {
         const newCoords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
         setMapCoords(newCoords);
-        setTargetCoords(newCoords); // Only jump map for search results - by worapol สุดหล่อ
+        setTargetCoords(newCoords); 
       }
     } catch (err) {
       console.error('Geocoding error:', err);
@@ -128,7 +127,7 @@ const Profile = () => {
         const initialCoords = [parseFloat(res.data.latitude), parseFloat(res.data.longitude)];
         setMapCoords(initialCoords);
         setTargetCoords(initialCoords);
-        // Set initial lastSearchQuery so it doesn't warp immediately - by worapol สุดหล่อ
+        
         lastSearchQuery.current = [res.data.district, res.data.province].filter(Boolean).join(', ');
       }
       setLoading(false);
@@ -144,18 +143,30 @@ const Profile = () => {
   const handleUpdateProfile = async (e) => {
     if (e) e.preventDefault();
     try {
-      // Save map coordinates along with address - by worapol สุดหล่อ
+      
       const finalAddress = {
         ...editAddress,
         latitude: mapCoords[0],
         longitude: mapCoords[1]
       };
       await api.put('/auth/profile', finalAddress);
-      await fetchProfile(); // Refresh from server to be 100% sure - by worapol สุดหล่อ
+      await fetchProfile(); 
       showToast(t('prof_address_success'));
       setIsAddressModalOpen(false);
     } catch (err) {
       showToast(t('error'), 'error');
+    }
+  };
+
+  const handleDeleteAddress = async () => {
+    if (window.confirm(t('prof_confirm_delete_address'))) {
+      try {
+        await api.delete('/auth/profile/address');
+        showToast(t('success'));
+        fetchProfile();
+      } catch (err) {
+        showToast(t('error'), 'error');
+      }
     }
   };
 
@@ -278,19 +289,27 @@ const Profile = () => {
             )}
           </div>
         ) : <p style={{ color: '#999', fontSize: '0.9rem' }}>{t('prof_no_address')}</p>}
-        <button type="button" className="save-btn" style={{ background: '#fff', color: '#000', border: '1px solid #28a745', marginTop: '1rem', fontWeight: '500' }}
-          onClick={() => {
-            setEditAddress(profile || {});
-            if (profile?.latitude && profile?.longitude) {
-              setMapCoords([parseFloat(profile.latitude), parseFloat(profile.longitude)]);
-              setTargetCoords([parseFloat(profile.latitude), parseFloat(profile.longitude)]);
-            }
-            setHasMovedManually(false);
-            lastSearchQuery.current = [profile?.district, profile?.province].filter(Boolean).join(', ');
-            setIsAddressModalOpen(true);
-          }}>
-          {profile.full_name ? t('prof_edit_address') : t('prof_add_address')}
-        </button>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button type="button" className="save-btn" style={{ background: '#fff', color: '#000', border: '1px solid #28a745', marginTop: '1rem', fontWeight: '500', flex: 1 }}
+            onClick={() => {
+              setEditAddress(profile || {});
+              if (profile?.latitude && profile?.longitude) {
+                setMapCoords([parseFloat(profile.latitude), parseFloat(profile.longitude)]);
+                setTargetCoords([parseFloat(profile.latitude), parseFloat(profile.longitude)]);
+              }
+              setHasMovedManually(false);
+              lastSearchQuery.current = [profile?.district, profile?.province].filter(Boolean).join(', ');
+              setIsAddressModalOpen(true);
+            }}>
+            {profile.full_name ? t('prof_edit_address') : t('prof_add_address')}
+          </button>
+          {profile.full_name && (
+            <button type="button" className="save-btn" style={{ background: '#fff', color: '#dc3545', border: '1px solid #dc3545', marginTop: '1rem', fontWeight: '500', flex: 1 }}
+              onClick={handleDeleteAddress}>
+              {t('prof_delete_address')}
+            </button>
+          )}
+        </div>
       </div>
 
       {isPasswordModalOpen && (

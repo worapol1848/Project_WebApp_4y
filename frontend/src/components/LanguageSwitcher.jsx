@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import './LanguageSwitcher.css';
@@ -8,7 +7,7 @@ const LanguageSwitcher = ({ up }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close on click outside - by worapol สุดหล่อ
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {

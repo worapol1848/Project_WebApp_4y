@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
@@ -8,7 +7,7 @@ const upload = require('../config/upload');
 const { logAdminAction } = require('../utils/logger');
 
 
-// Register User - by worapol สุดหล่อ
+
 router.post('/register', async (req, res) => {
   const { username, password, email } = req.body;
   try {
@@ -28,7 +27,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Login User - by worapol สุดหล่อ
+
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -53,7 +52,7 @@ router.post('/login', async (req, res) => {
 
 const { verifyToken, isSuperAdmin } = require('../middlewares/authMiddleware');
 
-// Get Profile - by worapol สุดหล่อ
+
 router.get('/profile', verifyToken, async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -67,14 +66,14 @@ router.get('/profile', verifyToken, async (req, res) => {
   }
 });
 
-// Update Profile - by worapol สุดหล่อ
+
 router.put('/profile', verifyToken, async (req, res) => {
   const {
     full_name, phone, address, sub_district, district, province, postal_code, latitude, longitude, preferred_language
   } = req.body;
   try {
-    // We update only the fields provided, keeping others the same. - by worapol สุดหล่อ
-    // However, to keep it simple and robust, we fetch current values first or use COALESCE in SQL. - by worapol สุดหล่อ
+    
+    
     await db.query(
       `UPDATE users SET 
         full_name = COALESCE(?, full_name), 
@@ -108,7 +107,30 @@ router.put('/profile', verifyToken, async (req, res) => {
   }
 });
 
-// Update Profile Image - by worapol สุดหล่อ
+
+router.delete('/profile/address', verifyToken, async (req, res) => {
+  try {
+    await db.query(
+      `UPDATE users SET 
+        full_name = NULL, 
+        phone = NULL, 
+        address = NULL, 
+        sub_district = NULL, 
+        district = NULL, 
+        province = NULL, 
+        postal_code = NULL, 
+        latitude = NULL, 
+        longitude = NULL
+      WHERE id = ?`,
+      [req.user.id]
+    );
+    res.json({ message: 'Address deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 router.put('/profile-image', verifyToken, upload.single('profile_image'), async (req, res) => {
   try {
     if (!req.file) {
@@ -122,7 +144,7 @@ router.put('/profile-image', verifyToken, upload.single('profile_image'), async 
   }
 });
 
-// Change Password - by worapol สุดหล่อ
+
 router.put('/change-password', verifyToken, async (req, res) => {
   const { oldPassword, newPassword } = req.body;
   try {
@@ -142,7 +164,7 @@ router.put('/change-password', verifyToken, async (req, res) => {
   }
 });
 
-// Get Face Data - by worapol สุดหล่อ
+
 router.get('/face-data', verifyToken, async (req, res) => {
   try {
     const [rows] = await db.query('SELECT face_descriptor FROM users WHERE id = ?', [req.user.id]);
@@ -152,7 +174,7 @@ router.get('/face-data', verifyToken, async (req, res) => {
   }
 });
 
-// Update Face Data - by worapol สุดหล่อ
+
 router.put('/face-data', verifyToken, async (req, res) => {
   try {
     const { face_descriptor } = req.body;
@@ -163,9 +185,9 @@ router.put('/face-data', verifyToken, async (req, res) => {
   }
 });
 
-// Admin Management Routes (Super Admin Only) - by worapol สุดหล่อ
 
-// Get all admins - by worapol สุดหล่อ
+
+
 router.get('/admins', verifyToken, isSuperAdmin, async (req, res) => {
   try {
     const [rows] = await db.query('SELECT id, username, role, email, full_name, phone, profile_image, (face_descriptor IS NOT NULL) as hasFaceData FROM users WHERE role IN ("admin", "superadmin")');
@@ -175,7 +197,7 @@ router.get('/admins', verifyToken, isSuperAdmin, async (req, res) => {
   }
 });
 
-// Update Face Data for specific admin (Super Admin only) - by worapol สุดหล่อ
+
 router.put('/admins/:id/face-data', verifyToken, isSuperAdmin, async (req, res) => {
   try {
     const { face_descriptor } = req.body;
@@ -186,7 +208,7 @@ router.put('/admins/:id/face-data', verifyToken, isSuperAdmin, async (req, res) 
   }
 });
 
-// Add new admin - by worapol สุดหล่อ
+
 router.post('/admins', verifyToken, isSuperAdmin, upload.single('profile_image'), async (req, res) => {
   const { username, password, email, role, full_name, phone } = req.body;
   const profile_image = req.file ? `/uploads/${req.file.filename}` : null;
@@ -208,7 +230,7 @@ router.post('/admins', verifyToken, isSuperAdmin, upload.single('profile_image')
   }
 });
 
-// Update admin - by worapol สุดหล่อ
+
 router.put('/admins/:id', verifyToken, isSuperAdmin, upload.single('profile_image'), async (req, res) => {
   const { username, email, role, password, old_password, full_name, phone } = req.body;
   const adminId = req.params.id;
@@ -236,7 +258,7 @@ router.put('/admins/:id', verifyToken, isSuperAdmin, upload.single('profile_imag
       params.push(profile_image);
     }
 
-    // Clear face data if role is changed to something other than superadmin - by worapol สุดหล่อ
+    
     if (role !== 'superadmin') {
       query += ', face_descriptor = NULL';
     }
@@ -259,11 +281,11 @@ router.put('/admins/:id', verifyToken, isSuperAdmin, upload.single('profile_imag
   }
 });
 
-// Delete admin - by worapol สุดหล่อ
+
 router.delete('/admins/:id', verifyToken, isSuperAdmin, async (req, res) => {
   const adminId = req.params.id;
   try {
-    // Prevent deleting self - by worapol สุดหล่อ
+    
     if (parseInt(adminId) === req.user.id) {
       return res.status(400).json({ message: 'Not allowed to delete yourself' });
     }
@@ -278,7 +300,7 @@ router.delete('/admins/:id', verifyToken, isSuperAdmin, async (req, res) => {
   }
 });
 
-// Reset admin face data - by worapol สุดหล่อ
+
 router.put('/admins/:id/reset-face', verifyToken, isSuperAdmin, async (req, res) => {
   const adminId = req.params.id;
   try {

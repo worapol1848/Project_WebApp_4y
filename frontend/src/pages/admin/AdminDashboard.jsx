@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect, useContext } from 'react';
 import api from '../../services/api';
 import MiniCalendar from '../../components/MiniCalendar';
@@ -24,20 +23,20 @@ const COLORS = ['#6366F1', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981', '#3B82F6'
 
 const AdminDashboard = () => {
   const { t } = useContext(LanguageContext);
-  const today = new Date().toISOString().split('T')[0]; // Using ISO string for date format - by worapol สุดหล่อ
+  const today = new Date().toISOString().split('T')[0]; 
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Daily Sales State - by worapol สุดหล่อ
+  
   const [selectedDate, setSelectedDate] = useState(today);
   const [dailyStats, setDailyStats] = useState(null);
   const [fetchingDaily, setFetchingDaily] = useState(false);
   const [salesStats, setSalesStats] = useState([]);
   const [fetchingStats, setFetchingStats] = useState(true);
-  const [chartView, setChartView] = useState('week'); // 'week', 'month', 'year' - by worapol สุดหล่อ
+  const [chartView, setChartView] = useState('week'); 
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [showYearDropdown, setShowYearDropdown] = useState(false);
-  const [lowStockFilter, setLowStockFilter] = useState('size'); // 'size', 'total' - by worapol สุดหล่อ
+  const [lowStockFilter, setLowStockFilter] = useState('size'); 
 
   useEffect(() => {
     fetchStats();
@@ -51,7 +50,7 @@ const AdminDashboard = () => {
     if (selectedDate) fetchDailyStats(selectedDate);
   }, [selectedDate]);
 
-  // Handle outside click for year dropdown - by worapol สุดหล่อ
+  
   useEffect(() => {
     const handleClickOutside = () => setShowYearDropdown(false);
     if (showYearDropdown) {
@@ -97,7 +96,7 @@ const AdminDashboard = () => {
 
   if (loading) return <div>{t('loading')}</div>;
 
-  // Prepare data for brand chart - by worapol สุดหล่อ
+  
   const brandData = stats?.brandStats?.map(item => ({
     name: item.brand,
     value: parseFloat(item.total_revenue)
@@ -107,7 +106,7 @@ const AdminDashboard = () => {
     <div className="admin-container">
       <h2 className="dashboard-title">{t('adm_dashboard')} {t('adm_overview')}</h2>
 
-      {/* Main Stats Row - by worapol สุดหล่อ */}
+      
       <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
         <div className="stat-card minimal-card">
           <div className="stat-icon icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
@@ -122,7 +121,7 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Order Status Combined Block - by worapol สุดหล่อ */}
+      
       <div className="section-card order-status-block" style={{ marginBottom: '2.5rem', padding: '1.5rem 2rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #F1F5F9', paddingBottom: '1rem' }}>
           <h3 style={{ margin: 0, display: 'flex', alignItems: 'center' }}>
@@ -215,7 +214,7 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Revenue Summary Block - by worapol สุดหล่อ */}
+      
       <div className="section-card revenue-summary-block" style={{ marginBottom: '2.5rem', padding: '2rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem' }}>
           <div style={{ width: '45px', height: '45px', background: '#FDF2F8', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '15px' }}>

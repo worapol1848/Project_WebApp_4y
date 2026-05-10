@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 const jwt = require('jsonwebtoken');
 
 const verifyToken = (req, res, next) => {

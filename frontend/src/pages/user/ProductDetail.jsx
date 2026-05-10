@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogActions, Box, Typography, Button } from '@mui/material';
@@ -20,7 +19,7 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
-  const [rating, setRating] = useState(0); // Start with 0 stars - by worapol สุดหล่อ
+  const [rating, setRating] = useState(0); 
   const [hoverRating, setHoverRating] = useState(0);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [submittingComment, setSubmittingComment] = useState(false);
@@ -44,7 +43,7 @@ const ProductDetail = () => {
     if (user) {
       try {
         const res = await api.get('/wishlist');
-        // Check both id and product_id to be safe - by worapol สุดหล่อ
+        
         setIsWishlisted(res.data.some(item => item.id === product.id || item.product_id === product.id));
       } catch (err) {
         console.error("Wishlist check failed:", err);
@@ -195,7 +194,7 @@ const ProductDetail = () => {
       setRating(0);
       setIsCommentModalOpen(false);
       showToast(t('pd_comment_success'), 'success');
-      fetchComments(); // Refresh comments list - by worapol สุดหล่อ
+      fetchComments(); 
     } catch (err) {
       console.error('Failed to post comment:', err);
       showToast(err.response?.data?.message || err.response?.data?.error || err.message || t('error'), 'error');
@@ -453,6 +452,65 @@ const ProductDetail = () => {
               {product.description ? <p>{product.description}</p> : <p className="no-desc">{t('pd_no_desc')}</p>}
             </div>
           </div>
+          
+          {(() => {
+            let guideData = [];
+            if (product.size_guide) {
+              try {
+                guideData = JSON.parse(product.size_guide);
+              } catch (e) { }
+            }
+            if (!guideData || guideData.length === 0) {
+              guideData = product.sizes || [];
+            }
+
+            if (guideData.length === 0) return null;
+
+            const productType = product.product_type || (guideData.some(s => s.chest_cm) ? 'apparel' : 'shoe');
+            const extraColOptions = productType === 'shoe'
+              ? [{ key: 'size_cm', label: 'Length (ความยาว)' }, { key: 'uk', label: 'UK' }, { key: 'us', label: 'US' }, { key: 'eu', label: 'EU' }, { key: 'usw', label: 'USW' }, { key: 'jp', label: 'JP' }]
+              : [{ key: 'chest_cm', label: 'Chest (รอบอก)' }, { key: 'size_cm', label: 'Length (ความยาว)' }, { key: 'height', label: 'Height (ส่วนสูง)' }, { key: 'waist', label: 'Waist (เอว)' }, { key: 'hip', label: 'Hip (สะโพก)' }];
+
+            const extraKeys = new Set();
+            guideData.forEach(item => {
+              Object.keys(item).forEach(k => {
+                if (!['size', 'size_cm', 'chest_cm', 'stock', 'id', 'product_id', 'created_at', 'updated_at'].includes(k)) extraKeys.add(k);
+              });
+            });
+            const extraColumns = Array.from(extraKeys);
+
+            return (
+              <div className="size-guide-section">
+                <h2 className="section-heading">{t("adm_size_guide_title")}</h2>
+                <div className="size-guide-table-wrapper">
+                  <table className="size-guide-table">
+                    <thead>
+                      <tr>
+                        <th>{t("size")} ({language === 'th' ? "ไซส์" : "Size"})</th>
+                        {guideData.some(s => s.chest_cm) && <th>{t("adm_form_chest_label")}</th>}
+                        {guideData.some(s => s.size_cm) && <th>{t("adm_form_length_label")}</th>}
+                        {extraColumns.map(col => (
+                          <th key={col}>{extraColOptions.find(o => o.key === col)?.label || col.toUpperCase()}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {guideData.map((s, index) => (
+                        <tr key={index}>
+                          <td><strong>{s.size}</strong></td>
+                          {guideData.some(sz => sz.chest_cm) && <td>{s.chest_cm ? (s.chest_cm.includes('in') || s.chest_cm.includes('cm') ? s.chest_cm : `${s.chest_cm} in`) : '-'}</td>}
+                          {guideData.some(sz => sz.size_cm) && <td>{s.size_cm ? (s.size_cm.includes('in') || s.size_cm.includes('cm') ? s.size_cm : (productType === 'apparel' || s.chest_cm ? `${s.size_cm} in` : `${s.size_cm} cm`)) : '-'}</td>}
+                          {extraColumns.map(col => (
+                            <td key={col}>{s[col] || '-'}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          })()}
 
           <div className="product-comments-container">
             <div className="comments-header-row">

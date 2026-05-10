@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import api from '../../services/api';
@@ -71,7 +70,7 @@ const AdminBestSellers = () => {
       const reportTime = today.toLocaleTimeString('en-US', { hour12: false });
       const reportId = `BST-${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-      // --- BRANDING & HEADER --- - by worapol สุดหล่อ
+      
       doc.setFillColor(16, 185, 129); 
       doc.rect(14, 15, 2, 25, 'F');
 
@@ -86,7 +85,7 @@ const AdminBestSellers = () => {
       doc.text('Official Catalog & Performance Hub', 20, 31);
       doc.text('123 Business Parkway, Suite 500, Bangkok, TH', 20, 36);
 
-      // Report Title - by worapol สุดหล่อ
+      
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(31, 41, 55);
@@ -99,12 +98,12 @@ const AdminBestSellers = () => {
       doc.text(`Generated: ${reportDate} | ${reportTime}`, 283, 41, { align: 'right' });
       doc.text(`Source: Admin Dashboard / Top Products Showcase`, 283, 46, { align: 'right' });
 
-      // Horizontal Divider - by worapol สุดหล่อ
+      
       doc.setDrawColor(229, 231, 235);
       doc.setLineWidth(0.5);
       doc.line(14, 48, 283, 48);
 
-      // Metadata Info - by worapol สุดหล่อ
+      
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(31, 41, 55);
@@ -112,7 +111,7 @@ const AdminBestSellers = () => {
       doc.setFont('helvetica', 'normal');
       doc.text(`Comparative analysis of ${bestSellers.length} products. Sorted by Sales Quantity (Highest to Lowest).`, 45, 55);
 
-      // Sorting: Ensure it's sorted by total_sold descending for the report - by worapol สุดหล่อ
+      
       const sortedBestSellers = [...bestSellers].sort((a, b) => b.total_sold - a.total_sold);
 
       const tableData = sortedBestSellers.map((p, idx) => [
@@ -160,7 +159,7 @@ const AdminBestSellers = () => {
       });
 
 
-      // --- SIGNATURE SECTION --- - by worapol สุดหล่อ
+      
       const finalY = doc.lastAutoTable.finalY || 150;
       const signatureY = finalY + 30;
       const safeSignatureY = signatureY < 165 ? 165 : signatureY;
@@ -168,7 +167,7 @@ const AdminBestSellers = () => {
       doc.setDrawColor(203, 213, 225);
       doc.setLineWidth(0.3);
       
-      // Admin Signature - by worapol สุดหล่อ
+      
       doc.line(14, safeSignatureY, 84, safeSignatureY);
       doc.setFontSize(8);
       doc.setFont('helvetica', 'italic');
@@ -176,12 +175,12 @@ const AdminBestSellers = () => {
       doc.text('Authorized Signature (Department Head)', 14, safeSignatureY + 5);
       doc.text('Date: ____________________', 14, safeSignatureY + 10);
 
-      // Operations Signature - by worapol สุดหล่อ
+      
       doc.line(213, safeSignatureY, 283, safeSignatureY);
       doc.text('Inventory Operations Review', 213, safeSignatureY + 5);
       doc.text('Date: ____________________', 213, safeSignatureY + 10);
 
-      // --- FOOTER --- - by worapol สุดหล่อ
+      
       const pageCount = doc.internal.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
@@ -197,7 +196,7 @@ const AdminBestSellers = () => {
 
       doc.save(`Vellin_BestSellers_Report_${new Date().toISOString().split('T')[0]}.pdf`);
 
-      // 🔍 LOG ACTION - by worapol สุดหล่อ
+      
       try {
         await api.post('/logs/manual', {
           action: 'Export PDF',
@@ -232,7 +231,7 @@ const AdminBestSellers = () => {
   const topTwoThree = bestSellers.slice(1, 3);
 
 
-  // Pagination Logic - by worapol สุดหล่อ
+  
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = bestSellers.slice(indexOfFirstItem, indexOfLastItem);

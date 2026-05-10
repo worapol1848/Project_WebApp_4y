@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 const db = require('../config/db');
 
 async function logAdminAction(admin_id, action, entity_type, entity_id, details) {

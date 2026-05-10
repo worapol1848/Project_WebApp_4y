@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect, useContext } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -18,7 +17,7 @@ const AdminProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [mainImage, setMainImage] = useState(null);
 
-  // Edit Modal State - by worapol สุดหล่อ
+  
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -32,10 +31,10 @@ const AdminProductDetail = () => {
   });
   const [sizes, setSizes] = useState([]);
   const [sizeGuide, setSizeGuide] = useState([]);
-  const [galleryImages, setGalleryImages] = useState([]); // {id, url, isNew, file} - by worapol สุดหล่อ
+  const [galleryImages, setGalleryImages] = useState([]); 
   const [deletedImageIds, setDeletedImageIds] = useState([]);
-  const [sizeType, setSizeType] = useState('shoe'); // 'shoe' or 'apparel' - by worapol สุดหล่อ
-  const [lengthUnit, setLengthUnit] = useState('in'); // 'in' or 'cm' - by worapol สุดหล่อ
+  const [sizeType, setSizeType] = useState('shoe'); 
+  const [lengthUnit, setLengthUnit] = useState('in'); 
   const [activeExtraColumns, setActiveExtraColumns] = useState([]);
   const [showColDropdown, setShowColDropdown] = useState(false);
   const [customColumnInput, setCustomColumnInput] = useState('');
@@ -202,7 +201,7 @@ const AdminProductDetail = () => {
     }
     setSizeGuide(sg);
 
-    // Parse custom columns out of the initial extra cols - by worapol สุดหล่อ
+    
     const pType = product.product_type || (product.sizes?.some(s => s.chest_cm) ? 'apparel' : 'shoe');
     const predefinedKeys = pType === 'shoe' ? ['size_cm', 'uk', 'us', 'eu', 'usw', 'jp'] : ['chest_cm', 'size_cm', 'height', 'waist', 'hip'];
     initialExtraCols.forEach(k => {
@@ -227,12 +226,12 @@ const AdminProductDetail = () => {
     setGalleryImages(initialGallery);
     setDeletedImageIds([]);
 
-    // Auto-detect size type based on existing data or product field - by worapol สุดหล่อ
+    
     const hasChest = product.sizes?.some(s => s.chest_cm);
     const initialType = product.product_type || (hasChest ? 'apparel' : 'shoe');
     setSizeType(initialType);
 
-    // Auto detect unit based on first guide item if any - by worapol สุดหล่อ
+    
     if (sg.length > 0 && sg[0].size_cm?.includes('cm')) {
       setLengthUnit('cm');
     } else {
@@ -304,7 +303,7 @@ const AdminProductDetail = () => {
     data.append('category', formData.category);
     data.append('brand', formData.brand);
 
-    // Auto-sync size fields from guide - by worapol สุดหล่อ
+    
     const finalSizes = sizes.map(s => {
       const match = sizeGuide.find(g => g.size === s.size) || {};
       return {
@@ -319,11 +318,11 @@ const AdminProductDetail = () => {
     data.append('size_guide', JSON.stringify(sizeGuide));
 
 
-    // Send images order and files - by worapol สุดหล่อ
+    
     const newFiles = galleryImages.filter(img => img.isNew).map(img => img.file);
     newFiles.forEach(file => data.append('images', file));
 
-    // Send full image order (urls) - by worapol สุดหล่อ
+    
     const imagesOrder = galleryImages.map(img => img.isNew ? 'NEW_FILE' : img.image_url);
     data.append('imagesOrder', JSON.stringify(imagesOrder));
 

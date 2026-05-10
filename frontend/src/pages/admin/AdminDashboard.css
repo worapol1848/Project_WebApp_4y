@@ -1,4 +1,3 @@
-/* Styled by worapol สุดหล่อ */
 .admin-container {
   padding: 80px 4rem 4rem 4rem;
   width: 100% !important;
@@ -539,7 +538,7 @@
   }
 }
 
-/* Pagination - Standardized across Admin Hub - by worapol สุดหล่อ */
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -615,7 +614,7 @@
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
-/* Order Status Block Styles - by worapol สุดหล่อ */
+
 .order-status-block {
   background: #ffffff;
   border-radius: 20px;

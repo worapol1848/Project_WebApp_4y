@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
@@ -8,7 +7,7 @@ const path = require('path');
 const fs = require('fs');
 const { logAdminAction } = require('../utils/logger');
 
-// Multer Config for Slips - by worapol สุดหล่อ
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const dir = 'uploads/slips';
@@ -22,7 +21,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// User: Create an order (Purchase) with slip - by worapol สุดหล่อ
+
 router.post('/', verifyToken, upload.single('slip'), async (req, res) => {
     const { items: itemsRaw, shipping_method, shipping_fee } = req.body;
     let items;
@@ -74,10 +73,10 @@ router.post('/', verifyToken, upload.single('slip'), async (req, res) => {
         await conn.query('UPDATE products SET stock = stock - ? WHERE id = ?', [item.quantity, item.productId]);
       }
 
-      // Final Total including shipping fee - by worapol สุดหล่อ
+      
       const finalTotalAmount = totalAmount + parseFloat(shipping_fee || 0);
 
-      // Create Order Record with snapshot of user's current profile at time of purchase - by worapol สุดหล่อ
+      
       const [userRows] = await conn.query(
         'SELECT full_name, phone, address, sub_district, district, province, postal_code, latitude, longitude FROM users WHERE id = ?',
         [userId]
@@ -107,7 +106,7 @@ router.post('/', verifyToken, upload.single('slip'), async (req, res) => {
       );
     }
 
-    // NEW: Clear cart after successful order - by worapol สุดหล่อ
+    
     await conn.query('DELETE FROM cart_items WHERE user_id = ?', [userId]);
 
     await conn.commit();
@@ -120,12 +119,12 @@ router.post('/', verifyToken, upload.single('slip'), async (req, res) => {
   }
 });
 
-// User: Get my orders - by worapol สุดหล่อ
+
 router.get('/myorders', verifyToken, async (req, res) => {
   try {
     const [orders] = await db.query('SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC', [req.user.id]);
 
-    // Fetch items for each order - by worapol สุดหล่อ
+    
     const ordersWithItems = await Promise.all(orders.map(async (order) => {
       const [items] = await db.query(
         `SELECT oi.*, p.name, p.image_url,
@@ -148,7 +147,7 @@ router.get('/myorders', verifyToken, async (req, res) => {
   }
 });
 
-// User: Confirm Receipt - by worapol สุดหล่อ
+
 router.put('/:id/deliver', verifyToken, async (req, res) => {
   try {
     const [result] = await db.query('UPDATE orders SET status = "delivered" WHERE id = ? AND user_id = ? AND (status = "shipped" OR status = "arrived")', [req.params.id, req.user.id]);
@@ -159,7 +158,7 @@ router.put('/:id/deliver', verifyToken, async (req, res) => {
   }
 });
 
-// User: Save refund bank information - by worapol สุดหล่อ
+
 router.put('/:id/refund-info', verifyToken, async (req, res) => {
   const { bank_name, bank_account_name, bank_account_number } = req.body;
   try {
@@ -175,7 +174,7 @@ router.put('/:id/refund-info', verifyToken, async (req, res) => {
   }
 });
 
-// Admin: Get all orders - by worapol สุดหล่อ
+
 router.get('/', verifyToken, isAdmin, async (req, res) => {
   try {
     const [orders] = await db.query(
@@ -190,7 +189,7 @@ router.get('/', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-// Admin: Update order status to shipped - by worapol สุดหล่อ
+
 router.put('/:id/ship', verifyToken, isAdmin, async (req, res) => {
   try {
     const [result] = await db.query('UPDATE orders SET status = "shipped" WHERE id = ? AND status = "pending"', [req.params.id]);
@@ -204,7 +203,7 @@ router.put('/:id/ship', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-// Admin: Update order status to arrived (at customer's location) - by worapol สุดหล่อ
+
 router.put('/:id/deliver-admin', verifyToken, isAdmin, async (req, res) => {
   try {
     const [result] = await db.query('UPDATE orders SET status = "arrived" WHERE id = ? AND status = "shipped"', [req.params.id]);
@@ -218,10 +217,11 @@ router.put('/:id/deliver-admin', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-// Admin: Mark as Refunded - by worapol สุดหล่อ
-router.put('/:id/refund-complete', verifyToken, isAdmin, async (req, res) => {
+
+router.put('/:id/refund-complete', verifyToken, isAdmin, upload.single('refund_slip'), async (req, res) => {
   try {
-    const [result] = await db.query('UPDATE orders SET status = "refunded" WHERE id = ? AND status = "cancelled"', [req.params.id]);
+    const refundSlipUrl = req.file ? `/uploads/slips/${req.file.filename}` : null;
+    const [result] = await db.query('UPDATE orders SET status = "refunded", refund_slip_url = ? WHERE id = ? AND status = "cancelled"', [refundSlipUrl, req.params.id]);
     if (result.affectedRows === 0) return res.status(400).json({ message: 'Order cannot be marked as refunded or not found (must be cancelled first)' });
 
     await logAdminAction(req.user.id, 'REFUND_COMPLETE', 'ORDER', req.params.id, { new_status: 'refunded' });
@@ -232,7 +232,7 @@ router.put('/:id/refund-complete', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-// Admin: Cancel order - by worapol สุดหล่อ
+
 router.put('/:id/cancel', verifyToken, isAdmin, async (req, res) => {
   const { cancel_reason } = req.body;
   const orderId = req.params.id;
@@ -244,7 +244,7 @@ router.put('/:id/cancel', verifyToken, isAdmin, async (req, res) => {
     const [result] = await conn.query('UPDATE orders SET status = "cancelled", cancel_reason = ? WHERE id = ? AND status != "cancelled"', [cancel_reason, orderId]);
     if (result.affectedRows === 0) throw new Error('Order cannot be cancelled or not found');
 
-    // restore stock - by worapol สุดหล่อ
+    
     const [items] = await conn.query('SELECT oi.product_id, oi.size, oi.quantity, p.product_type FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = ?', [orderId]);
     for (const item of items) {
       if (item.size) {
@@ -268,7 +268,7 @@ router.put('/:id/cancel', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-// Admin: Toggle Slip Verification - by worapol สุดหล่อ
+
 router.put('/:id/verify-slip', verifyToken, isAdmin, async (req, res) => {
   try {
     const { id } = req.params;
@@ -289,7 +289,7 @@ router.put('/:id/verify-slip', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-// Admin: Get specific order details - by worapol สุดหล่อ
+
 router.get('/:id', verifyToken, isAdmin, async (req, res) => {
   try {
     const [orderRows] = await db.query(
@@ -303,7 +303,7 @@ router.get('/:id', verifyToken, isAdmin, async (req, res) => {
     if (orderRows.length === 0) return res.status(404).json({ message: 'Order not found' });
     const order = orderRows[0];
 
-    // Map shipping columns to the format the frontend expects (matching profile keys) - by worapol สุดหล่อ
+    
     const formattedOrder = {
       ...order,
       full_name: order.shipping_full_name,

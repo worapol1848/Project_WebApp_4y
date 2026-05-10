@@ -1,10 +1,9 @@
-// code in this file is written by worapol สุดหล่อ
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
 const { verifyToken } = require('../middlewares/authMiddleware');
 
-// Get cart items - by worapol สุดหล่อ
+
 router.get('/', verifyToken, async (req, res) => {
   try {
     const [rows] = await pool.query(`
@@ -22,11 +21,11 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
-// Add/Update cart item - by worapol สุดหล่อ
+
 router.post('/', verifyToken, async (req, res) => {
   const { productId, quantity, size, replace } = req.body;
   try {
-    // Check if item already exists - by worapol สุดหล่อ
+    
     const [existing] = await pool.query(
       'SELECT id, quantity FROM cart_items WHERE user_id = ? AND product_id = ? AND size = ?',
       [req.user.id, productId, size]
@@ -34,20 +33,20 @@ router.post('/', verifyToken, async (req, res) => {
 
     if (existing.length > 0) {
       if (replace) {
-        // Overwrite quantity (used by Cart page) - by worapol สุดหล่อ
+        
         await pool.query(
           'UPDATE cart_items SET quantity = ? WHERE id = ?',
           [quantity, existing[0].id]
         );
       } else {
-        // Increment quantity (used by Add to Cart button) - by worapol สุดหล่อ
+        
         await pool.query(
           'UPDATE cart_items SET quantity = quantity + ? WHERE id = ?',
           [quantity, existing[0].id]
         );
       }
     } else {
-      // Insert new - by worapol สุดหล่อ
+      
       await pool.query(
         'INSERT INTO cart_items (user_id, product_id, quantity, size) VALUES (?, ?, ?, ?)',
         [req.user.id, productId, quantity, size]
@@ -59,9 +58,9 @@ router.post('/', verifyToken, async (req, res) => {
   }
 });
 
-// Sync local cart to DB (Bulk add) - by worapol สุดหล่อ
+
 router.post('/sync', verifyToken, async (req, res) => {
-  const { items } = req.body; // Array of { id: productId, quantity, size } - by worapol สุดหล่อ
+  const { items } = req.body; 
   if (!items || !Array.isArray(items)) return res.status(400).json({ error: 'Invalid items' });
 
   try {
@@ -72,7 +71,7 @@ router.post('/sync', verifyToken, async (req, res) => {
       );
 
       if (existing.length > 0) {
-        // If exists, maybe we merge or keep DB? Let's merge (sum quantities) - by worapol สุดหล่อ
+        
         await pool.query(
           'UPDATE cart_items SET quantity = quantity + ? WHERE id = ?',
           [item.quantity, existing[0].id]
@@ -90,7 +89,7 @@ router.post('/sync', verifyToken, async (req, res) => {
   }
 });
 
-// Delete specific item - by worapol สุดหล่อ
+
 router.delete('/:productId/:size', verifyToken, async (req, res) => {
   const { productId, size } = req.params;
   try {
@@ -104,7 +103,7 @@ router.delete('/:productId/:size', verifyToken, async (req, res) => {
   }
 });
 
-// Clear cart - by worapol สุดหล่อ
+
 router.delete('/', verifyToken, async (req, res) => {
   try {
     await pool.query('DELETE FROM cart_items WHERE user_id = ?', [req.user.id]);

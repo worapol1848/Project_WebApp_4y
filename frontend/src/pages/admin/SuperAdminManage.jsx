@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useEffect, useState, useContext } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
@@ -26,7 +25,7 @@ const SuperAdminManage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Form State - by worapol สุดหล่อ
+  
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -59,7 +58,7 @@ const SuperAdminManage = () => {
     fetchAdmins();
   }, []);
 
-  // Auto-reopen modal if returning from face scan - by worapol สุดหล่อ
+  
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const editId = params.get('editId');
@@ -68,7 +67,7 @@ const SuperAdminManage = () => {
       if (targetAdmin) {
         setEditingAdmin(targetAdmin);
 
-        // Retrieve temp form data if it exists - by worapol สุดหล่อ
+        
         const savedFormDataStr = sessionStorage.getItem('tempAdminFormData');
         let savedFormData = null;
         if (savedFormDataStr) {
@@ -81,14 +80,14 @@ const SuperAdminManage = () => {
         }
 
         if (savedFormData) {
-          // Restore user's filled data - by worapol สุดหล่อ
+          
           setFormData({
             ...savedFormData,
             role: 'superadmin', // Force superadmin after scan
             profileImagePreview: targetAdmin.profile_image ? `http://localhost:5000${targetAdmin.profile_image}` : null
           });
         } else {
-          // Fallback to database data - by worapol สุดหล่อ
+          
           let fName = '';
           let lName = '';
           if (targetAdmin.full_name) {
@@ -112,7 +111,7 @@ const SuperAdminManage = () => {
         }
         
         setOpenModal(true);
-        // Remove the query param once handled - by worapol สุดหล่อ
+        
         navigate(location.pathname, { replace: true });
       }
     }
@@ -222,7 +221,7 @@ const SuperAdminManage = () => {
       }
     }
 
-    // Strict Rule: Cannot be Super Admin without Face Data - by worapol สุดหล่อ
+    
     if (formData.role === 'superadmin') {
       const currentAdmin = admins.find(a => a.id === editingAdmin?.id);
       if (!currentAdmin || !currentAdmin.hasFaceData) {
@@ -265,7 +264,7 @@ const SuperAdminManage = () => {
       handleCloseModal();
       const newAdminsList = await fetchAdmins();
       
-      // Update self in AuthContext if we edited our own profile - by worapol สุดหล่อ
+      
       if (editingAdmin && user && editingAdmin.id === user.id && newAdminsList) {
         const updatedSelf = newAdminsList.find(a => a.id === user.id);
         if (updatedSelf) {
@@ -302,7 +301,7 @@ const SuperAdminManage = () => {
     });
   };
 
-  // Stats - by worapol สุดหล่อ
+  
   const totalAdmins = admins.length;
   const superAdmins = admins.filter(a => a.role === 'superadmin').length;
   const registeredFaces = admins.filter(a => a.hasFaceData).length;
@@ -310,7 +309,7 @@ const SuperAdminManage = () => {
   return (
     <Box sx={{
       minHeight: '100vh',
-      backgroundColor: '#F3F4F6', // Lighter grey for background - by worapol สุดหล่อ
+      backgroundColor: '#F3F4F6', 
       p: { xs: 2, md: 5 },
       display: 'flex',
       flexDirection: 'column',

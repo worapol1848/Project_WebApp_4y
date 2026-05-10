@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect } from 'react';
 
 import { useLanguage } from '../context/LanguageContext';
@@ -12,7 +11,7 @@ const CategoryHero = ({ products, title }) => {
     if (heroProducts.length <= 1) return;
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % heroProducts.length);
-    }, 6000); // 6 seconds for each slide - by worapol สุดหล่อ
+    }, 6000); 
     return () => clearInterval(timer);
   }, [heroProducts.length]);
 

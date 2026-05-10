@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -13,7 +12,7 @@ const AdminNavbar = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isLocked, setIsLocked] = React.useState(true); // Locked means pinned open - by worapol สุดหล่อ
+  const [isLocked, setIsLocked] = React.useState(true); 
   const [isHovered, setIsHovered] = React.useState(false);
   const [isProductsOpen, setIsProductsOpen] = React.useState(
     location.pathname.includes('/admin/product') || location.pathname.includes('/admin/inventory')
@@ -26,7 +25,7 @@ const AdminNavbar = () => {
     navigate('/login');
   };
 
-  // Add body class for admin layout offset - by worapol สุดหล่อ
+  
   useEffect(() => {
     if (user && (user.role === 'admin' || user.role === 'superadmin')) {
       document.body.classList.add('admin-active-layout');

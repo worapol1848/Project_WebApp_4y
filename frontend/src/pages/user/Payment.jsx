@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
@@ -9,7 +8,7 @@ import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-lea
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// Fix for Leaflet default icon issues in React - by worapol สุดหล่อ
+
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
@@ -21,7 +20,7 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// Component to handle map movement programmatically - by worapol สุดหล่อ
+
 const MapController = ({ targetCoords, zoom }) => {
   const map = useMap();
   useEffect(() => {
@@ -33,7 +32,7 @@ const MapController = ({ targetCoords, zoom }) => {
   return null;
 };
 
-// Main Map Logic Component - by worapol สุดหล่อ
+
 const MapLogic = ({ coords, setCoords, onManualMove }) => {
   useMapEvents({
     click(e) {
@@ -66,7 +65,7 @@ const Payment = () => {
   const { t, language } = useLanguage();
   const [cartItems, setCartItems] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('bank'); // 'bank' or 'qr' - by worapol สุดหล่อ
+  const [paymentMethod, setPaymentMethod] = useState('bank'); 
   const [slipFile, setSlipFile] = useState(null);
   const [slipPreview, setSlipPreview] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -170,10 +169,10 @@ const Payment = () => {
     fetchCart();
   }, [navigate]);
 
-  const [shippingMethod, setShippingMethod] = useState(''); // Empty initially - by worapol สุดหล่อ
+  const [shippingMethod, setShippingMethod] = useState(''); 
   const [shippingFee, setShippingFee] = useState(0);
 
-  // Auto-detect shipping method based on province - by worapol สุดหล่อ
+  
   useEffect(() => {
     if (profile?.province && profile?.address && profile?.sub_district && profile?.district) {
       const isBkk = profile.province.includes('กรุงเทพ') || profile.province.toLowerCase().includes('bangkok');
@@ -185,7 +184,7 @@ const Payment = () => {
         setShippingFee(150);
       }
     } else {
-      // Clear if no address - by worapol สุดหล่อ
+      
       setShippingMethod('');
       setShippingFee(0);
     }
@@ -196,7 +195,7 @@ const Payment = () => {
   const totalPrice = cartSubtotal - cartDiscount + (cartItems.length > 0 ? shippingFee : 0);
 
   const handlePlaceOrder = async () => {
-    // Validation - by worapol สุดหล่อ
+    
     if (!profile?.address || !profile?.sub_district || !profile?.district || !profile?.province) {
       showToast(t('pay_missing_address'), "error");
       return;

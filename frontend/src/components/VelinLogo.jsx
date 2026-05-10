@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React from 'react';
 
 const VelinLogo = ({ className = '', textColor = '#FFFFFF', width, height, viewBox, iconOnly = false }) => {

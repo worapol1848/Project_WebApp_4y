@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -30,17 +29,17 @@ import AdminInventory from './pages/admin/AdminInventory';
 import FaceScanner from './pages/admin/FaceScanner';
 import SuperAdminManage from './pages/admin/SuperAdminManage';
 
-// A special protector for user-facing routes - by worapol สุดหล่อ
+
 const UserRoute = ({ children }) => {
   const { user, loading } = React.useContext(AuthContext);
   if (loading) return null;
   
-  // If a regular admin tries to access user pages, send them back to the admin dashboard - by worapol สุดหล่อ
+  
   if (user && user.role === 'admin') {
     return <Navigate to="/admin" replace />;
   }
   
-  // Users and Super Admins (and Guests) can view user pages - by worapol สุดหล่อ
+  
   return children;
 };
 

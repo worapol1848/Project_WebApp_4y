@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
@@ -16,7 +15,7 @@ const AdminProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Form State - by worapol สุดหล่อ
+  
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [isDuplicating, setIsDuplicating] = useState(false);
@@ -32,10 +31,10 @@ const AdminProducts = () => {
   });
   const [sizes, setSizes] = useState([]);
   const [sizeGuide, setSizeGuide] = useState([]);
-  const [galleryImages, setGalleryImages] = useState([]); // {id, url, isNew, file} - by worapol สุดหล่อ
-  const [deletedImageIds, setDeletedImageIds] = useState([]); // Track IDs to delete on server - by worapol สุดหล่อ
-  const [sizeType, setSizeType] = useState('shoe'); // 'shoe' or 'apparel' - by worapol สุดหล่อ
-  const [lengthUnit, setLengthUnit] = useState('in'); // 'in' or 'cm' - by worapol สุดหล่อ
+  const [galleryImages, setGalleryImages] = useState([]); 
+  const [deletedImageIds, setDeletedImageIds] = useState([]); 
+  const [sizeType, setSizeType] = useState('shoe'); 
+  const [lengthUnit, setLengthUnit] = useState('in'); 
   const [activeExtraColumns, setActiveExtraColumns] = useState([]);
   const [showColDropdown, setShowColDropdown] = useState(false);
   const [customColumnInput, setCustomColumnInput] = useState('');
@@ -151,7 +150,7 @@ const AdminProducts = () => {
     data.append('category', formData.category);
     data.append('brand', formData.brand);
 
-    // Auto-sync size fields from guide - by worapol สุดหล่อ
+    
     const finalSizes = sizes.map(s => {
       const match = sizeGuide.find(g => g.size === s.size) || {};
       return {
@@ -166,11 +165,11 @@ const AdminProducts = () => {
     data.append('size_guide', JSON.stringify(sizeGuide));
 
 
-    // Send images order and files - by worapol สุดหล่อ
+    
     const newFiles = galleryImages.filter(img => img.isNew).map(img => img.file);
     newFiles.forEach(file => data.append('images', file));
 
-    // Send full image order (urls) - by worapol สุดหล่อ
+    
     const imagesOrder = galleryImages.map(img => img.isNew ? 'NEW_FILE' : img.image_url);
     data.append('imagesOrder', JSON.stringify(imagesOrder));
 
@@ -269,10 +268,10 @@ const AdminProducts = () => {
   const handleDuplicate = (prod) => {
     setIsDuplicating(true);
     console.log("Duplicating product:", prod);
-    // Helper to increment number at the end of a string - by worapol สุดหล่อ
+    
     const incrementString = (str) => {
       if (!str) return '';
-      const match = str.match(/(\d+)(?!.*\d)/); // Finds the last sequence of numbers - by worapol สุดหล่อ
+      const match = str.match(/(\d+)(?!.*\d)/); 
       if (match) {
         const numPart = match[0];
         const nextNum = (parseInt(numPart) + 1).toString().padStart(numPart.length, '0');
@@ -293,7 +292,7 @@ const AdminProducts = () => {
       images: []
     });
 
-    // Clean sizes for new IDs (backend handles this) - by worapol สุดหล่อ
+    
     const clonedSizes = (prod.sizes || []).map(s => ({
       size: s.size,
       stock: s.stock,
@@ -310,7 +309,7 @@ const AdminProducts = () => {
     }
     setSizeGuide(sg);
 
-    // Re-detect columns - by worapol สุดหล่อ
+    
     let initialExtraCols = new Set();
     if (sg.length > 0) {
       sg.forEach(item => {
@@ -332,7 +331,7 @@ const AdminProducts = () => {
     setCustomColumns(parsedCustomCols);
     setActiveExtraColumns(Array.from(initialExtraCols));
 
-    // Clone gallery - by worapol สุดหล่อ
+    
     const initialGallery = [];
     if (prod.image_url) {
       initialGallery.push({ id: `temp-primary-${Date.now()}`, image_url: prod.image_url, isNew: false });
@@ -347,7 +346,7 @@ const AdminProducts = () => {
     setGalleryImages(initialGallery);
     setDeletedImageIds([]);
 
-    // Detect unit from data - by worapol สุดหล่อ
+    
     if (sg.length > 0) {
       const firstEntry = sg[0];
       const val = firstEntry.chest_cm || firstEntry.size_cm || '';
@@ -361,7 +360,7 @@ const AdminProducts = () => {
     const initialType = prod.product_type || (hasChest ? 'apparel' : 'shoe');
     setSizeType(initialType);
 
-    // Clear other UI states - by worapol สุดหล่อ
+    
     setCustomColumnInput('');
     setShowColDropdown(false);
 
@@ -373,7 +372,7 @@ const AdminProducts = () => {
     setIsDuplicating(false);
     setFormData({ name: '', description: '', price: '', discount_percent: 0, product_code: '', category: '', brand: '', images: [] });
 
-    // Default to shoe with default sizes for {t('adm_form_size_guide')} only - by worapol สุดหล่อ
+    
     const defaultShoe = ['38', '39', '40', '41', '42', '43', '44', '45'];
     setSizes([]);
     setSizeGuide(defaultShoe.map(size => ({ size, size_cm: '', chest_cm: '' })));
@@ -482,18 +481,20 @@ const AdminProducts = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
   const [showDiscountOnly, setShowDiscountOnly] = useState(false);
-  const [priceRange, setPriceRange] = useState(0); // Min Price - by worapol สุดหล่อ
-  const [stockRange, setStockRange] = useState(0); // Min Stock - by worapol สุดหล่อ
+  const [priceRange, setPriceRange] = useState(0); 
+  const [stockRange, setStockRange] = useState(0); 
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
-  // Color extraction from names - by worapol สุดหล่อ
+  
   const commonColors = ['Red', 'Blue', 'Green', 'Black', 'White', 'Grey', 'Gray', 'Pink', 'Yellow', 'Purple', 'Orange', 'Brown', 'Navy', 'Oat', 'Beige', 'Olive', 'Teal', 'Silver', 'Gold'];
   const availableColors = [...new Set(products.flatMap(p => {
     return commonColors.filter(color => p.name.toLowerCase().includes(color.toLowerCase()));
   }))].sort();
 
-  const uniqueBrands = [...new Set(products.map(p => p.brand).filter(Boolean))].sort();
-  const uniqueCategories = [...new Set(products.map(p => p.category).filter(Boolean))].sort();
+  const officialBrands = ['Nike', 'Adidas', 'New Balance', 'Asics', 'Converse', 'Stussy', 'Puma'];
+  const uniqueBrands = [...new Set([...officialBrands, ...products.map(p => p.brand).filter(Boolean)])].sort();
+  const officialCategories = ['shoe', 'apparel'];
+  const uniqueCategories = [...new Set([...officialCategories, ...products.map(p => p.category).filter(Boolean)])].sort();
 
   const handleBrandToggle = (brand) => {
     setSelectedBrands(prev =>
@@ -523,7 +524,7 @@ const AdminProducts = () => {
   };
 
   const filteredProducts = products.filter(product => {
-    // Category/Brand/Color Filters - by worapol สุดหล่อ
+    
     if (selectedBrands.length > 0 && !selectedBrands.includes(product.brand)) {
       return false;
     }
@@ -535,12 +536,12 @@ const AdminProducts = () => {
       if (!hasColor) return false;
     }
 
-    // Special Filters - by worapol สุดหล่อ
+    
     if (showDiscountOnly && (!product.discount_percent || product.discount_percent <= 0)) {
       return false;
     }
 
-    // Range Filters (Min filters: show if value >= range) - by worapol สุดหล่อ
+    
     if (Number(product.price * (1 - (product.discount_percent || 0) / 100)) < priceRange) {
       return false;
     }
@@ -548,7 +549,7 @@ const AdminProducts = () => {
       return false;
     }
 
-    // Toggle Filters - by worapol สุดหล่อ
+    
     if (showLowStockOnly && product.stock >= 5) {
       return false;
     }
@@ -559,7 +560,7 @@ const AdminProducts = () => {
 
     const searchLower = searchTerm.toLowerCase().trim();
 
-    // Check for specific prefixes - by worapol สุดหล่อ
+    
     if (searchLower.startsWith('code')) {
       const codeSearch = searchLower.replace('code', '').replace(':', '').trim();
       return codeSearch ? (product.product_code?.toLowerCase() || '').includes(codeSearch) : true;
@@ -582,7 +583,7 @@ const AdminProducts = () => {
       return !isNaN(stockSearchNum) ? Number(product.stock) === stockSearchNum : true;
     }
 
-    // Default: search by name or description - by worapol สุดหล่อ
+    
     return (
       (product.name?.toLowerCase() || '').includes(searchLower) ||
       (product.description?.toLowerCase() || '').includes(searchLower)
@@ -598,18 +599,18 @@ const AdminProducts = () => {
       const reportTime = today.toLocaleTimeString('en-US', { hour12: false });
       const reportId = `INV-${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-      // Determine Report Title based on filters - by worapol สุดหล่อ
+      
       let reportTitle = "PRODUCT INVENTORY AUDIT";
-      let statusLabel = "OFFICIAL {t('adm_table_stock')} RECORD";
+      let statusLabel = `OFFICIAL ${t('adm_table_stock')} RECORD`;
       let accentColor = [79, 70, 229]; 
 
       if (showLowStockOnly || showLowSizeStockOnly) {
-        reportTitle = "CRITICAL {t('adm_table_stock')} ALERT REPORT";
+        reportTitle = `CRITICAL ${t('adm_table_stock')} ALERT REPORT`;
         statusLabel = "URGENT REPLENISHMENT REQUIRED";
         accentColor = [220, 38, 38]; 
       }
 
-      // --- {t('adm_table_brand')}ING & HEADER --- - by worapol สุดหล่อ
+      
       doc.setFillColor(...accentColor);
       doc.rect(14, 15, 2, 25, 'F');
 
@@ -624,7 +625,7 @@ const AdminProducts = () => {
       doc.text('Inventory Control & Quality Assurance', 20, 31);
       doc.text('123 Business Parkway, Suite 500, Bangkok, TH', 20, 36);
 
-      // Report Title - by worapol สุดหล่อ
+      
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(31, 41, 55);
@@ -637,19 +638,19 @@ const AdminProducts = () => {
       doc.text(`Generated: ${reportDate} | ${reportTime}`, 283, 41, { align: 'right' });
       doc.text(`Source: Admin Dashboard / Inventory Management`, 283, 46, { align: 'right' });
 
-      // Horizontal Divider - by worapol สุดหล่อ
+      
       doc.setDrawColor(229, 231, 235);
       doc.setLineWidth(0.5);
       doc.line(14, 48, 283, 48);
 
-      // Metadata & Filters - by worapol สุดหล่อ
+      
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(31, 41, 55);
       doc.text('DOCUMENT STATUS:', 14, 54);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(...accentColor);
-      doc.text(statusLabel, 55, 54);
+      doc.text(statusLabel, 60, 54);
 
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
@@ -663,10 +664,10 @@ const AdminProducts = () => {
       const filterText = filterDesc.length > 0 ? `Active Filters: ${filterDesc.join(' | ')}` : "No specific filters applied. Full catalog audit.";
       doc.text(filterText, 14, 59);
 
-      // Sorting: Priority to display low stock at top for audit - by worapol สุดหล่อ
+      
       const sortedProducts = [...filteredProducts].sort((a, b) => Number(a.stock) - Number(b.stock));
 
-      // --- TABLE PREPARATION --- - by worapol สุดหล่อ
+      
       const tableColumn = ["Code", "Product Description", "Category", "Brand", "Price (THB)", "Disc", "Final (THB)", "Stock", "Sizes Breakdown"];
       const tableRows = sortedProducts.map(p => {
         const finalPrice = p.discount_percent > 0
@@ -722,7 +723,7 @@ const AdminProducts = () => {
         }
       });
 
-      // --- SIGNATURE SECTION --- - by worapol สุดหล่อ
+      
       const finalY = doc.lastAutoTable.finalY || 150;
       const signatureY = finalY + 25;
       const safeSignatureY = signatureY < 165 ? 165 : signatureY;
@@ -740,7 +741,7 @@ const AdminProducts = () => {
       doc.text('Warehouse Manager Approval', 213, safeSignatureY + 5);
       doc.text(`Signed Date: ${today.toLocaleDateString()} ________________`, 213, safeSignatureY + 10);
 
-      // --- FOOTER --- - by worapol สุดหล่อ
+      
       const pageCount = doc.internal.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
@@ -759,7 +760,7 @@ const AdminProducts = () => {
       showToast('Formal PDF Report Downloaded');
 
 
-      // 🔍 LOG ACTION - by worapol สุดหล่อ
+      
       try {
         await api.post('/logs/manual', {
           action: 'Export PDF',
@@ -785,7 +786,7 @@ const AdminProducts = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // Reset to first page when filters change - by worapol สุดหล่อ
+  
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, showLowStockOnly, showLowSizeStockOnly, selectedBrands, selectedCategories, selectedColors, showDiscountOnly, priceRange, stockRange]);
@@ -1225,11 +1226,21 @@ const AdminProducts = () => {
                   <div className="form-row">
                     <div className="form-group">
                       <label>{t('adm_form_category') || 'Category'}</label>
-                      <input type="text" name="category" value={formData.category} onChange={handleInputChange} />
+                      <select name="category" value={formData.category} onChange={handleInputChange} className="form-select">
+                        <option value="">-- {t('category')} --</option>
+                        {uniqueCategories.map(cat => (
+                          <option key={cat} value={cat}>{cat === 'shoe' ? t('nav_shoes') : (cat === 'apparel' ? t('nav_apparel') : cat)}</option>
+                        ))}
+                      </select>
                     </div>
                     <div className="form-group">
                       <label>{t('adm_form_brand') || 'Brand'}</label>
-                      <input type="text" name="brand" value={formData.brand} onChange={handleInputChange} />
+                      <select name="brand" value={formData.brand} onChange={handleInputChange} className="form-select">
+                        <option value="">-- {t('brand')} --</option>
+                        {uniqueBrands.map(brand => (
+                          <option key={brand} value={brand}>{brand}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                   <div className="form-group">

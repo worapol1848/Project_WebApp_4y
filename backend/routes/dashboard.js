@@ -1,16 +1,15 @@
-// code in this file is written by worapol สุดหล่อ
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const { verifyToken, isAdmin } = require('../middlewares/authMiddleware');
 
-// Admin Dashboard Stats - by worapol สุดหล่อ
+
 router.get('/', verifyToken, isAdmin, async (req, res) => {
   try {
     const [products] = await db.query('SELECT COUNT(*) as total FROM products');
     const [orders] = await db.query('SELECT COUNT(*) as total FROM orders');
     
-    // Separate order counts by status - by worapol สุดหล่อ
+    
     const [deliveredOrders] = await db.query("SELECT COUNT(*) as total FROM orders WHERE status = 'delivered'");
     const [pendingOrders] = await db.query("SELECT COUNT(*) as total FROM orders WHERE status = 'pending'");
     const [shippedOrders] = await db.query("SELECT COUNT(*) as total FROM orders WHERE status = 'shipped'");
@@ -72,7 +71,7 @@ router.get('/', verifyToken, isAdmin, async (req, res) => {
     const [totalSalesData] = await db.query("SELECT SUM(total_amount) as total FROM orders WHERE status = 'delivered'");
     const [totalProductsSoldData] = await db.query("SELECT SUM(quantity) as total FROM order_items JOIN orders ON order_items.order_id = orders.id WHERE orders.status = 'delivered'");
 
-    // Financial Metrics for Revenue Dashboard - by worapol สุดหล่อ
+    
     const [todaySalesData] = await db.query("SELECT SUM(total_amount) as total FROM orders WHERE status = 'delivered' AND DATE(created_at) = CURDATE()");
     const [yesterdaySalesData] = await db.query("SELECT SUM(total_amount) as total FROM orders WHERE status = 'delivered' AND DATE(created_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)");
     const [thisMonthSalesData] = await db.query("SELECT SUM(total_amount) as total FROM orders WHERE status = 'delivered' AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())");
@@ -101,7 +100,7 @@ router.get('/', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-// Get sales for a specific date - by worapol สุดหล่อ
+
 router.get('/daily-sales', verifyToken, isAdmin, async (req, res) => {
   const { date } = req.query;
   try {
@@ -110,7 +109,7 @@ router.get('/daily-sales', verifyToken, isAdmin, async (req, res) => {
       [date]
     );
 
-    // Hourly breakdown for the selected date - by worapol สุดหล่อ
+    
     const [hourlyData] = await db.query(`
       SELECT 
         HOUR(created_at) as hour,
@@ -140,7 +139,7 @@ router.get('/daily-sales', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-// Get weekly, monthly, or yearly sales stats for chart - by worapol สุดหล่อ
+
 router.get('/sales-stats', verifyToken, isAdmin, async (req, res) => {
   const { type = 'week', year } = req.query;
 
@@ -148,7 +147,7 @@ router.get('/sales-stats', verifyToken, isAdmin, async (req, res) => {
     if (type === 'year' || type === 'calendar-year') {
       const targetYear = year || new Date().getFullYear();
 
-      // Get sales for Jan-Dec of specified year - by worapol สุดหล่อ
+      
       const [stats] = await db.query(`
         SELECT 
           MONTH(created_at) as month,
@@ -173,7 +172,7 @@ router.get('/sales-stats', verifyToken, isAdmin, async (req, res) => {
       return res.json(dataPoints);
     }
 
-    // Default: daily stats for week or month - by worapol สุดหล่อ
+    
     const days = type === 'month' ? 29 : 6;
     const [stats] = await db.query(`
       SELECT 
@@ -211,7 +210,7 @@ router.get('/sales-stats', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-// GET detailed revenue breakdown for table - by worapol สุดหล่อ
+
 router.get('/revenue-details', verifyToken, isAdmin, async (req, res) => {
   const { limit, brand } = req.query;
   const limitClause = limit ? `LIMIT ${parseInt(limit)}` : '';
@@ -252,7 +251,7 @@ router.get('/revenue-details', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-// GET detailed daily breakdown for a specific month/year - by worapol สุดหล่อ
+
 router.get('/monthly-report', verifyToken, isAdmin, async (req, res) => {
   const { month, year } = req.query;
   const targetMonth = month || (new Date().getMonth() + 1);
@@ -280,7 +279,7 @@ router.get('/monthly-report', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-// GET recent daily revenue for sidebar history (last 30 entries) - by worapol สุดหล่อ
+
 router.get('/recent-daily-revenue', verifyToken, isAdmin, async (req, res) => {
   try {
     const [reportData] = await db.query(`
@@ -301,7 +300,7 @@ router.get('/recent-daily-revenue', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-// GET unique product brands - by worapol สุดหล่อ
+
 router.get('/brands', verifyToken, isAdmin, async (req, res) => {
   try {
     const [brands] = await db.query('SELECT DISTINCT brand FROM products WHERE brand IS NOT NULL AND brand != "" ORDER BY brand ASC');
@@ -311,7 +310,7 @@ router.get('/brands', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-// GET comprehensive inventory summary - by worapol สุดหล่อ
+
 router.get('/inventory-summary', verifyToken, isAdmin, async (req, res) => {
   try {
     const [inventoryData] = await db.query(`
@@ -345,7 +344,7 @@ router.get('/inventory-summary', verifyToken, isAdmin, async (req, res) => {
       ORDER BY p.created_at DESC
     `);
 
-    // Calculate derived values: original_quantity, remaining_value, total_potential_value - by worapol สุดหล่อ
+    
     const enrichedData = inventoryData.map(item => {
       const remaining_stock = parseInt(item.remaining_stock) || 0;
       const total_sold = parseInt(item.total_sold) || 0;

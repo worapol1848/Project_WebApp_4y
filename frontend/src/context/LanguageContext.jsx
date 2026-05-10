@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../services/api';
 import { AuthContext } from './AuthContext';
@@ -7,7 +6,7 @@ export const LanguageContext = createContext();
 
 export const translations = {
   en: {
-    // Shared / Buttons - by worapol สุดหล่อ
+    
     ok: 'OK',
     dismiss: 'Got it',
     login: 'Login',
@@ -31,7 +30,7 @@ export const translations = {
     phone: 'Phone',
     postal_code: 'Postal Code',
     
-    // Auth Modals & Alerts - by worapol สุดหล่อ
+    
     auth_title_order: 'Sign In to Order',
     auth_msg_order: 'Please sign in or register to place an order.',
     auth_title_wish: 'Wishlist',
@@ -39,7 +38,7 @@ export const translations = {
     auth_title_comment: 'Post a Comment',
     auth_msg_comment: 'Please sign in to leave a review.',
 
-    // Navbar - by worapol สุดหล่อ
+    
     nav_home: 'Home',
     nav_products: 'Products',
     nav_categories: 'Categories',
@@ -64,7 +63,7 @@ export const translations = {
     nav_under_5k: 'Under 5,000',
     nav_above_50k: '50,000+',
 
-    // Home - by worapol สุดหล่อ
+    
     h_collection: 'COLLECTION',
     h_exclusive: 'EXCLUSIVE DROP',
     h_new_coll: 'NEW COLLECTION 2026',
@@ -85,7 +84,7 @@ export const translations = {
     h_loading_exp: 'Loading Velin Experience...',
     h_out_of_stock: 'Out of Stock',
 
-    // Products Page - by worapol สุดหล่อ
+    
     ps_found: 'Found',
     ps_items: 'items',
     ps_filter_by: 'Filter By',
@@ -103,7 +102,7 @@ export const translations = {
     ps_desc_puma: 'Puma, founded by Rudolf Dassler in 1948 in Germany, built global fame through fast innovation and collaborations with many global icons, perfectly blending the sport lifestyle with modern fashion.',
     ps_desc_default: 'VELIN curates the finest quality products from top brands worldwide, allowing you to experience outstanding style and the latest innovations across all fashion categories, whether footwear, apparel, or accessories that reflect your true self.',
 
-    // Product Detail - by worapol สุดหล่อ
+    
     pd_available_sizes: 'Available Sizes',
     pd_selected: 'Selected',
     pd_available_colors: 'Available Colors',
@@ -129,7 +128,7 @@ export const translations = {
     pd_rate_error: 'Please rate before submitting',
     pd_comment_success: 'Comment submitted successfully!',
 
-    // Cart - by worapol สุดหล่อ
+    
     cart_title: 'Your Cart',
     cart_empty: 'Your cart is empty',
     cart_go_shop: 'Go Shopping',
@@ -144,14 +143,14 @@ export const translations = {
     cart_add_success: 'Added to cart!',
     cart_remove_success: 'Removed from cart',
     
-    // Wishlist - by worapol สุดหล่อ
+    
     wish_added: 'Added to wishlist!',
     wish_removed: 'Removed from wishlist',
     wish_subtitle: 'Items you are interested in and saved.',
     wish_empty: 'No items in wishlist',
     wish_empty_desc: 'Go back and browse products you like and save them here.',
 
-    // My Orders - by worapol สุดหล่อ
+    
     ord_title: 'Order History',
     ord_number: 'Order',
     ord_date: 'Date',
@@ -172,7 +171,7 @@ export const translations = {
     ord_refund_done: 'Refund processed successfully.',
     ord_refund_check_bank: 'Please check your bank account.',
     
-    // Order Statuses - by worapol สุดหล่อ
+    
     st_pending: 'Pending',
     st_shipped: 'Shipped',
     st_arrived: 'Arrived',
@@ -180,12 +179,12 @@ export const translations = {
     st_cancelled: 'Cancelled',
     st_refunded: 'Refunded',
 
-    // Confirmation Modals - by worapol สุดหล่อ
+    
     conf_receipt_title: 'Confirm Receipt?',
     conf_receipt_msg: 'Have you received and checked the product?',
     conf_receipt_btn: 'Confirm Received',
     
-    // Review Modal - by worapol สุดหล่อ
+    
     rev_title: 'Write a Review',
     rev_rate: 'Rate this product',
     rev_placeholder: 'Share your experience with this product (Optional)',
@@ -193,7 +192,7 @@ export const translations = {
     rev_submitting: 'Submitting...',
     rev_success: 'Thank you for your review!',
 
-    // Refund Modal - by worapol สุดหล่อ
+    
     ref_title: 'Refund Information',
     ref_desc: 'Please provide correct bank account details for the refund (Order #',
     ref_bank: 'Bank',
@@ -206,7 +205,7 @@ export const translations = {
     ref_submit: 'Save Information',
     ref_success: 'Refund information saved. Admin will process it soon.',
 
-    // Payment / Checkout - by worapol สุดหล่อ
+    
     pay_title: 'Payment',
     pay_billing: 'Billing Information',
     pay_shipping_method: 'Shipping Method',
@@ -230,6 +229,7 @@ export const translations = {
     pay_attach_slip: 'Attach slip here',
     pay_upload_slip: 'Upload Transfer Evidence',
     pay_change_slip: 'Change Image',
+    pay_view_slip: 'View Refund Slip',
     pay_confirm: 'Confirm Payment',
     pay_bkk_only: 'Bangkok Only',
     pay_shipping_via: 'Shipping via',
@@ -244,13 +244,13 @@ export const translations = {
     order_success_check_history: 'You can check your order details in the Order History page.',
     back_home: 'Back to Home',
 
-    // Profile Sections - by worapol สุดหล่อ
+    
     prof_title: 'Account Settings',
     prof_account_info: 'Account Information',
     prof_personal: 'Personal Information',
     prof_shipping_addr: 'Shipping Address',
     
-    // Profile Fields & Labels - by worapol สุดหล่อ
+    
     prof_name: 'Full Name',
     prof_email: 'Email Address',
     prof_phone: 'Phone Number',
@@ -258,14 +258,16 @@ export const translations = {
     prof_no_email: 'No email provided',
     prof_no_address: 'Please provide shipping address',
     
-    // Profile Actions - by worapol สุดหล่อ
+    
     prof_update: 'Update Profile',
     prof_success: 'Profile updated successfully!',
     prof_edit_address: 'Edit',
     prof_add_address: 'Add Shipping Address',
+    prof_delete_address: 'Delete Address',
+    prof_confirm_delete_address: 'Are you sure you want to delete this address?',
     prof_edit_address_title: 'Edit Shipping Address',
 
-    // Password Management - by worapol สุดหล่อ
+    
     prof_change_pw: 'Change Password',
     prof_old_pw: 'Current Password',
     prof_new_pw: 'New Password',
@@ -274,7 +276,7 @@ export const translations = {
     prof_pw_mismatch: 'New password and confirmation do not match',
     prof_pw_success: 'Password changed successfully',
 
-    // Address & Map Specifics - by worapol สุดหล่อ
+    
     prof_address_header: 'Address',
     prof_full_name: 'Full Name',
     prof_address_detail: 'Address Details',
@@ -298,7 +300,7 @@ export const translations = {
     prof_set_default: 'Set as default address',
     prof_address_success: 'Shipping address updated successfully',
 
-    // Footer - by worapol สุดหล่อ
+    
     f_most_popular: 'Most Popular',
     f_nike: 'NIKE',
     f_apparel: 'APPAREL',
@@ -319,14 +321,14 @@ export const translations = {
     f_privacy: 'Privacy',
     f_tagline: 'The Premier Destination for Curation & Rare Finds.',
     
-    // Shipping Modal Content - by worapol สุดหล่อ
+    
     ship_title: 'Shipping & Delivery',
     ship_messenger_title: 'Messenger Delivery (Bangkok Only)',
     ship_messenger_desc: 'Fast delivery via courier after product verification. Same-day delivery available for ready-to-ship orders confirmed before 04:00 PM. (Fee calculated by distance)',
     ship_ems_title: 'EMS Express',
     ship_ems_desc: 'Standard delivery via logistics partners after verification (1-2 business days for ready-to-ship, 3-5 days for standard orders).',
 
-    // Admin - by worapol สุดหล่อ
+    
     adm_dashboard: 'Dashboard',
     adm_products: 'Products',
     adm_orders: 'Orders',
@@ -345,7 +347,7 @@ export const translations = {
     adm_top_brand: 'Top Performing Brand',
     adm_no_brand_data: 'No brand data available.',
     
-    // Admin Inventory - by worapol สุดหล่อ
+    
     inv_title: 'Product Inventory & Summary',
     inv_th_product: 'Product',
     inv_th_sold: 'Sold Revenue (฿)',
@@ -355,8 +357,12 @@ export const translations = {
     inv_th_total_qty: 'Total Quantity',
     inv_th_total_val: 'Grand Total (Stock + Sales)',
     inv_th_price: 'Price',
+    inv_th_item: 'Item',
+    inv_th_size: 'Size',
+    inv_th_quantity: 'Qty',
+    inv_th_total: 'Total',
 
-    // Admin Orders - by worapol สุดหล่อ
+    
     adm_order_shipped: 'Order marked as shipped',
     adm_order_arrived: 'Order arrived at destination',
     adm_order_cancelled: 'Order cancelled successfully',
@@ -381,6 +387,7 @@ export const translations = {
     adm_total_pay: 'Total Pay',
     adm_curr_status: 'Current Status',
     adm_reason: 'Reason',
+    adm_reason_label: 'Reason for cancellation',
     adm_wait_confirm: 'Waiting for customer to confirm receipt',
     adm_finalized: 'Finalized',
     adm_refund_success: 'Refund successful',
@@ -407,15 +414,20 @@ export const translations = {
     adm_pending_hint: 'Pending Check',
     adm_no_slip: 'No Slip',
     adm_map_pos_label: 'Map Location',
+    adm_not_specified: 'Not specified',
+    adm_refund_info: 'Refund Information',
+    h_bank: 'Bank',
+    h_acc_name: 'Account Name',
+    h_acc_num: 'Account Number',
 
-    // Navigation & General - by worapol สุดหล่อ
+    
     view_detail: 'View Detail',
     nav_wishlist: 'Wishlist',
     nav_under: 'Under',
     nav_up: 'Up',
     nav_user_acc: 'User Account',
 
-    // Auth Page - by worapol สุดหล่อ
+    
     auth_welcome: 'Welcome Back',
     auth_sign_in_desc: 'Sign in to your account',
     auth_create_acc: 'Create Account',
@@ -437,7 +449,7 @@ export const translations = {
     auth_login_failed: 'Login failed',
     auth_reg_failed: 'Registration failed',
 
-    // Misc / Filters - by worapol สุดหล่อ
+    
     en: 'English',
     th: 'Thai',
     in: 'in',
@@ -452,19 +464,19 @@ export const translations = {
     week: 'Week',
     month: 'Month',
 
-    // Super Admin - by worapol สุดหล่อ
+    
     super_admin_welcome: 'Welcome!',
     super_admin_desc_1: 'You are logged in as',
     super_admin_desc_2: 'Please select the system you want to access:',
     super_admin_btn_products: 'Manage Products / Orders (Normal)',
     super_admin_btn_admins: 'Manage Admins (Face Scan Required)',
 
-    // Admin Activity Logs - by worapol สุดหล่อ
     
-    // Roles - by worapol สุดหล่อ
+    
+    
     adm_role_super: 'SUPER ADMIN',
 
-    // Admin Best Sellers - by worapol สุดหล่อ
+    
     adm_loading_best_sellers: 'Loading Best Sellers...',
     adm_top_products_showcase: 'Top Products Showcase',
     adm_print_hub_report: 'Print Hub Report',
@@ -488,7 +500,7 @@ export const translations = {
     adm_prev: 'Prev',
     adm_next: 'Next',
 
-    // Admin Dashboard - by worapol สุดหล่อ
+    
     adm_overview: 'Overview',
     adm_forecast_7_days: 'Forecast (Last 7 Days)',
     adm_trend_year: 'Trend for Year',
@@ -506,7 +518,7 @@ export const translations = {
     adm_items_sold: 'items sold',
     adm_lifetime_desc: 'Comprehensive data insight across all operational cycles. Growth rate and inventory turnover are benchmarked against historical performance.',
 
-    // Admin Orders - by worapol สุดหล่อ
+    
     adm_manage_orders: 'Manage Customer Orders',
     adm_status_pending: 'Pending',
     adm_status_shipped: 'Shipped',
@@ -524,7 +536,7 @@ export const translations = {
     adm_actions: 'Actions',
     adm_no_orders_found: 'No orders found matching your filters.',
 
-    // Admin Products - by worapol สุดหล่อ
+    
     adm_manage_products: 'Manage Products',
     adm_filter: 'Filter',
     adm_total_low: 'Stock < 5',
@@ -559,6 +571,8 @@ export const translations = {
     adm_form_cover: 'Cover',
     adm_form_stock: 'Stock',
     adm_form_size_guide: 'Size Guide',
+    adm_form_chest_label: 'Chest',
+    adm_form_length_label: 'Length',
     adm_form_add_stock: '+ Add Stock',
     adm_form_add_guide: '+ Add Guide Entry',
     adm_form_save: 'Save Changes',
@@ -657,10 +671,9 @@ export const translations = {
     adm_reset_face_confirm: 'Are you sure you want to reset face data for {{username}}?',
     adm_reset_success: 'Face data reset successfully.',
     adm_form_password: 'Access Password',
-    adm_personnel: 'Personnel Management',
   },
   th: {
-    // Shared / Buttons - by worapol สุดหล่อ
+    
     ok: 'ตกลง',
     dismiss: 'รับทราบ',
     login: 'เข้าสู่ระบบ',
@@ -684,7 +697,7 @@ export const translations = {
     phone: 'เบอร์โทรศัพท์',
     postal_code: 'รหัสไปรษณีย์',
 
-    // Auth Modals & Alerts - by worapol สุดหล่อ
+    
     auth_title_order: 'เข้าสู่ระบบเพื่อสั่งซื้อ',
     auth_msg_order: 'กรุณาเข้าสู่ระบบหรือสมัครสมาชิกก่อนสั่งซื้อสินค้านะครับ',
     auth_title_wish: 'รายการโปรด',
@@ -692,7 +705,7 @@ export const translations = {
     auth_title_comment: 'แสดงความคิดเห็น',
     auth_msg_comment: 'กรุณาเข้าสู่ระบบเพื่อแสดงความคิดเห็นนะครับ',
 
-    // Navbar - by worapol สุดหล่อ
+    
     nav_home: 'หน้าหลัก',
     nav_products: 'สินค้า',
     nav_categories: 'หมวดหมู่',
@@ -717,7 +730,7 @@ export const translations = {
     nav_under_5k: 'ต่ำกว่า 5,000',
     nav_above_50k: '50,000 ขึ้นไป',
 
-    // Home - by worapol สุดหล่อ
+    
     h_collection: 'คอลเลกชัน',
     h_exclusive: 'สินค้าพิเศษ',
     h_new_coll: 'คอลเลกชันใหม่ 2026',
@@ -737,7 +750,7 @@ export const translations = {
     h_loading_exp: 'กำลังโหลดประสบการณ์ Velin...',
     h_go_home: 'กลับหน้าหลัก',
 
-    // Products Page - by worapol สุดหล่อ
+    
     ps_found: 'พบสินค้า',
     ps_items: 'รายการ',
     ps_filter_by: 'กรองโดย',
@@ -755,7 +768,7 @@ export const translations = {
     ps_desc_puma: 'Puma ก่อตั้งโดย Rudolf Dassler ในปี 1948 ณ ประเทศเยอรมัน พูม่าสร้างชื่อเสียงระดับโลกผ่านนวัตกรรมที่รวดเร็วและความร่วมมือกับไอคอนระดับโลกมากมาย ผสมผสานไลฟ์สไตล์แบบสปอร์ตเข้ากับแฟชั่นยุคใหม่ได้อย่างลงตัว',
     ps_desc_default: 'VELIN คัดสรรผลิตภัณฑ์คุณภาพเยี่ยมจากแบรนด์ชั้นนำทั่วโลก เพื่อให้คุณได้สัมผัสกับสไตล์ที่โดดเด่นและนวัตกรรมล่าสุดในวงการแฟชั่นทุกประเภท ไม่ว่าจะเป็นรองเท้า เสื้อผ้า หรืออุปกรณ์เสริมที่สะท้อนความเป็นตัวคุณ',
 
-    // Product Detail - by worapol สุดหล่อ
+    
     pd_available_sizes: 'ไซส์ที่พร้อมส่ง',
     pd_selected: 'เลือกแล้ว',
     pd_available_colors: 'สีอื่นๆ ที่มี',
@@ -781,7 +794,7 @@ export const translations = {
     pd_rate_error: 'กรุณาให้คะแนนดาวก่อนส่งรีวิว',
     pd_comment_success: 'ส่งความคิดเห็นเรียบร้อยแล้ว!',
 
-    // Cart - by worapol สุดหล่อ
+    
     cart_title: 'ตะกร้าสินค้าของคุณ',
     cart_empty: 'ตะกร้าของคุณยังว่างอยู่',
     cart_go_shop: 'ไปเลือกซื้อสินค้า',
@@ -796,14 +809,14 @@ export const translations = {
     cart_add_success: 'เพิ่มลงตะกร้าแล้ว!',
     cart_remove_success: 'เอาสินค้าออกจากตะกร้าแล้ว',
 
-    // Wishlist - by worapol สุดหล่อ
+    
     wish_added: 'เพิ่มรายการโปรดแล้ว!',
     wish_removed: 'นำออกจากรายการโปรดแล้ว',
     wish_subtitle: 'สินค้าที่คุณสนใจและบันทึกไว้',
     wish_empty: 'ไม่มีรายการโปรด',
     wish_empty_desc: 'กลับไปเลือกชมสินค้าที่คุณถูกใจแล้วบันทึกไว้ที่นี่',
 
-    // My Orders - by worapol สุดหล่อ
+    
     ord_title: 'ประวัติการสั่งซื้อ',
     ord_number: 'คำสั่งซื้อ',
     ord_date: 'วันที่',
@@ -824,7 +837,7 @@ export const translations = {
     ord_refund_done: 'คืนเงินเรียบร้อยแล้ว',
     ord_refund_check_bank: 'กรุณาตรวจสอบยอดเงินในบัญชี',
     
-    // Order Statuses - by worapol สุดหล่อ
+    
     st_pending: 'รอดำเนินการ',
     st_shipped: 'จัดส่งแล้ว',
     st_arrived: 'ถึงที่หมาย',
@@ -832,12 +845,12 @@ export const translations = {
     st_cancelled: 'ยกเลิก',
     st_refunded: 'คืนเงินแล้ว',
 
-    // Confirmation Modals - by worapol สุดหล่อ
+    
     conf_receipt_title: 'ยืนยันได้รับสินค้า?',
     conf_receipt_msg: 'คุณตรวจสอบและได้รับสินค้าเรียบร้อยแล้วใช่หรือไม่?',
     conf_receipt_btn: 'ยืนยันรับของ',
     
-    // Review Modal - by worapol สุดหล่อ
+    
     rev_title: 'เขียนรีวิวสินค้า',
     rev_rate: 'ให้คะแนนสินค้านี้',
     rev_placeholder: 'แชร์ประสบการณ์ของคุณเกี่ยวกับสินค้านี้ (ไม่บังคับ)',
@@ -845,7 +858,7 @@ export const translations = {
     rev_submitting: 'กำลังส่ง...',
     rev_success: 'ขอบคุณสำหรับรีวิวของคุณ!',
 
-    // Refund Modal - by worapol สุดหล่อ
+    
     ref_title: 'แจ้งข้อมูลเพื่อรับเงินคืน',
     ref_desc: 'กรุณากรอกข้อมูลบัญชีธนาคารเพื่อให้เราโอนเงินคืน (ออเดอร์ #',
     ref_bank: 'ธนาคาร',
@@ -858,7 +871,7 @@ export const translations = {
     ref_submit: 'บันทึกข้อมูล',
     ref_success: 'บันทึกข้อมูลคืนเงินเรียบร้อยแล้ว',
 
-    // Payment / Checkout - by worapol สุดหล่อ
+    
     pay_title: 'ชำระเงิน',
     pay_billing: 'ข้อมูลที่อยู่จัดส่ง',
     pay_shipping_method: 'วิธีการจัดส่ง',
@@ -882,6 +895,7 @@ export const translations = {
     pay_attach_slip: 'แนบสลิปที่นี่',
     pay_upload_slip: 'อัพโหลดหลักฐานการโอน',
     pay_change_slip: 'เปลี่ยนรูปภาพ',
+    pay_view_slip: 'ดูหลักฐานการคืนเงิน',
     pay_confirm: 'ยืนยันการชำระเงิน',
     pay_bkk_only: 'เฉพาะกรุงเทพฯ',
     pay_shipping_via: 'การจัดส่งผ่าน',
@@ -892,13 +906,13 @@ export const translations = {
     order_success_check_history: 'คุณสามารถตรวจสอบรายละเอียดคำสั่งซื้อของคุณได้ที่หน้าประวัติการสั่งซื้อ',
     back_home: 'กลับหน้าหลัก',
 
-    // Profile Sections - by worapol สุดหล่อ
+    
     prof_title: 'การตั้งค่าบัญชี',
     prof_account_info: 'ข้อมูลบัญชี',
     prof_personal: 'ข้อมูลส่วนตัว',
     prof_shipping_addr: 'ที่อยู่จัดส่ง',
     
-    // Profile Fields & Labels - by worapol สุดหล่อ
+    
     prof_name: 'ชื่อ-นามสกุล',
     prof_email: 'อีเมล',
     prof_phone: 'เบอร์โทรศัพท์',
@@ -906,14 +920,16 @@ export const translations = {
     prof_no_email: 'ไม่ได้ระบุอีเมล',
     prof_no_address: 'กรุณาระบุที่อยู่จัดส่ง',
     
-    // Profile Actions - by worapol สุดหล่อ
+    
     prof_update: 'อัปเดตข้อมูล',
     prof_success: 'อัปเดตข้อมูลโปรไฟล์แล้ว!',
     prof_edit_address: 'แก้ไข',
     prof_add_address: 'เพิ่มที่อยู่จัดส่ง',
+    prof_delete_address: 'ลบที่อยู่จัดส่ง',
+    prof_confirm_delete_address: 'คุณแน่ใจหรือไม่ที่จะลบที่อยู่จัดส่งนี้?',
     prof_edit_address_title: 'แก้ไขที่อยู่จัดส่ง',
 
-    // Password Management - by worapol สุดหล่อ
+    
     prof_change_pw: 'เปลี่ยนรหัสผ่าน',
     prof_old_pw: 'รหัสผ่านปัจจุบัน',
     prof_new_pw: 'รหัสผ่านใหม่',
@@ -922,7 +938,7 @@ export const translations = {
     prof_pw_mismatch: 'รหัสผ่านใหม่และการยืนยันไม่ตรงกัน',
     prof_pw_success: 'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว',
 
-    // Address & Map Specifics - by worapol สุดหล่อ
+    
     prof_address_header: 'ที่อยู่',
     prof_full_name: 'ชื่อ นามสกุล',
     prof_address_detail: 'รายละเอียดที่อยู่',
@@ -946,7 +962,7 @@ export const translations = {
     prof_set_default: 'ตั้งเป็นที่อยู่หลัก',
     prof_address_success: 'อัปเดตที่อยู่จัดส่งเรียบร้อย',
 
-    // Footer - by worapol สุดหล่อ
+    
     f_most_popular: 'สินค้าขายดี',
     f_nike: 'NIKE',
     f_apparel: 'เครื่องแต่งกาย',
@@ -966,14 +982,14 @@ export const translations = {
     f_terms: 'ข้อกำหนด',
     f_privacy: 'ความเป็นส่วนตัว',
 
-    // Shipping Modal - by worapol สุดหล่อ
+    
     ship_title: 'การจัดส่งและขนส่ง',
     ship_messenger_title: 'จัดส่งเมสเซนเจอร์ (เฉพาะกรุงเทพฯ)',
     ship_messenger_desc: 'จัดส่งด่วนหลังการตรวจสอบสินค้า เลือกส่งในวันเดียวกันได้สำหรับคำสั่งซื้อพร้อมส่งที่ยืนยันก่อน 16:00 น. (ราคาตามระยะทาง)',
     ship_ems_title: 'ส่งแบบ EMS ด่วน',
     ship_ems_desc: 'จัดส่งโดยพาร์ทเนอร์หลังผ่านการตรวจสอบ (1-2 วันทำการสำหรับสินค้าพร้อมส่ง, 3-5 วันสำหรับเคสปกติ)',
 
-    // Admin - by worapol สุดหล่อ
+    
     adm_dashboard: 'แดชบอร์ด',
     adm_products: 'จัดการสินค้า',
     adm_orders: 'ออเดอร์',
@@ -984,7 +1000,6 @@ export const translations = {
     adm_total_orders: 'ออเดอร์ทั้งหมดในระบบ',
     adm_bestsellers: 'สินค้าขายดี',
     adm_logs: 'ประวัติการใช้งาน',
-    adm_personnel: 'ระบบบุคลากร',
     adm_manage: 'จัดการแอดมิน',
     adm_sales_dash: 'หน้าขายสินค้า',
     adm_inventory_summary: 'สรุปคลังสินค้า',
@@ -992,7 +1007,7 @@ export const translations = {
     adm_top_brand: 'แบรนด์ที่ทำยอดขายได้สูงสุด',
     adm_no_brand_data: 'ไม่มีข้อมูลแบรนด์',
     
-    // Admin Inventory - by worapol สุดหล่อ
+    
     inv_title: 'สรุปผลิตภัณฑ์และคลังสินค้า',
     inv_th_product: 'สินค้า',
     inv_th_sold: 'ยอดขายสุทธิ (สำเร็จแล้ว)',
@@ -1001,9 +1016,14 @@ export const translations = {
     inv_th_remain_qty: 'คงเหลือ',
     inv_th_total_qty: 'จำนวนรวม',
     inv_th_total_val: 'มูลค่าสินค้ารวมทั้งหมด',
-    inv_th_price: 'ราคา/ชิ้น',
+    inv_th_price: 'ราคา',
+    inv_th_item: 'สินค้า',
+    inv_th_size: 'ไซส์',
+    inv_th_quantity: 'จำนวน',
+    inv_th_total: 'ยอดรวม',
+    inv_th_price_per_unit: 'ราคา/ชิ้น',
 
-    // Admin Orders - by worapol สุดหล่อ
+    
     adm_order_shipped: 'แจ้งจัดส่งสินค้าเรียบร้อยแล้ว',
     adm_order_arrived: 'แจ้งสินค้าถึงที่หมายเรียบร้อยแล้ว',
     adm_order_cancelled: 'ยกเลิกคำสั่งซื้อเรียบร้อยแล้ว',
@@ -1053,6 +1073,7 @@ export const translations = {
     adm_total_pay: 'ยอดชำระรวม',
     adm_curr_status: 'สถานะปัจจุบัน',
     adm_reason: 'เหตุผล',
+    adm_reason_label: 'เหตุผลในการยกเลิก',
     adm_wait_confirm: 'รอการยืนยันรับสินค้าจากลูกค้า',
     adm_finalized: 'เสร็จสมบูรณ์',
     adm_refund_success: 'คืนเงินสำเร็จ',
@@ -1079,6 +1100,11 @@ export const translations = {
     adm_pending_hint: 'รอยืนยัน',
     adm_no_slip: 'ไม่มีสลิป',
     adm_map_pos_label: 'ตำแหน่งบนแผนที่',
+    adm_not_specified: 'ยังไม่ได้ระบุ',
+    adm_refund_info: 'ข้อมูลการคืนเงิน',
+    h_bank: 'ธนาคาร',
+    h_acc_name: 'ชื่อบัญชี',
+    h_acc_num: 'เลขที่บัญชี',
     view_detail: 'ดูรายละเอียด',
     nav_wishlist: 'รายการโปรด',
     nav_under: 'ต่ำกว่า',
@@ -1090,7 +1116,7 @@ export const translations = {
     pay_missing_slip: 'กรุณาแนบสลิปหลักฐานการโอน',
     pay_select_shipping: 'กรุณาเลือกวิธีการจัดส่ง',
 
-    // Auth Page (Synced) - by worapol สุดหล่อ
+    
     auth_welcome: 'ยินดีต้อนรับกลับมา',
     auth_sign_in_desc: 'เข้าสู่ระบบบัญชีของคุณ',
     auth_create_acc: 'สร้างบัญชี',
@@ -1112,7 +1138,7 @@ export const translations = {
     auth_login_failed: 'เข้าสู่ระบบล้มเหลว',
     auth_reg_failed: 'สมัครสมาชิกล้มเหลว',
 
-    // Misc / Filters - by worapol สุดหล่อ
+    
     en: 'อังกฤษ',
     th: 'ไทย',
     in: 'นิ้ว',
@@ -1128,14 +1154,14 @@ export const translations = {
     month: 'เดือน',
     f_tagline: 'จุดหมายปลายทางชั้นนำสำหรับการคัดสรรและสินค้าหายาก',
 
-    // Super Admin - by worapol สุดหล่อ
+    
     super_admin_welcome: 'ยินดีต้อนรับ!',
     super_admin_desc_1: 'คุณเข้าสู่ระบบในฐานะ',
     super_admin_desc_2: 'กรุณาเลือกระบบที่คุณต้องการเข้าใช้งาน:',
     super_admin_btn_products: 'จัดการสินค้า/ออเดอร์ (ระบบปกติ)',
     super_admin_btn_admins: 'จัดการแอดมิน (ต้องสแกนใบหน้า)',
 
-    // Admin Activity Logs - by worapol สุดหล่อ
+    
     adm_logs_title: 'ประวัติการใช้งานระบบ',
     adm_logs_desc: 'ตรวจจับและบันทึกทุกการเคลื่อนไหวของแอดมิน ทั้งการจัดการสินค้า อัปเดตสต๊อก และระบบออเดอร์ทั้งหมด',
     adm_logs_th_datetime: 'วันเวลา',
@@ -1147,10 +1173,10 @@ export const translations = {
     adm_logs_no_activity: 'ไม่มีประวัติการใช้งานล่าสุด',
     adm_logs_loading: 'กำลังโหลดประวัติการใช้งาน...',
 
-    // Roles - by worapol สุดหล่อ
+    
     adm_role_super: 'ผู้ดูแลระดับสูง',
 
-    // Admin Best Sellers - by worapol สุดหล่อ
+    
     adm_loading_best_sellers: 'กำลังโหลดข้อมูลสินค้าขายดี...',
     adm_top_products_showcase: 'แสดงผลสินค้ายอดฮิต',
     adm_print_hub_report: 'พิมพ์รายงานการขาย',
@@ -1173,7 +1199,7 @@ export const translations = {
     adm_prev: 'ก่อนหน้า',
     adm_next: 'ถัดไป',
 
-    // Admin Dashboard - by worapol สุดหล่อ
+    
     adm_overview: 'ภาพรวม',
     adm_forecast_7_days: 'พยากรณ์ (7 วันล่าสุด)',
     adm_trend_year: 'แนวโน้มสำหรับปี',
@@ -1191,18 +1217,17 @@ export const translations = {
     adm_items_sold: 'ชิ้นที่ขายได้',
     adm_lifetime_desc: 'ข้อมูลเชิงลึกแบบครบวงจรตลอดทุกรอบการดำเนินงาน อัตราการเติบโตและการหมุนเวียนสินค้าถูกเปรียบเทียบกับผลงานในอดีต',
 
-    // Admin Orders - by worapol สุดหล่อ
+    
     adm_status_pending: 'รอดำเนินการ',
     adm_status_shipped: 'จัดส่งแล้ว',
     adm_status_arrived: 'ถึงที่หมาย',
     adm_status_delivered: 'สำเร็จแล้ว',
     adm_status_cancelled: 'ยกเลิก',
     adm_status_refunded: 'คืนเงิน',
-    adm_payment_verification: 'การตรวจสอบการชำระเงิน',
     adm_shipping_status: 'สถานะการจัดส่ง',
 
 
-    // Admin Products - by worapol สุดหล่อ
+    
     adm_manage_products: 'จัดการสินค้า',
     adm_filter: 'ตัวกรอง',
     adm_total_low: 'สต็อก < 5',
@@ -1239,6 +1264,8 @@ export const translations = {
     adm_form_cover: 'หน้าปก',
     adm_form_stock: 'สต๊อก',
     adm_form_size_guide: 'ตารางไซส์',
+    adm_form_chest_label: 'รอบอก',
+    adm_form_length_label: 'ความยาว',
     adm_form_add_stock: '+ เพิ่มสต๊อก',
     adm_form_add_guide: '+ เพิ่มตารางไซส์',
     adm_form_save: 'บันทึกการเปลี่ยนแปลง',
@@ -1308,20 +1335,20 @@ export const translations = {
     adm_reset_face_confirm: 'คุณแน่ใจหรือไม่ที่จะรีเซ็ตข้อมูลใบหน้าของ {{username}}? เจ้าหน้าที่จะต้องสแกนใบหน้าใหม่',
     adm_reset_success: 'รีเซ็ตข้อมูลใบหน้าเรียบร้อยแล้ว',
     adm_form_password: 'รหัสผ่านสำหรับการเข้าถึง',
-    adm_personnel: 'จัดการบุคลากร',
+
   }
 };
 
 export const LanguageProvider = ({ children }) => {
   const { user } = useContext(AuthContext);
   
-  // Helper to get the correct storage key based on current user - by worapol สุดหล่อ
+  
   const getLangKey = (u) => {
     if (u && u.id) return `velin_lang_${u.id}`;
     return 'velin_lang_guest';
   };
 
-  // Initialize with the language for the current user in storage, or 'en' - by worapol สุดหล่อ
+  
   const [language, setLanguage] = useState(() => {
     try {
       const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -1332,22 +1359,22 @@ export const LanguageProvider = ({ children }) => {
     }
   });
 
-  // Keep state in sync with user changes (Login/Logout/Switch) - by worapol สุดหล่อ
+  
   useEffect(() => {
     const syncLanguage = async () => {
       const key = getLangKey(user);
       const localPref = localStorage.getItem(key);
 
-      // 1. Immediately switch to local preference if exists, or default to 'en' - by worapol สุดหล่อ
-      // This avoids showing the PREVIOUS user's language while the API is loading. - by worapol สุดหล่อ
+      
+      
       if (localPref) {
         setLanguage(localPref);
       } else {
-        // If no local preference for THIS user, clear the state to 'en' immediately - by worapol สุดหล่อ
+        
         setLanguage('en');
       }
 
-      // 2. Then, if logged in, try to fetch the absolute truth from the DB - by worapol สุดหล่อ
+      
       if (user) {
         try {
           const res = await api.get('/auth/profile');
@@ -1369,7 +1396,7 @@ export const LanguageProvider = ({ children }) => {
     const key = getLangKey(user);
     localStorage.setItem(key, lang);
     
-    // We update the backend if user is logged in - by worapol สุดหล่อ
+    
     if (user) {
       try {
         await api.put('/auth/profile', { preferred_language: lang });

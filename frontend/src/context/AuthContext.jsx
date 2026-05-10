@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { createContext, useState, useEffect } from 'react';
 import api from '../services/api';
 
@@ -9,11 +8,11 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Force re-login on new browser session/restart as requested by USER - by worapol สุดหล่อ
+    
     const sessionActive = sessionStorage.getItem('session_active');
 
     if (!sessionActive) {
-      // First time opening the app in this browser session - by worapol สุดหล่อ
+      
       localStorage.removeItem('user');
       localStorage.removeItem('token');
       sessionStorage.setItem('session_active', 'true');

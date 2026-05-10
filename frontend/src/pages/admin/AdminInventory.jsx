@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useLanguage } from '../../context/LanguageContext';
@@ -13,7 +12,7 @@ const AdminInventory = () => {
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Pagination - by worapol สุดหล่อ
+  
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -42,7 +41,7 @@ const AdminInventory = () => {
       const reportTime = today.toLocaleTimeString('en-US', { hour12: false });
       const reportId = `INV-${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-      // --- HEADER SECTION --- - by worapol สุดหล่อ
+      
       doc.setFillColor(79, 70, 229);
       doc.rect(14, 15, 2, 25, 'F');
 
@@ -60,7 +59,7 @@ const AdminInventory = () => {
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(31, 41, 55);
-      doc.text('PRODUCT INVENTORY AUDIT', 283, 30, { align: 'right' });
+      doc.text('PRODUCT INVENTORY & FINANCIAL SUMMARY', 283, 30, { align: 'right' });
 
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
@@ -73,42 +72,58 @@ const AdminInventory = () => {
       doc.setLineWidth(0.5);
       doc.line(14, 50, 283, 50);
 
-      // --- STATUS BAR --- - by worapol สุดหล่อ
+      
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(31, 41, 55);
       doc.text('DOCUMENT STATUS:', 14, 58);
       doc.setTextColor(79, 70, 229);
-      doc.text('OFFICIAL STOCK RECORD', 48, 58);
+      doc.text('OFFICIAL STOCK RECORD', 55, 58);
 
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(107, 114, 128);
       doc.text('No specific filters applied. Full catalog audit.', 14, 63);
 
-      // --- TABLE SECTION --- - by worapol สุดหล่อ
+      
       const exportData = inventory.map(item => {
-        const disc = item.discount_percent ? `${item.discount_percent}%` : '-';
-        const finalPrice = item.discount_percent 
-          ? item.price * (1 - item.discount_percent / 100) 
-          : item.price;
+        const soldRev = item.total_sold_revenue || (item.total_sold * item.price) || 0;
+        const remainVal = item.remaining_value || (item.remaining_stock * item.price) || 0;
+        const totalVal = item.total_potential_value || ((item.total_sold + item.remaining_stock) * item.price) || 0;
+        
+        const categoryLabel = item.category === 'shoe' ? t('nav_shoes') : (item.category === 'apparel' ? t('nav_apparel') : item.category);
+        const productInfo = `${item.product_code}\n${item.name}\n${item.brand} - ${categoryLabel}`;
 
         return [
-          item.product_code || '-',
-          item.name,
-          item.category,
-          item.brand,
+          productInfo,
           Number(item.price).toLocaleString(),
-          disc,
-          Number(finalPrice).toLocaleString(),
-          { content: item.remaining_stock, styles: { textColor: item.remaining_stock < 5 ? [220, 38, 38] : [31, 41, 55], fontStyle: 'bold' } },
-          item.sizes_breakdown || '-'
+          item.total_quantity,
+          item.total_sold,
+          item.remaining_stock,
+          Number(soldRev).toLocaleString(),
+          Number(remainVal).toLocaleString(),
+          Number(totalVal).toLocaleString()
         ];
       });
 
       autoTable(doc, {
         startY: 68,
-        head: [['Code', 'Product Description', 'Category', 'Brand', 'Price (THB)', 'Disc', 'Final (THB)', 'Stock', 'Sizes Breakdown']],
+        head: [
+          [
+            { content: 'Product', rowSpan: 2, styles: { halign: 'left', valign: 'middle' } },
+            { content: 'Price', rowSpan: 2, styles: { halign: 'right', valign: 'middle' } },
+            { content: 'PRODUCTS (QTY)', colSpan: 3, styles: { halign: 'center', fillColor: [240, 253, 244], textColor: [21, 128, 61] } },
+            { content: 'FINANCIAL SUMMARY (THB)', colSpan: 3, styles: { halign: 'center', fillColor: [239, 246, 255], textColor: [29, 78, 216] } }
+          ],
+          [
+            { content: 'Total Qty', styles: { halign: 'center' } },
+            { content: 'Sold (Qty)', styles: { halign: 'center' } },
+            { content: 'Remain (Qty)', styles: { halign: 'center' } },
+            { content: 'Sold Revenue', styles: { halign: 'right' } },
+            { content: 'Stock Value', styles: { halign: 'right' } },
+            { content: 'Grand Total', styles: { halign: 'right' } }
+          ]
+        ],
         body: exportData,
         theme: 'grid',
         headStyles: {
@@ -116,30 +131,33 @@ const AdminInventory = () => {
           textColor: 255,
           fontSize: 8,
           fontStyle: 'bold',
-          halign: 'center'
+          halign: 'center',
+          lineColor: [200, 200, 200],
+          lineWidth: 0.1
         },
         styles: {
-          fontSize: 7,
+          fontSize: 7.5,
           cellPadding: 3,
-          valign: 'middle'
+          valign: 'middle',
+          lineColor: [180, 180, 180],
+          lineWidth: 0.1
         },
         columnStyles: {
-          0: { cellWidth: 25 },
-          1: { cellWidth: 55 },
+          0: { cellWidth: 70 },
+          1: { cellWidth: 25, halign: 'right', fontStyle: 'bold' },
           2: { cellWidth: 20, halign: 'center' },
           3: { cellWidth: 20, halign: 'center' },
-          4: { cellWidth: 20, halign: 'right' },
-          5: { cellWidth: 15, halign: 'center' },
-          6: { cellWidth: 20, halign: 'right' },
-          7: { cellWidth: 15, halign: 'center' },
-          8: { cellWidth: 70 }
+          4: { cellWidth: 20, halign: 'center' },
+          5: { cellWidth: 30, halign: 'right' },
+          6: { cellWidth: 30, halign: 'right' },
+          7: { cellWidth: 30, halign: 'right', fontStyle: 'bold' }
         },
         alternateRowStyles: {
           fillColor: [250, 250, 251]
         }
       });
 
-      // --- SIGNATURE SECTION --- - by worapol สุดหล่อ
+      
       const finalY = doc.lastAutoTable.finalY + 30;
       doc.setDrawColor(203, 213, 225);
       doc.setLineWidth(0.3);
@@ -155,7 +173,7 @@ const AdminInventory = () => {
       doc.text('Warehouse Manager Approval', 213, finalY + 5);
       doc.text(`Signed Date: ${today.toLocaleDateString()}`, 213, finalY + 10);
 
-      // --- FOOTER --- - by worapol สุดหล่อ
+      
       const pageCount = doc.internal.getNumberOfPages();
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
@@ -172,7 +190,7 @@ const AdminInventory = () => {
     }
   };
 
-  // Stats - by worapol สุดหล่อ
+  
   const [totalPotentialValue, setTotalPotentialValue] = useState(0);
   const [totalRemainingValue, setTotalRemainingValue] = useState(0);
   const [totalItemsOriginal, setTotalItemsOriginal] = useState(0);
@@ -206,7 +224,7 @@ const AdminInventory = () => {
       setTotalRemainingValue(remainVal);
       setTotalItemsOriginal(itemsOrg);
       setTotalItemsRemaining(soldVal);
-      setInventory(res.data.map(item => ({ ...item, total_remaining_qty: item.remaining_stock }))); // Save for later use - by worapol สุดหล่อ
+      setInventory(res.data.map(item => ({ ...item, total_remaining_qty: item.remaining_stock }))); 
 
     } catch (err) {
       console.error(err);

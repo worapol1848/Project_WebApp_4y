@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import './Toast.css';
 

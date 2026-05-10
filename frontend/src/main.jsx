@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'

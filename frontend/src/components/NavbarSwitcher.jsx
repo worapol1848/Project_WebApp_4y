@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -13,7 +12,7 @@ const NavbarSwitcher = () => {
     return null;
   }
 
-  // Admin navbar for admin and superadmin routes - by worapol สุดหล่อ
+  
   if ((location.pathname.startsWith('/admin') || location.pathname.startsWith('/superadmin')) && !location.pathname.includes('/face-scan')) {
     if (user && (user.role === 'admin' || user.role === 'superadmin')) {
       return <AdminNavbar />;

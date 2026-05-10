@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -26,7 +25,7 @@ const UserNavbar = () => {
   const [currentUser, setCurrentUser] = useState(user);
   const [filters, setFilters] = useState({ brands: [], categories: [], productTypes: [] });
   
-  // Price Slider State - by worapol สุดหล่อ
+  
   const minPossible = 0;
   const maxPossible = 100000;
   const [sliderMin, setSliderMin] = useState(minPossible);
@@ -35,7 +34,7 @@ const UserNavbar = () => {
   const userMenuRef = useRef(null);
   const searchResultsRef = useRef(null);
 
-  // Reset states on route change - by worapol สุดหล่อ
+  
   useEffect(() => {
     setIsUserMenuOpen(false);
     setIsSearchOpen(false);
@@ -43,7 +42,7 @@ const UserNavbar = () => {
     setSearchTerm('');
   }, [location.pathname]);
 
-  // Click outside listeners - by worapol สุดหล่อ
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
@@ -57,7 +56,7 @@ const UserNavbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Hide/Show on scroll - by worapol สุดหล่อ
+  
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -126,14 +125,14 @@ const UserNavbar = () => {
     }
   };
 
-  // Fetch Filters (Brands & Categories) - by worapol สุดหล่อ
+  
   useEffect(() => {
     api.get('/products/filters')
       .then(res => setFilters(res.data))
       .catch(err => console.error('Error fetching filters:', err));
   }, []);
 
-  // Search Logic - by worapol สุดหล่อ
+  
   useEffect(() => {
     if (isSearchOpen && allProducts.length === 0) {
       api.get('/products').then(res => setAllProducts(res.data)).catch(err => console.error(err));

@@ -1,13 +1,12 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect } from 'react';
 
 const PromoSlider = ({ products, navigate }) => {
-  // Use products with discounts or low stock as "Recommended/Best Sellers" - by worapol สุดหล่อ
+  
   let promoProducts = products?.filter(p => p.discount_percent > 0 || p.stock < 20) || [];
   if (promoProducts.length < 4) {
     promoProducts = [...promoProducts, ...(products || [])];
   }
-  promoProducts = promoProducts.slice(0, 4); // force 4 faces for the 3D cube - by worapol สุดหล่อ
+  promoProducts = promoProducts.slice(0, 4); 
 
   const [current, setCurrent] = useState(0);
   const [transitionTime, setTransitionTime] = useState(0.8);

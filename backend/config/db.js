@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 const mysql = require('mysql2');
 require('dotenv').config();
 
@@ -15,7 +14,7 @@ const pool = mysql.createPool({
 
 const promisePool = pool.promise();
 
-// Test connection - by worapol สุดหล่อ
+
 promisePool.getConnection()
   .then(connection => {
     console.log('Database connected successfully');

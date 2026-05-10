@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useToast } from '../../context/ToastContext';
@@ -9,7 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import './AdminDashboard.css';
 import './AdminOrders.css';
 
-// Fix for Leaflet default icon issues in React - by worapol สุดหล่อ
+
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
@@ -37,12 +36,14 @@ const AdminOrders = () => {
   const [isRefundConfirmOpen, setIsRefundConfirmOpen] = useState(false);
   const [orderToRefund, setOrderToRefund] = useState(null);
   const [isFullMapOpen, setIsFullMapOpen] = useState(false);
+  const [refundSlip, setRefundSlip] = useState(null);
+  const [isRefunding, setIsRefunding] = useState(false);
 
-  // Filters - by worapol สุดหล่อ
-  const [slipFilter, setSlipFilter] = useState('all'); // all, verified, pending - by worapol สุดหล่อ
+  
+  const [slipFilter, setSlipFilter] = useState('all'); 
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // Pagination - by worapol สุดหล่อ
+  
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -122,7 +123,7 @@ const AdminOrders = () => {
 
   const handleCancelClick = (e, id) => {
     if (e && e.stopPropagation) e.stopPropagation();
-    // If e is actually the id (called from modal) - by worapol สุดหล่อ
+    
     const orderId = id || e;
     setOrderToCancel(orderId);
     setCancelReason('');
@@ -157,27 +158,41 @@ const AdminOrders = () => {
   };
 
   const handleRefundOrder = async (orderId) => {
+    if (isRefunding) return;
+    setIsRefunding(true);
     try {
-      await api.put(`/orders/${orderId}/refund-complete`);
+      const formData = new FormData();
+      if (refundSlip) {
+        formData.append('refund_slip', refundSlip);
+      }
+
+      await api.put(`/orders/${orderId}/refund-complete`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
       showToast(t('adm_order_refunded') || 'Order marked as Refunded', 'success');
       setIsRefundConfirmOpen(false);
       setOrderToRefund(null);
+      setRefundSlip(null);
       fetchOrders();
       if (selectedOrder && selectedOrder.id === orderId) {
         handleViewDetails(orderId);
       }
     } catch (err) {
       showToast(err.response?.data?.message || t('adm_order_update_failed') || 'Failed to update order', 'error');
+    } finally {
+      setIsRefunding(false);
     }
   };
 
   const openRefundConfirm = (e, id) => {
     if (e && e.stopPropagation) e.stopPropagation();
     setOrderToRefund(id);
+    setRefundSlip(null);
     setIsRefundConfirmOpen(true);
   };
 
-  // Calculate pagination - by worapol สุดหล่อ
+  
   const indexOfLastOrder = currentPage * itemsPerPage;
   const indexOfFirstOrder = indexOfLastOrder - itemsPerPage;
 
@@ -640,6 +655,18 @@ const AdminOrders = () => {
                           {selectedOrder.cancel_reason || <span style={{ fontStyle: 'italic', opacity: 0.5 }}>ยังไม่ได้ระบุ</span>}
                         </span>
                       </div>
+                      {selectedOrder.refund_slip_url && (
+                        <div className="info-row" style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid #FFEDD5', flexDirection: 'column', alignItems: 'flex-start' }}>
+                          <span className="info-label" style={{ marginBottom: '8px' }}>{t('pay_upload_slip') || 'Refund Slip'}:</span>
+                          <a href={`http://localhost:5000${selectedOrder.refund_slip_url}`} target="_blank" rel="noopener noreferrer">
+                            <img 
+                              src={`http://localhost:5000${selectedOrder.refund_slip_url}`} 
+                              alt="Refund Slip" 
+                              style={{ maxWidth: '100%', borderRadius: '8px', border: '1px solid #E2E8F0', cursor: 'pointer' }} 
+                            />
+                          </a>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : null}
@@ -839,11 +866,40 @@ const AdminOrders = () => {
                   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L3 7V17L12 22L21 17V7L12 2Z" /><path d="M12 22V12" /><path d="M21 7L12 12L3 7" /></svg>
                 </div>
               </div>
-              <p style={{ fontSize: '1.1rem', color: '#444', marginBottom: '0.5rem' }}>{t('adm_confirm_refund_msg') || 'Confirm refund transferred?'}</p>
+              <p style={{ fontSize: '1.1rem', color: '#444', marginBottom: '1rem' }}>{t('adm_confirm_refund_msg') || 'Confirm refund transferred?'}</p>
+              
+              <div className="refund-upload-section" style={{ marginTop: '20px', padding: '15px', backgroundColor: '#F8FAFC', borderRadius: '12px', border: '1px dashed #CBD5E1' }}>
+                <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', color: '#475569' }}>
+                  {t('pay_upload_slip') || 'Upload Refund Slip'}
+                </label>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={(e) => setRefundSlip(e.target.files[0])}
+                  style={{ display: 'none' }}
+                  id="refund-slip-input"
+                />
+                <label htmlFor="refund-slip-input" className="premium-upload-btn" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', backgroundColor: '#FFF', border: '1px solid #E2E8F0', borderRadius: '8px', fontSize: '0.9rem', color: '#6366F1', fontWeight: '600', transition: 'all 0.2s' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  {refundSlip ? refundSlip.name : (t('pay_attach_slip') || 'Attach Slip')}
+                </label>
+                {refundSlip && (
+                  <div style={{ marginTop: '10px' }}>
+                    <img src={URL.createObjectURL(refundSlip)} alt="Preview" style={{ maxWidth: '100px', borderRadius: '8px', border: '2px solid #6366F1' }} />
+                  </div>
+                )}
+              </div>
             </div>
             <div className="admin-modal-footer">
-              <button className="modal-btn secondary" onClick={() => setIsRefundConfirmOpen(false)}>{t('no') || 'No'}</button>
-              <button className="modal-btn success" style={{ backgroundColor: '#6366f1' }} onClick={() => handleRefundOrder(orderToRefund)}>{t('adm_refund_success') || 'Refunded'}</button>
+              <button className="modal-btn secondary" onClick={() => setIsRefundConfirmOpen(false)} disabled={isRefunding}>{t('no') || 'No'}</button>
+              <button 
+                className="modal-btn success" 
+                style={{ backgroundColor: '#6366f1' }} 
+                onClick={() => handleRefundOrder(orderToRefund)}
+                disabled={isRefunding}
+              >
+                {isRefunding ? (t('loading') || 'Processing...') : (t('adm_refund_success') || 'Refunded')}
+              </button>
             </div>
           </div>
         </div>

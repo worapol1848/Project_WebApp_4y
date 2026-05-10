@@ -1,14 +1,13 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect } from 'react';
 import './MiniCalendar.css';
 
 const MiniCalendar = ({ selectedDate, onChange, compact = false }) => {
-  // selectedDate is a string 'YYYY-MM-DD' - by worapol สุดหล่อ
+  
   const initialDate = selectedDate ? new Date(selectedDate) : new Date();
 
   const [currentMonth, setCurrentMonth] = useState(initialDate);
 
-  // Sync if parent changes it - by worapol สุดหล่อ
+  
   useEffect(() => {
     if (selectedDate) {
       const parentDate = new Date(selectedDate);
@@ -31,7 +30,7 @@ const MiniCalendar = ({ selectedDate, onChange, compact = false }) => {
 
   const handleDateClick = (day) => {
     const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-    // Format to YYYY-MM-DD local time correctly - by worapol สุดหล่อ
+    
     const year = newDate.getFullYear();
     const month = String(newDate.getMonth() + 1).padStart(2, '0');
     const d = String(newDate.getDate()).padStart(2, '0');
@@ -44,13 +43,13 @@ const MiniCalendar = ({ selectedDate, onChange, compact = false }) => {
     const month = currentMonth.getMonth();
 
     const totalDays = daysInMonth(year, month);
-    // Adjust startDay to Monday-based (0 for Mon, 6 for Sun) - by worapol สุดหล่อ
+    
     let startDay = firstDayOfMonth(year, month) - 1;
-    if (startDay === -1) startDay = 6; // Sunday moved to index 6 - by worapol สุดหล่อ
+    if (startDay === -1) startDay = 6; 
 
     const days = [];
 
-    // Dates from previous month - by worapol สุดหล่อ
+    
     const prevMonth = new Date(year, month - 1);
     const prevTotalDays = daysInMonth(prevMonth.getFullYear(), prevMonth.getMonth());
     for (let i = startDay - 1; i >= 0; i--) {
@@ -61,7 +60,7 @@ const MiniCalendar = ({ selectedDate, onChange, compact = false }) => {
       );
     }
 
-    // Actual days of current month - by worapol สุดหล่อ
+    
     const today = new Date();
     for (let d = 1; d <= totalDays; d++) {
       const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
@@ -79,7 +78,7 @@ const MiniCalendar = ({ selectedDate, onChange, compact = false }) => {
       );
     }
 
-    // Dates from next month (fill the grid to 42 cells) - by worapol สุดหล่อ
+    
     const remainingSlots = 42 - days.length;
     for (let i = 1; i <= remainingSlots; i++) {
       days.push(

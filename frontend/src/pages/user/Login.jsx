@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -23,7 +22,7 @@ const Login = () => {
       const role = (user.role || '').toLowerCase();
       
       if (role === 'superadmin') {
-        // Delay toast for superadmin until face scan is complete - by worapol สุดหล่อ
+        
         setShowFaceScanWarning(true);
       } else {
         showToast(`${t('auth_login_success')}, ${user.username}!`);
@@ -61,7 +60,7 @@ const Login = () => {
         <button type="submit">{t('auth_sign_in')}</button>
       </form>
 
-      {/* Face Scan Warning Dialog - by worapol สุดหล่อ */}
+      
       <Dialog 
         open={showFaceScanWarning} 
         onClose={() => setShowFaceScanWarning(false)}

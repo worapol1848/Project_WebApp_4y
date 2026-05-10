@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import axios from 'axios';
 
 const api = axios.create({

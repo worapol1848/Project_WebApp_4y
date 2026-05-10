@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
@@ -15,7 +14,7 @@ const MyOrders = () => {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [orderToConfirm, setOrderToConfirm] = useState(null);
 
-  // Review states - by worapol สุดหล่อ
+  
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [reviewItem, setReviewItem] = useState(null);
   const [rating, setRating] = useState(0);
@@ -23,11 +22,11 @@ const MyOrders = () => {
   const [commentText, setCommentText] = useState('');
   const [submittingReview, setSubmittingReview] = useState(false);
 
-  // Pagination states - by worapol สุดหล่อ
+  
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // Refund states - by worapol สุดหล่อ
+  
   const [isRefundModalOpen, setIsRefundModalOpen] = useState(false);
   const [refundOrderId, setRefundOrderId] = useState(null);
   const [bankName, setBankName] = useState('');
@@ -100,7 +99,7 @@ const MyOrders = () => {
       showToast(t('rev_success'), 'success');
       setIsReviewModalOpen(false);
       setReviewItem(null);
-      fetchOrders(); // Refresh to update is_reviewed status - by worapol สุดหล่อ
+      fetchOrders(); 
     } catch (err) {
       showToast(err.response?.data?.message || t('error'), 'error');
     } finally {
@@ -151,7 +150,7 @@ const MyOrders = () => {
     }
   };
 
-  // Pagination Logic - by worapol สุดหล่อ
+  
   const indexOfLastOrder = currentPage * itemsPerPage;
   const indexOfFirstOrder = indexOfLastOrder - itemsPerPage;
   const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
@@ -293,6 +292,16 @@ const MyOrders = () => {
                     {t('ord_refund_done')}
                   </div>
                   <p style={{ margin: '5px 0 0 0', fontSize: '0.85rem', opacity: 0.8 }}>{t('ord_refund_check_bank')}</p>
+                  {order.refund_slip_url && (
+                    <button 
+                      className="write-review-btn-small" 
+                      style={{ marginTop: '10px', backgroundColor: '#047857', color: '#fff', border: 'none', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                      onClick={() => window.open(`http://localhost:5000${order.refund_slip_url}`, '_blank')}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      {t('pay_view_slip')}
+                    </button>
+                  )}
                 </div>
               )}
             </div>

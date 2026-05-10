@@ -1,10 +1,9 @@
-// code in this file is written by worapol สุดหล่อ
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const { verifyToken } = require('../middlewares/authMiddleware');
 
-// Get all comments for a product (Public) - by worapol สุดหล่อ
+
 router.get('/:productId', async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -17,7 +16,7 @@ router.get('/:productId', async (req, res) => {
   }
 });
 
-// Post a new comment (User only) - by worapol สุดหล่อ
+
 router.post('/:productId', verifyToken, async (req, res) => {
   const { comment, rating, size, quantity, order_id } = req.body;
   const productId = req.params.productId;
@@ -33,8 +32,8 @@ router.post('/:productId', verifyToken, async (req, res) => {
   const safeComment = (comment && comment.trim() !== '') ? comment.trim() : '-';
 
   try {
-    // Optional: Check if user has purchased the item? (More advanced) - by worapol สุดหล่อ
-    // For now, any logged-in user can comment. - by worapol สุดหล่อ
+    
+    
 
     const [result] = await db.query(
       'INSERT INTO product_comments (product_id, user_id, username, rating, comment, size, quantity, order_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',

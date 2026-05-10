@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import MiniCalendar from '../../components/MiniCalendar';
@@ -21,7 +20,7 @@ const AdminRevenue = () => {
   const [salesStats, setSalesStats] = useState([]);
   const [fetchingStats, setFetchingStats] = useState(true);
   const [chartView, setChartView] = useState('week');
-  const [chartType, setChartType] = useState('area'); // 'area', 'bar', 'pie' - by worapol สุดหล่อ
+  const [chartType, setChartType] = useState('area'); 
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [showYearDropdown, setShowYearDropdown] = useState(false);
   const [showBrandDropdown, setShowBrandDropdown] = useState(false);
@@ -35,14 +34,14 @@ const AdminRevenue = () => {
         return;
       }
 
-      const doc = new jsPDF('l', 'mm', 'a4'); // Landscape for better visibility - by worapol สุดหล่อ
+      const doc = new jsPDF('l', 'mm', 'a4'); 
       const today = new Date();
       const reportDate = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
       const reportTime = today.toLocaleTimeString('en-US', { hour12: false });
       const reportId = `REV-${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-      // --- BRANDING & HEADER --- - by worapol สุดหล่อ
-      doc.setFillColor(79, 70, 229); // Indigo 600 - by worapol สุดหล่อ
+      
+      doc.setFillColor(79, 70, 229); 
       doc.rect(14, 15, 2, 25, 'F');
 
       doc.setFontSize(24);
@@ -326,7 +325,7 @@ const AdminRevenue = () => {
   const [fetchingDetails, setFetchingDetails] = useState(true);
   const [tableLimit, setTableLimit] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Reduced to 5 as requested - by worapol สุดหล่อ
+  const itemsPerPage = 5; 
   const [selectedProducts, setSelectedProducts] = useState([]);
 
   const [monthlyReport, setMonthlyReport] = useState([]);
@@ -334,7 +333,7 @@ const AdminRevenue = () => {
   const [reportYear, setReportYear] = useState(new Date().getFullYear());
   const [fetchingReport, setFetchingReport] = useState(false);
   const [historyPage, setHistoryPage] = useState(1); 
-  const [recentHistory, setRecentHistory] = useState([]); // New state for sidebar history - by worapol สุดหล่อ
+  const [recentHistory, setRecentHistory] = useState([]); 
 
   const fetchMonthlyReport = async (month, year) => {
     setFetchingReport(true);
@@ -358,7 +357,7 @@ const AdminRevenue = () => {
   useEffect(() => {
     fetchStats();
     fetchBrands();
-    fetchRecentHistory(); // Fetch on mount - by worapol สุดหล่อ
+    fetchRecentHistory(); 
   }, []);
 
   useEffect(() => {
@@ -374,13 +373,13 @@ const AdminRevenue = () => {
       }
       const res = await api.get(url);
       setRevenueDetails(res.data);
-      // Automatically select all when data is fetched - by worapol สุดหล่อ
+      
       setSelectedProducts(res.data.map(item => item.product_name));
     } catch (err) {
       console.error(err);
     } finally {
       setFetchingDetails(false);
-      setCurrentPage(1); // Reset to first page on new fetch - by worapol สุดหล่อ
+      setCurrentPage(1); 
     }
   };
 
@@ -662,7 +661,7 @@ const AdminRevenue = () => {
             </div>
           </div>
 
-          {/* New Daily Revenue History Widget - by worapol สุดหล่อ */}
+          
           <div className="section-card" style={{ padding: '1.75rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
               <h3 style={{ margin: 0, fontSize: '1.1rem' }}>

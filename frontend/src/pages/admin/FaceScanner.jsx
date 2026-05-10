@@ -1,11 +1,10 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useEffect, useRef, useState, useContext } from 'react';
 import * as faceapi from '@vladmandic/face-api';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Box, Typography, Paper, CircularProgress, Dialog, DialogContent, DialogActions, Button, Zoom, Avatar } from '@mui/material';
 import { AuthContext } from '../../context/AuthContext';
-import { useToast } from '../../context/ToastContext'; // Import useToast - by worapol สุดหล่อ
-import { useLanguage } from '../../context/LanguageContext'; // Import useLanguage - by worapol สุดหล่อ
+import { useToast } from '../../context/ToastContext'; 
+import { useLanguage } from '../../context/LanguageContext'; 
 import api from '../../services/api';
 
 const FaceScanner = () => {
@@ -15,8 +14,8 @@ const FaceScanner = () => {
   const canvasContainerRef = useRef();
   const navigate = useNavigate();
   const { user: currentUser } = useContext(AuthContext);
-  const { showToast } = useToast(); // Initialize showToast - by worapol สุดหล่อ
-  const { t } = useLanguage(); // Initialize t - by worapol สุดหล่อ
+  const { showToast } = useToast(); 
+  const { t } = useLanguage(); 
 
   const [initializing, setInitializing] = useState(true);
   const [faceData, setFaceData] = useState(null);
@@ -205,7 +204,7 @@ const FaceScanner = () => {
               setIsCapturing(false);
               stopStream();
               
-              // Show Welcome Toast AFTER scan success - by worapol สุดหล่อ
+              
               showToast(`${t('auth_login_success')}, ${currentUser?.username}!`);
               
               setScanSuccess(true);

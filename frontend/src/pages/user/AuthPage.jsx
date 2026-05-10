@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -50,17 +49,17 @@ const AuthPage = () => {
     try {
       const user = await login(loginData.username, loginData.password);
       
-      // Sync Cart & Wishlist from LocalStorage to DB - by worapol สุดหล่อ
+      
       if (user.role === 'user') {
         try {
-          // Sync Cart - by worapol สุดหล่อ
+          
           const localCart = JSON.parse(localStorage.getItem('cart_guest') || '[]');
           if (localCart.length > 0) {
             await api.post('/cart/sync', { items: localCart });
             localStorage.removeItem('cart_guest');
           }
 
-          // Sync Wishlist - by worapol สุดหล่อ
+          
           const localWish = JSON.parse(localStorage.getItem('wishlist_guest') || '[]');
           if (localWish.length > 0) {
             await api.post('/wishlist/sync', { itemIds: localWish.map(i => i.id) });
@@ -74,11 +73,11 @@ const AuthPage = () => {
         }
       }
 
-      // Improved role check with case-insensitivity - by worapol สุดหล่อ
+      
       const role = (user.role || '').toLowerCase();
       
       if (role === 'superadmin') {
-        // Delay toast for superadmin until face scan is complete - by worapol สุดหล่อ
+        
         setShowFaceScanWarning(true);
       } else {
         // For other roles, show toast immediately
@@ -139,6 +138,13 @@ const AuthPage = () => {
       </div>
 
       <div className="auth-center-content">
+        <button 
+          className="back-to-home-btn" 
+          onClick={() => navigate('/')}
+        >
+          <i className='bx bx-arrow-back'></i>
+          {t('auth_back_home')}
+        </button>
         <div className={`auth-container ${isActive ? 'active' : ''}`}>
 
           {/* Login Form */}
@@ -263,7 +269,7 @@ const AuthPage = () => {
         </div>
       </div>
 
-      {/* Face Scan Warning Dialog - by worapol สุดหล่อ */}
+      
       <Dialog 
         open={showFaceScanWarning} 
         onClose={() => setShowFaceScanWarning(false)}

@@ -1,10 +1,9 @@
-// code in this file is written by worapol สุดหล่อ
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
 const { verifyToken } = require('../middlewares/authMiddleware');
 
-// Get wishlist items - by worapol สุดหล่อ
+
 router.get('/', verifyToken, async (req, res) => {
   try {
     const [rows] = await pool.query(`
@@ -21,7 +20,7 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
-// Add to wishlist - by worapol สุดหล่อ
+
 router.post('/', verifyToken, async (req, res) => {
   const { productId } = req.body;
   try {
@@ -35,9 +34,9 @@ router.post('/', verifyToken, async (req, res) => {
   }
 });
 
-// Sync local wishlist - by worapol สุดหล่อ
+
 router.post('/sync', verifyToken, async (req, res) => {
-  const { itemIds } = req.body; // Array of product ids - by worapol สุดหล่อ
+  const { itemIds } = req.body; 
   if (!itemIds || !Array.isArray(itemIds)) return res.status(400).json({ error: 'Invalid items' });
 
   try {
@@ -53,7 +52,7 @@ router.post('/sync', verifyToken, async (req, res) => {
   }
 });
 
-// Remove from wishlist - by worapol สุดหล่อ
+
 router.delete('/:productId', verifyToken, async (req, res) => {
   const { productId } = req.params;
   try {

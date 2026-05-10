@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../services/api';
@@ -15,7 +14,7 @@ import {
 } from '@mui/material';
 import './Products.css';
 
-// Custom Products Hero featuring requested images - by worapol สุดหล่อ
+
 const ProductsHero = ({ title }) => {
   const [current, setCurrent] = useState(0);
   const heroImages = [

@@ -1,4 +1,3 @@
-// code in this file is written by worapol สุดหล่อ
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../services/api';
@@ -16,12 +15,12 @@ import { useLanguage } from '../../context/LanguageContext';
 import './Home.css';
 
 const PromoSlider = ({ products, navigate }) => {
-  // Use products with discounts or low stock as "Recommended/Best Sellers" - by worapol สุดหล่อ
+  
   let promoProducts = products?.filter(p => p.discount_percent > 0 || p.stock < 20) || [];
   if (promoProducts.length < 4) {
     promoProducts = [...promoProducts, ...(products || [])];
   }
-  promoProducts = promoProducts.slice(0, 4); // force 4 faces for the 3D cube - by worapol สุดหล่อ
+  promoProducts = promoProducts.slice(0, 4); 
 
   const [current, setCurrent] = useState(0);
   const [transitionTime, setTransitionTime] = useState(0.8);
@@ -49,7 +48,7 @@ const PromoSlider = ({ products, navigate }) => {
 
   if (!promoProducts || promoProducts.length < 4) return null;
 
-  // Calculate the currently visible face index (0 to 3) for the nav dots - by worapol สุดหล่อ
+  
   const activeIdx = ((current % 4) + 4) % 4;
 
   return (
@@ -91,7 +90,7 @@ const PromoSlider = ({ products, navigate }) => {
 
       <div className="promo-slider-nav">
         {promoProducts.map((_, idx) => {
-          // Calculate shortest path for jump - by worapol สุดหล่อ
+          
           let diff = (idx - activeIdx);
           if (diff > 2) diff -= 4;
           if (diff < -2) diff += 4;
@@ -149,7 +148,7 @@ const Home = () => {
     },
     {
       isCollection: true,
-      variants: [11, 8, 12, 9, 10], // IDs for Green, Maroon, Blue, Dark Grey, Oat - by worapol สุดหล่อ
+      variants: [11, 8, 12, 9, 10], 
       image: '/4 model.png',
       subtitle: t('h_new_coll_2026'),
       title: t('h_adidas_title'),
@@ -194,7 +193,7 @@ const Home = () => {
         console.error("Wishlist fetch error:", err);
       }
     } else {
-      setWishlist([]); // Clear if not logged in - by worapol สุดหล่อ
+      setWishlist([]); 
     }
   };
 
@@ -235,7 +234,7 @@ const Home = () => {
     if (!productToBuy || !selectedSize) return;
 
     if (user) {
-      // If user is logged in, send to backend API - by worapol สุดหล่อ
+      
       try {
         await api.post('/cart', {
           productId: productToBuy.id,
@@ -253,7 +252,7 @@ const Home = () => {
         showToast(err.response?.data?.message || t('error'), 'error');
       }
     } else {
-      // Fallback for guest (though openBuyModal prevents it, keep for safety or future use) - by worapol สุดหล่อ
+      
       const cartItem = {
         id: productToBuy.id,
         name: productToBuy.name,
