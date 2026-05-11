@@ -91,7 +91,7 @@ const AdminInventory = () => {
         const remainVal = item.remaining_value || (item.remaining_stock * item.price) || 0;
         const totalVal = item.total_potential_value || ((item.total_sold + item.remaining_stock) * item.price) || 0;
         
-        const categoryLabel = item.category === 'shoe' ? t('nav_shoes') : (item.category === 'apparel' ? t('nav_apparel') : item.category);
+        const categoryLabel = item.category === 'shoe' ? 'Shoe' : (item.category === 'apparel' ? 'Apparel' : item.category);
         const productInfo = `${item.product_code}\n${item.name}\n${item.brand} - ${categoryLabel}`;
 
         return [

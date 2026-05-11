@@ -3,6 +3,7 @@ import api from '../../services/api';
 import { AuthContext } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { Box, Typography, Button, Paper, Avatar, Grid, Divider } from '@mui/material';
 import './Profile.css';
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
@@ -76,6 +77,7 @@ const Profile = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isFullMapOpen, setIsFullMapOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [hasMovedManually, setHasMovedManually] = useState(false);
@@ -151,8 +153,9 @@ const Profile = () => {
       };
       await api.put('/auth/profile', finalAddress);
       await fetchProfile(); 
-      showToast(t('prof_address_success'));
+      showToast(t('prof_address_success') || 'Profile updated successfully');
       setIsAddressModalOpen(false);
+      setIsEditProfileModalOpen(false);
     } catch (err) {
       showToast(t('error'), 'error');
     }
@@ -213,104 +216,139 @@ const Profile = () => {
   if (loading) return <div className="profile-container" style={{ marginTop: '120px' }}>{t('loading')}...</div>;
 
   return (
-    <div className="profile-container">
-      <h2>{t('prof_title')}</h2>
-      
-      <div className="profile-header-card">
-        <div 
-          className="profile-image-wrapper" 
-          onClick={() => fileInputRef.current.click()}
-          style={{ cursor: 'pointer' }}
-        >
-          {profile.profile_image ? (
-            <img src={`http://localhost:5000${profile.profile_image}`} alt="Profile" className="profile-avatar-img" />
-          ) : (
-            <div className="profile-avatar-placeholder">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-            </div>
-          )}
-          <div className="avatar-edit-badge">
-            <i className='bx bxs-camera'></i>
-          </div>
-        </div>
-        <input 
-          type="file" 
-          ref={fileInputRef} 
-          style={{ display: 'none' }} 
-          accept="image/*" 
-          onChange={handleImageUpload} 
-        />
-        <div className="profile-header-info">
-          <h3>{profile.full_name || profile.username}</h3>
-          <p>{profile.email}</p>
-        </div>
-      </div>
+    <Box sx={{ minHeight: '100vh', backgroundColor: '#F9FAFB', p: { xs: 2, md: 5 }, pt: { xs: 12, md: 15 }, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Box sx={{ width: '100%', maxWidth: '800px', mb: 4, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Typography variant="h4" fontWeight="1000" sx={{ color: '#111827' }}>
+          {t('prof_title')}
+        </Typography>
+      </Box>
 
-      <div className="profile-section">
-        <h3>{t('prof_account_info')}</h3>
-        <div className="form-group"><label>{t('username')}</label><div className="read-only-text">{profile.username}</div></div>
-        <div className="form-group"><label>{t('email')}</label><div className="read-only-text">{profile.email || t('prof_no_email')}</div></div>
-        <div className="form-group" style={{ marginTop: '1rem' }}>
-          <button type="button" className="password-change-link" onClick={() => setIsPasswordModalOpen(true)}>{t('prof_change_pw')}</button>
-        </div>
-      </div>
+      <Paper elevation={0} sx={{
+        width: '100%',
+        maxWidth: '800px',
+        backgroundColor: '#fff',
+        borderRadius: '32px',
+        p: { xs: 3, md: 6 },
+        boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05), 0 10px 10px -5px rgba(0,0,0,0.02)',
+        border: '1px solid #E5E7EB',
+        position: 'relative'
+      }}>
+        {/* Avatar Section */}
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center', gap: 4, mb: 5 }}>
+          <Box sx={{ position: 'relative', cursor: 'pointer' }} onClick={() => fileInputRef.current.click()}>
+            <Avatar
+              src={profile.profile_image ? `http://localhost:5000${profile.profile_image}` : null}
+              sx={{ width: 140, height: 140, border: '4px solid #F3F4F6', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', fontSize: '3.5rem', fontWeight: 'bold' }}
+            >
+              {profile.username?.charAt(0).toUpperCase()}
+            </Avatar>
+            <Box sx={{ position: 'absolute', bottom: 5, right: 5, bgcolor: '#007aff', color: '#fff', width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '3px solid #fff', boxShadow: '0 4px 8px rgba(0,0,0,0.15)' }}>
+              <i className='bx bxs-camera' style={{ fontSize: '1.2rem' }}></i>
+            </Box>
+          </Box>
+          <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept="image/*" onChange={handleImageUpload} />
+          
+          <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+            <Typography variant="h3" fontWeight="900" sx={{ color: '#111827', mb: 1 }}>{profile.full_name || profile.username}</Typography>
+            <Typography variant="h6" sx={{ color: '#6B7280', mb: 2 }}>@{profile.username}</Typography>
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: { xs: 'center', md: 'flex-start' } }}>
+              <Button variant="outlined" size="small" onClick={() => setIsEditProfileModalOpen(true)} sx={{ borderRadius: '12px', textTransform: 'none', fontWeight: 'bold', borderColor: '#E5E7EB', color: '#111827', '&:hover': { bgcolor: '#F9FAFB', borderColor: '#D1D5DB' } }}>
+                {t('prof_edit_profile') || 'Edit Profile'}
+              </Button>
+              <Button variant="contained" size="small" onClick={() => setIsPasswordModalOpen(true)} sx={{ borderRadius: '12px', textTransform: 'none', fontWeight: 'bold', bgcolor: '#3B82F6', color: '#fff', '&:hover': { bgcolor: '#2563EB' }, boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.3)' }}>
+                {t('prof_change_pw') || 'Change Password'}
+              </Button>
+            </Box>
+          </Box>
+        </Box>
 
-      <div className="profile-section">
-        <h3>{t('prof_shipping_addr')}</h3>
-        {profile.full_name ? (
-          <div className="address-display-card" style={{ background: '#f9f9f9', padding: '1.5rem', borderRadius: '12px', border: '1px solid #eee' }}>
-            <p style={{ fontWeight: '600', marginBottom: '0.5rem', fontSize: '1.1rem' }}>{profile.full_name}</p>
-            <p style={{ color: '#666', marginBottom: '1rem' }}>{profile.phone}</p>
-            <p style={{ fontSize: '0.95rem', color: '#444', lineHeight: '1.6' }}>
-              {profile.address}<br />
-              {profile.sub_district}, {profile.district}<br />
-              {profile.province}, {profile.postal_code}
-            </p>
+        <Divider sx={{ my: 4, borderColor: '#F3F4F6', borderWidth: '1px' }} />
 
-            {profile.latitude && profile.longitude && (
-              <div className="profile-map-preview" style={{ marginTop: '1.5rem', height: '200px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #ddd' }}>
-                <MapContainer
-                  center={[profile.latitude, profile.longitude]}
-                  zoom={15}
-                  style={{ height: '100%' }}
-                  zoomControl={false}
-                  dragging={false}
-                  touchZoom={false}
-                  scrollWheelZoom={false}
-                  doubleClickZoom={false}
-                >
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  <Marker position={[profile.latitude, profile.longitude]} />
-                </MapContainer>
-              </div>
-            )}
-          </div>
-        ) : <p style={{ color: '#999', fontSize: '0.9rem' }}>{t('prof_no_address')}</p>}
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <button type="button" className="save-btn" style={{ background: '#fff', color: '#000', border: '1px solid #28a745', marginTop: '1rem', fontWeight: '500', flex: 1 }}
-            onClick={() => {
-              setEditAddress(profile || {});
-              if (profile?.latitude && profile?.longitude) {
-                setMapCoords([parseFloat(profile.latitude), parseFloat(profile.longitude)]);
-                setTargetCoords([parseFloat(profile.latitude), parseFloat(profile.longitude)]);
-              }
-              setHasMovedManually(false);
-              lastSearchQuery.current = [profile?.district, profile?.province].filter(Boolean).join(', ');
-              setIsAddressModalOpen(true);
-            }}>
-            {profile.full_name ? t('prof_edit_address') : t('prof_add_address')}
-          </button>
-          {profile.full_name && (
-            <button type="button" className="save-btn" style={{ background: '#fff', color: '#dc3545', border: '1px solid #dc3545', marginTop: '1rem', fontWeight: '500', flex: 1 }}
-              onClick={handleDeleteAddress}>
-              {t('prof_delete_address')}
-            </button>
-          )}
-        </div>
-      </div>
+        {/* Info Grid */}
+        <Grid container spacing={4} sx={{ mb: 4 }}>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Typography sx={{ color: '#9CA3AF', fontSize: '0.85rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                {t('email') || 'Email'}
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Typography sx={{ color: '#1F2937', fontSize: '1.1rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: 1.5, wordBreak: 'break-all' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                  {profile.email || t('prof_no_email')}
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Typography sx={{ color: '#9CA3AF', fontSize: '0.85rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                {t('phone') || 'Phone'}
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Typography sx={{ color: '#1F2937', fontSize: '1.1rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  {profile.phone || '-'}
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
+
+        {/* Shipping Address at the bottom */}
+        <Box sx={{ width: '100%' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, p: 3, bgcolor: '#F8FAFC', borderRadius: '20px', border: '1px solid #E2E8F0' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography sx={{ color: '#9CA3AF', fontSize: '0.85rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                  {t('prof_shipping_addr')}
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Button size="small" variant="contained" onClick={() => {
+                    setEditAddress(profile || {});
+                    if (profile?.latitude && profile?.longitude) {
+                      setMapCoords([parseFloat(profile.latitude), parseFloat(profile.longitude)]);
+                      setTargetCoords([parseFloat(profile.latitude), parseFloat(profile.longitude)]);
+                    }
+                    setHasMovedManually(false);
+                    lastSearchQuery.current = [profile?.district, profile?.province].filter(Boolean).join(', ');
+                    setIsAddressModalOpen(true);
+                  }} sx={{ borderRadius: '10px', textTransform: 'none', bgcolor: '#111827', color: '#fff', '&:hover': { bgcolor: '#374151' } }}>
+                    {profile.full_name ? t('prof_edit_address') : t('prof_add_address')}
+                  </Button>
+                  {profile.full_name && (
+                    <Button size="small" color="error" variant="outlined" onClick={handleDeleteAddress} sx={{ borderRadius: '10px', textTransform: 'none' }}>
+                      {t('prof_delete_address')}
+                    </Button>
+                  )}
+                </Box>
+              </Box>
+
+              {profile.full_name ? (
+                <Box>
+                  <Typography sx={{ fontWeight: '800', fontSize: '1.1rem', color: '#1F2937', mb: 0.5 }}>{profile.full_name}</Typography>
+                  <Typography sx={{ color: '#4B5563', lineHeight: '1.6', fontSize: '1rem' }}>
+                    {profile.address}<br />
+                    {profile.sub_district}, {profile.district}<br />
+                    {profile.province}, {profile.postal_code}
+                  </Typography>
+
+                  {profile.latitude && profile.longitude && (
+                    <Box sx={{ mt: 3, height: '200px', borderRadius: '16px', overflow: 'hidden', border: '1px solid #E5E7EB', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+                      <MapContainer center={[profile.latitude, profile.longitude]} zoom={15} style={{ height: '100%' }} zoomControl={false} dragging={false} touchZoom={false} scrollWheelZoom={false} doubleClickZoom={false}>
+                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                        <Marker position={[profile.latitude, profile.longitude]} />
+                      </MapContainer>
+                    </Box>
+                  )}
+                </Box>
+              ) : (
+                <Typography sx={{ color: '#9CA3AF', fontSize: '0.9rem', fontStyle: 'italic', py: 2 }}>
+                  {t('prof_no_address')}
+                </Typography>
+              )}
+            </Box>
+        </Box>
+      </Paper>
 
       {isPasswordModalOpen && (
         <div className="modal-overlay">
@@ -369,6 +407,44 @@ const Profile = () => {
         </div>
       )}
 
+      {isEditProfileModalOpen && (
+        <div className="modal-overlay" style={{ zIndex: 3000, background: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-content" style={{ maxWidth: '400px', borderRadius: '16px', padding: '30px' }}>
+            <button 
+              className="modal-close" 
+              onClick={() => setIsEditProfileModalOpen(false)}
+              style={{ position: 'absolute', top: '15px', right: '15px', background: '#F3F4F6', color: '#111827', width: '28px', height: '28px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              &times;
+            </button>
+            <div className="modal-header" style={{ marginBottom: '24px', textAlign: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'bold', color: '#000' }}>{t('prof_account_info') || 'Account Information'}</h3>
+            </div>
+            <div className="address-form-body" style={{ padding: 0 }}>
+              <div className="form-group" style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: '#4B5563', marginBottom: '6px', fontWeight: '600' }}>{t('email') || 'Email'}</label>
+                <input type="email" value={editAddress.email || ''} onChange={(e) => setEditAddress({ ...editAddress, email: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E5E7EB', outline: 'none', fontSize: '1rem', color: '#111827' }} />
+              </div>
+              <div className="form-group" style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: '#4B5563', marginBottom: '6px', fontWeight: '600' }}>{t('full_name') || 'Full Name'}</label>
+                <input type="text" value={editAddress.full_name || ''} onChange={(e) => setEditAddress({ ...editAddress, full_name: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E5E7EB', outline: 'none', fontSize: '1rem', color: '#111827' }} />
+              </div>
+              <div className="form-group" style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: '#4B5563', marginBottom: '6px', fontWeight: '600' }}>{t('phone') || 'Phone'}</label>
+                <input type="text" value={editAddress.phone || ''} onChange={(e) => setEditAddress({ ...editAddress, phone: e.target.value })} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E5E7EB', outline: 'none', fontSize: '1rem', color: '#111827' }} />
+              </div>
+              <button 
+                type="button" 
+                onClick={handleUpdateProfile} 
+                style={{ width: '100%', background: '#111827', color: '#fff', border: 'none', borderRadius: '8px', padding: '12px', fontSize: '1rem', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                {t('save') || 'Save Changes'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {isAddressModalOpen && (
         <div className="modal-overlay">
           <div className="address-modal-content">
@@ -388,7 +464,7 @@ const Profile = () => {
             </div>
             <div className="address-form-body">
               <div className="address-group-card">
-                <h4>{t('prof_shipping_addr')}</h4>
+                <h4>{t('prof_shipping_contact') || 'Recipient Information'}</h4>
                 <div className="form-group"><label>{t('full_name')}</label><input type="text" value={editAddress.full_name || ''} onChange={(e) => setEditAddress({ ...editAddress, full_name: e.target.value })} /></div>
                 <div className="form-group"><label>{t('phone')}</label><input type="text" value={editAddress.phone || ''} onChange={(e) => setEditAddress({ ...editAddress, phone: e.target.value })} /></div>
               </div>
@@ -474,7 +550,7 @@ const Profile = () => {
           </div>
         </div>
       )}
-    </div>
+    </Box>
   );
 };
 

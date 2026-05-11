@@ -39,6 +39,8 @@ const AdminProducts = () => {
   const [showColDropdown, setShowColDropdown] = useState(false);
   const [customColumnInput, setCustomColumnInput] = useState('');
   const [customColumns, setCustomColumns] = useState([]);
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [isAddingBrand, setIsAddingBrand] = useState(false);
 
   const isThai = useLanguage().language === 'th';
   const predefinedExtraColOptions = sizeType === 'shoe'
@@ -208,6 +210,9 @@ const AdminProducts = () => {
   const openEdit = (prod) => {
     setIsDuplicating(false);
     setEditingId(prod.id);
+    setIsAddingCategory(false);
+    setIsAddingBrand(false);
+    
     setFormData({
       name: prod.name,
       description: prod.description,
@@ -281,6 +286,7 @@ const AdminProducts = () => {
     };
 
     setEditingId(null);
+    
     setFormData({
       name: prod.name ? `${prod.name} (Copy)` : '',
       description: prod.description || '',
@@ -370,6 +376,8 @@ const AdminProducts = () => {
   const resetForm = () => {
     setEditingId(null);
     setIsDuplicating(false);
+    setIsAddingCategory(false);
+    setIsAddingBrand(false);
     setFormData({ name: '', description: '', price: '', discount_percent: 0, product_code: '', category: '', brand: '', images: [] });
 
     
@@ -601,11 +609,11 @@ const AdminProducts = () => {
 
       
       let reportTitle = "PRODUCT INVENTORY AUDIT";
-      let statusLabel = `OFFICIAL ${t('adm_table_stock')} RECORD`;
+      let statusLabel = `OFFICIAL STOCK RECORD`;
       let accentColor = [79, 70, 229]; 
 
       if (showLowStockOnly || showLowSizeStockOnly) {
-        reportTitle = `CRITICAL ${t('adm_table_stock')} ALERT REPORT`;
+        reportTitle = `CRITICAL STOCK ALERT REPORT`;
         statusLabel = "URGENT REPLENISHMENT REQUIRED";
         accentColor = [220, 38, 38]; 
       }
@@ -1226,21 +1234,91 @@ const AdminProducts = () => {
                   <div className="form-row">
                     <div className="form-group">
                       <label>{t('adm_form_category') || 'Category'}</label>
-                      <select name="category" value={formData.category} onChange={handleInputChange} className="form-select">
-                        <option value="">-- {t('category')} --</option>
-                        {uniqueCategories.map(cat => (
-                          <option key={cat} value={cat}>{cat === 'shoe' ? t('nav_shoes') : (cat === 'apparel' ? t('nav_apparel') : cat)}</option>
-                        ))}
-                      </select>
+                      {isAddingCategory ? (
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <input 
+                            type="text" 
+                            name="category" 
+                            value={formData.category} 
+                            onChange={(e) => setFormData({...formData, category: e.target.value})}
+                            className="form-select" 
+                            placeholder={t('adm_form_category') || "หมวดหมู่"}
+                            style={{ flex: 1 }}
+                            autoFocus
+                          />
+                          <button 
+                            type="button" 
+                            onClick={() => { setIsAddingCategory(false); setFormData({...formData, category: ''}); }}
+                            style={{ padding: '0 12px', border: '1px solid #ddd', borderRadius: '4px', background: '#f5f5f5', cursor: 'pointer' }}
+                          >
+                            {t('cancel') || 'ยกเลิก'}
+                          </button>
+                        </div>
+                      ) : (
+                        <select 
+                          name="categorySelect" 
+                          value={uniqueCategories.includes(formData.category) ? formData.category : ''} 
+                          onChange={(e) => {
+                            if (e.target.value === '__NEW__') {
+                              setIsAddingCategory(true);
+                              setFormData({...formData, category: ''});
+                            } else {
+                              setFormData({...formData, category: e.target.value});
+                            }
+                          }}
+                          className="form-select"
+                        >
+                          <option value="">-- {t('adm_form_category') || 'หมวดหมู่'} --</option>
+                          {uniqueCategories.map(cat => (
+                            <option key={cat} value={cat}>{cat === 'shoe' ? t('nav_shoes') : (cat === 'apparel' ? t('nav_apparel') : cat.toLowerCase() === 'shirt' ? t('nav_shirt') : cat)}</option>
+                          ))}
+                          <option value="__NEW__">+ {isThai ? 'พิมพ์เพิ่มหมวดหมู่ใหม่' : 'Add New Category'}</option>
+                        </select>
+                      )}
                     </div>
                     <div className="form-group">
                       <label>{t('adm_form_brand') || 'Brand'}</label>
-                      <select name="brand" value={formData.brand} onChange={handleInputChange} className="form-select">
-                        <option value="">-- {t('brand')} --</option>
-                        {uniqueBrands.map(brand => (
-                          <option key={brand} value={brand}>{brand}</option>
-                        ))}
-                      </select>
+                      {isAddingBrand ? (
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <input 
+                            type="text" 
+                            name="brand" 
+                            value={formData.brand} 
+                            onChange={(e) => setFormData({...formData, brand: e.target.value})}
+                            className="form-select" 
+                            placeholder={t('adm_form_brand') || "แบรนด์"}
+                            style={{ flex: 1 }}
+                            autoFocus
+                          />
+                          <button 
+                            type="button" 
+                            onClick={() => { setIsAddingBrand(false); setFormData({...formData, brand: ''}); }}
+                            style={{ padding: '0 12px', border: '1px solid #ddd', borderRadius: '4px', background: '#f5f5f5', cursor: 'pointer' }}
+                          >
+                            {t('cancel') || 'ยกเลิก'}
+                          </button>
+                        </div>
+                      ) : (
+                        <select 
+                          name="brandSelect" 
+                          value={uniqueBrands.includes(formData.brand) ? formData.brand : ''} 
+                          onChange={(e) => {
+                            if (e.target.value === '__NEW__') {
+                              setIsAddingBrand(true);
+                              setFormData({...formData, brand: ''});
+                            } else {
+                              setFormData({...formData, brand: e.target.value});
+                            }
+                          }}
+                          className="form-select"
+                        >
+                          <option value="">-- {t('adm_form_brand') || 'แบรนด์'} --</option>
+                          {uniqueBrands.map(brand => (
+                            <option key={brand} value={brand}>{brand}</option>
+                          ))}
+                          <option value="__NEW__">+ {isThai ? 'พิมพ์เพิ่มแบรนด์ใหม่' : 'Add New Brand'}</option>
+                        </select>
+                      )}
                     </div>
                   </div>
                   <div className="form-group">

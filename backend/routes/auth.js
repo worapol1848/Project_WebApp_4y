@@ -69,7 +69,7 @@ router.get('/profile', verifyToken, async (req, res) => {
 
 router.put('/profile', verifyToken, async (req, res) => {
   const {
-    full_name, phone, address, sub_district, district, province, postal_code, latitude, longitude, preferred_language
+    full_name, phone, address, sub_district, district, province, postal_code, latitude, longitude, preferred_language, email
   } = req.body;
   try {
     
@@ -85,7 +85,8 @@ router.put('/profile', verifyToken, async (req, res) => {
         postal_code = COALESCE(?, postal_code), 
         latitude = COALESCE(?, latitude), 
         longitude = COALESCE(?, longitude),
-        preferred_language = COALESCE(?, preferred_language)
+        preferred_language = COALESCE(?, preferred_language),
+        email = COALESCE(?, email)
       WHERE id = ?`,
       [
         full_name || null, 
@@ -98,6 +99,7 @@ router.put('/profile', verifyToken, async (req, res) => {
         latitude || null, 
         longitude || null, 
         preferred_language || null, 
+        email || null,
         req.user.id
       ]
     );

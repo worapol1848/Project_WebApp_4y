@@ -29,6 +29,10 @@ const AdminProductDetail = () => {
     brand: '',
     images: []
   });
+  const [uniqueCategories, setUniqueCategories] = useState([]);
+  const [uniqueBrands, setUniqueBrands] = useState([]);
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [isAddingBrand, setIsAddingBrand] = useState(false);
   const [sizes, setSizes] = useState([]);
   const [sizeGuide, setSizeGuide] = useState([]);
   const [galleryImages, setGalleryImages] = useState([]); 
@@ -80,7 +84,20 @@ const AdminProductDetail = () => {
   useEffect(() => {
     fetchProduct();
     fetchComments();
+    fetchUniqueOptions();
   }, [id]);
+
+  const fetchUniqueOptions = async () => {
+    try {
+      const res = await api.get('/products');
+      const brands = [...new Set(res.data.map(p => p.brand).filter(Boolean))].sort();
+      const cats = [...new Set(res.data.map(p => p.category).filter(Boolean))].sort();
+      setUniqueBrands(brands);
+      setUniqueCategories(cats);
+    } catch (err) {
+      console.error('Failed to fetch unique options', err);
+    }
+  };
 
   const handleTypeChange = (type) => {
     setSizeType(type);
@@ -185,6 +202,12 @@ const AdminProductDetail = () => {
       brand: product.brand || '',
       images: []
     });
+
+    const officialCategories = ['shoe', 'apparel'];
+    const cats = [...new Set([...officialCategories, ...uniqueCategories])];
+    setIsAddingCategory(false);
+    setIsAddingBrand(false);
+
     setSizes(product.sizes || []);
     let sg = [];
     let initialExtraCols = new Set();
@@ -630,11 +653,91 @@ const AdminProductDetail = () => {
                   <div className="form-row">
                     <div className="form-group">
                       <label>Category</label>
-                      <input type="text" name="category" value={formData.category} onChange={handleInputChange} />
+                      {isAddingCategory ? (
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <input 
+                            type="text" 
+                            name="category" 
+                            value={formData.category} 
+                            onChange={(e) => setFormData({...formData, category: e.target.value})}
+                            className="form-select" 
+                            placeholder={t('adm_form_category') || "หมวดหมู่"}
+                            style={{ flex: 1 }}
+                            autoFocus
+                          />
+                          <button 
+                            type="button" 
+                            onClick={() => { setIsAddingCategory(false); setFormData({...formData, category: ''}); }}
+                            style={{ padding: '0 12px', border: '1px solid #ddd', borderRadius: '4px', background: '#f5f5f5', cursor: 'pointer' }}
+                          >
+                            {t('cancel') || 'ยกเลิก'}
+                          </button>
+                        </div>
+                      ) : (
+                        <select 
+                          name="categorySelect" 
+                          value={uniqueCategories.includes(formData.category) ? formData.category : ''} 
+                          onChange={(e) => {
+                            if (e.target.value === '__NEW__') {
+                              setIsAddingCategory(true);
+                              setFormData({...formData, category: ''});
+                            } else {
+                              setFormData({...formData, category: e.target.value});
+                            }
+                          }}
+                          className="form-select"
+                        >
+                          <option value="">-- {t('adm_form_category') || 'หมวดหมู่'} --</option>
+                          {uniqueCategories.map(cat => (
+                            <option key={cat} value={cat}>{cat === 'shoe' ? t('nav_shoes') : (cat === 'apparel' ? t('nav_apparel') : cat.toLowerCase() === 'shirt' ? t('nav_shirt') : cat)}</option>
+                          ))}
+                          <option value="__NEW__">+ {isThai ? 'พิมพ์เพิ่มหมวดหมู่ใหม่' : 'Add New Category'}</option>
+                        </select>
+                      )}
                     </div>
                     <div className="form-group">
                       <label>Brand</label>
-                      <input type="text" name="brand" value={formData.brand} onChange={handleInputChange} />
+                      {isAddingBrand ? (
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <input 
+                            type="text" 
+                            name="brand" 
+                            value={formData.brand} 
+                            onChange={(e) => setFormData({...formData, brand: e.target.value})}
+                            className="form-select" 
+                            placeholder={t('adm_form_brand') || "แบรนด์"}
+                            style={{ flex: 1 }}
+                            autoFocus
+                          />
+                          <button 
+                            type="button" 
+                            onClick={() => { setIsAddingBrand(false); setFormData({...formData, brand: ''}); }}
+                            style={{ padding: '0 12px', border: '1px solid #ddd', borderRadius: '4px', background: '#f5f5f5', cursor: 'pointer' }}
+                          >
+                            {t('cancel') || 'ยกเลิก'}
+                          </button>
+                        </div>
+                      ) : (
+                        <select 
+                          name="brandSelect" 
+                          value={uniqueBrands.includes(formData.brand) ? formData.brand : ''} 
+                          onChange={(e) => {
+                            if (e.target.value === '__NEW__') {
+                              setIsAddingBrand(true);
+                              setFormData({...formData, brand: ''});
+                            } else {
+                              setFormData({...formData, brand: e.target.value});
+                            }
+                          }}
+                          className="form-select"
+                        >
+                          <option value="">-- {t('adm_form_brand') || 'แบรนด์'} --</option>
+                          {uniqueBrands.map(brand => (
+                            <option key={brand} value={brand}>{brand}</option>
+                          ))}
+                          <option value="__NEW__">+ {isThai ? 'พิมพ์เพิ่มแบรนด์ใหม่' : 'Add New Brand'}</option>
+                        </select>
+                      )}
                     </div>
                   </div>
 

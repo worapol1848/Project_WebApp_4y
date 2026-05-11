@@ -28,6 +28,8 @@ import AdminLogs from './pages/admin/AdminLogs';
 import AdminInventory from './pages/admin/AdminInventory';
 import FaceScanner from './pages/admin/FaceScanner';
 import SuperAdminManage from './pages/admin/SuperAdminManage';
+import SuperAdminDirectory from './pages/admin/SuperAdminDirectory';
+import SuperAdminProfileView from './pages/admin/SuperAdminProfileView';
 
 
 const UserRoute = ({ children }) => {
@@ -113,6 +115,12 @@ function App() {
                 } />
                 <Route path="/superadmin/manage" element={
                   <ProtectedRoute requireSuperAdmin={true}><SuperAdminManage /></ProtectedRoute>
+                } />
+                <Route path="/superadmin/directory" element={
+                  <ProtectedRoute requireSuperAdmin={true}><SuperAdminDirectory /></ProtectedRoute>
+                } />
+                <Route path="/superadmin/admin/:id" element={
+                  <ProtectedRoute requireSuperAdmin={true}><SuperAdminProfileView /></ProtectedRoute>
                 } />
               </Routes>
               <FooterSwitcher />

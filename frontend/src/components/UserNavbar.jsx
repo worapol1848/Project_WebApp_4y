@@ -192,17 +192,24 @@ const UserNavbar = () => {
               </button>
               <div className="mega-menu">
                 <div className="mega-menu-content">
+                  {filters.brands && filters.brands.length > 0 && (
                     <div className="mega-column">
                       <h4>{t('nav_brands')}</h4>
-                      <Link to="/products?brand=Adidas">Adidas</Link>
-                      <Link to="/products?brand=Asics">Asics</Link>
-                      <Link to="/products?brand=Converse">Converse</Link>
-                      <Link to="/products?brand=New Balance">New Balance</Link>
-                      <Link to="/products?brand=Nike">Nike</Link>
-                      <Link to="/products?brand=Puma">Puma</Link>
-                      <Link to="/products?brand=Stussy">Stussy</Link>
+                      {filters.brands.map(brand => (
+                        <Link key={brand} to={`/products?brand=${brand}`}>{brand}</Link>
+                      ))}
                     </div>
-                  {filters.productTypes.length > 0 && (
+                  )}
+                  {(filters.categories && filters.categories.length > 0) ? (
+                    <div className="mega-column">
+                      <h4>{t('nav_product_types')}</h4>
+                      {filters.categories.map(cat => (
+                        <Link key={cat} to={`/products?category=${cat}`}>
+                          {cat === 'apparel' ? t('nav_apparel') : cat === 'shoe' ? t('nav_shoes') : cat.toLowerCase() === 'shirt' ? t('nav_shirt') : cat}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (filters.productTypes && filters.productTypes.length > 0) && (
                     <div className="mega-column">
                       <h4>{t('nav_product_types')}</h4>
                       {filters.productTypes.map(type => (

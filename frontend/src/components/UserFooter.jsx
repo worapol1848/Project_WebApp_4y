@@ -96,7 +96,13 @@ const UserFooter = () => {
           <img src="/kasikorn bank.jpg" alt="Kasikorn" className="bank-icon-vibrant" />
           <img src="/krungthai bank.png" alt="Krungthai" className="bank-icon-vibrant" />
           <span className="payment-divider">|</span>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1200px-Mastercard-logo.svg.png" alt="Mastercard" className="pay-method-icon-vibrant" />
+          <svg width="34" height="22" viewBox="0 0 34 22" fill="none" xmlns="http://www.w3.org/2000/svg" className="pay-method-icon-vibrant" aria-label="Mastercard">
+            <title>Mastercard</title>
+            <circle cx="11" cy="11" r="11" fill="#EB001B"/>
+            <circle cx="23" cy="11" r="11" fill="#F79E1B"/>
+            <path d="M17 11C17 14.1 18.2 16.9 20.1 19.1C18.2 21.3 15.8 21.3 13.9 19.1C15.8 16.9 17 14.1 17 11Z" fill="#FF5F00"/>
+            <path d="M17 11C17 7.9 15.8 5.1 13.9 2.9C15.8 0.7 18.2 0.7 20.1 2.9C18.2 5.1 17 7.9 17 11Z" fill="#FF5F00"/>
+          </svg>
         </div>
       </div>
 

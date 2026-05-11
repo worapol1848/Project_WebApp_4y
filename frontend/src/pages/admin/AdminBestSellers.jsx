@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import api from '../../services/api';
 import jsPDF from 'jspdf';
@@ -37,7 +37,20 @@ const AdminBestSellers = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedBrand, setSelectedBrand] = useState('All');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const itemsPerPage = 5;
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -109,7 +122,7 @@ const AdminBestSellers = () => {
       doc.setTextColor(31, 41, 55);
       doc.text('REPORT CONTEXT:', 14, 55);
       doc.setFont('helvetica', 'normal');
-      doc.text(`Comparative analysis of ${bestSellers.length} products. Sorted by Sales Quantity (Highest to Lowest).`, 45, 55);
+      doc.text(`Comparative analysis of ${bestSellers.length} products. Filter: ${selectedBrand === 'All' ? 'All Brands' : `Brand - ${selectedBrand}`}. Sorted by Sales Qty.`, 45, 55);
 
       
       const sortedBestSellers = [...bestSellers].sort((a, b) => b.total_sold - a.total_sold);
@@ -219,14 +232,26 @@ const AdminBestSellers = () => {
     }
   };
 
+  // When selectedBrand changes, reset page to 1
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedBrand]);
+
   if (loading) return <div className="admin-container">{t('adm_loading_best_sellers')}</div>;
 
-  const bestSellers = (stats?.bestSellers || []).sort((a, b) => {
+  const allBestSellers = (stats?.bestSellers || []).sort((a, b) => {
     if (b.total_sold !== a.total_sold) {
       return b.total_sold - a.total_sold;
     }
     return b.total_revenue - a.total_revenue;
   });
+
+  const uniqueBrands = ['All', ...new Set(allBestSellers.map(p => p.brand).filter(Boolean))];
+
+  const bestSellers = selectedBrand === 'All' 
+    ? allBestSellers 
+    : allBestSellers.filter(p => p.brand === selectedBrand);
+
   const topOne = bestSellers[0];
   const topTwoThree = bestSellers.slice(1, 3);
 
@@ -259,17 +284,54 @@ const AdminBestSellers = () => {
     <div className="admin-container">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h2 className="dashboard-title" style={{ margin: 0 }}>{t('adm_top_products_showcase')}</h2>
-        <button
-          onClick={handleExportPDF}
-          className="export-pdf-btn"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          {t('adm_print_hub_report')}
-        </button>
+        
+        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+          <div className="custom-dropdown-container" ref={dropdownRef}>
+            <div 
+              className={`custom-dropdown-header ${isDropdownOpen ? 'open' : ''}`}
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px', color: '#6366F1' }}>
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                <span>{selectedBrand === 'All' ? (t('adm_filter_all_brands') || 'All Brands') : selectedBrand}</span>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '12px', transition: 'transform 0.2s ease', transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+            {isDropdownOpen && (
+              <div className="custom-dropdown-list">
+                {uniqueBrands.map(b => (
+                  <div 
+                    key={b} 
+                    className={`custom-dropdown-item ${selectedBrand === b ? 'active' : ''}`}
+                    onClick={() => { setSelectedBrand(b); setIsDropdownOpen(false); }}
+                  >
+                    <span>{b === 'All' ? (t('adm_filter_all_brands') || 'All Brands') : b}</span>
+                    {selectedBrand === b && (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <button
+            onClick={handleExportPDF}
+            className="export-pdf-btn"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            {t('adm_print_hub_report')}
+          </button>
+        </div>
       </div>
 
       {topOne && (

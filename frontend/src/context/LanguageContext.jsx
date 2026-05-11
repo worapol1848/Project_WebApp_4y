@@ -60,6 +60,7 @@ export const translations = {
     nav_logout: 'Logout',
     nav_apparel: 'Apparel',
     nav_shoes: 'Shoes',
+    nav_shirt: 'Shirt',
     nav_under_5k: 'Under 5,000',
     nav_above_50k: '50,000+',
 
@@ -246,7 +247,10 @@ export const translations = {
 
     
     prof_title: 'Account Settings',
+    prof_edit_profile: 'Edit Profile',
+    prof_change_pw: 'Change Password',
     prof_account_info: 'Account Information',
+    prof_shipping_contact: 'Recipient Information',
     prof_personal: 'Personal Information',
     prof_shipping_addr: 'Shipping Address',
     
@@ -484,6 +488,7 @@ export const translations = {
     adm_units: 'units',
     adm_revenue_label: 'Revenue:',
     adm_top_performance: 'Top Performance',
+    adm_filter_all_brands: 'All Brands',
     adm_full_catalog_performance: 'Full Catalog Performance (Ranked by Sales Volume)',
     adm_no_sales_data: 'No sales data recorded yet.',
     adm_rank: 'Rank',
@@ -568,6 +573,7 @@ export const translations = {
     adm_form_brand: 'Brand',
     adm_form_desc: 'Description',
     adm_form_gallery: 'Manage Gallery',
+    adm_form_gallery_hint: 'First image is cover, use ◀ ▶ to reorder',
     adm_form_cover: 'Cover',
     adm_form_stock: 'Stock',
     adm_form_size_guide: 'Size Guide',
@@ -635,6 +641,7 @@ export const translations = {
     adm_arrive: 'Arrive',
     adm_workforce_mgmt: 'Workforce Management',
     adm_workforce_desc: 'Personnel security and role assignment',
+    adm_admin_directory: 'Admin Profiles',
     adm_total_personnel: 'Total Personnel',
     adm_super_admins: 'Super Admins',
     adm_biometrics_registered: 'Biometrics Registered',
@@ -727,6 +734,7 @@ export const translations = {
     nav_logout: 'ออกจากระบบ',
     nav_apparel: 'เสื้อผ้า',
     nav_shoes: 'รองเท้า',
+    nav_shirt: 'เสื้อเชิ้ต',
     nav_under_5k: 'ต่ำกว่า 5,000',
     nav_above_50k: '50,000 ขึ้นไป',
 
@@ -908,7 +916,10 @@ export const translations = {
 
     
     prof_title: 'การตั้งค่าบัญชี',
+    prof_edit_profile: 'แก้ไขข้อมูลส่วนตัว',
+    prof_change_pw: 'เปลี่ยนรหัสผ่าน',
     prof_account_info: 'ข้อมูลบัญชี',
+    prof_shipping_contact: 'ข้อมูลผู้รับสินค้า',
     prof_personal: 'ข้อมูลส่วนตัว',
     prof_shipping_addr: 'ที่อยู่จัดส่ง',
     
@@ -1054,6 +1065,7 @@ export const translations = {
     adm_revenue_summary_desc: 'ข้อมูลสรุปนี้แสดงถึงผลการดำเนินงานสะสมในทุกรอบธุรกิจ ใช้แผนภูมิด้านบนเพื่อระบุแนวโน้มการเติบโตและเดือนที่มีผลงานสูงสุด ร้านค้าของคุณกำลังแสดงรูปแบบการเติบโตที่มั่นคง',
     adm_revenue_breakdown: 'รายละเอียดการแยกประเภทรายได้',
     adm_last_sold: 'ขายล่าสุดเมื่อ',
+    adm_units_sold_items: 'จำนวนที่ขาย (ชิ้น)',
     adm_revenue_contribution: 'สัดส่วนรายได้',
     adm_monthly_performance_log: 'บันทึกสรุปผลงานรายวันประจำเดือน',
     adm_monthly_desc: 'รายละเอียดการขายและจำนวนชิ้นที่ขายได้ในแต่ละวันของเดือน',
@@ -1185,6 +1197,7 @@ export const translations = {
     adm_units: 'ชิ้น',
     adm_revenue_label: 'รายได้:',
     adm_top_performance: 'ประสิทธิภาพสูงสุด',
+    adm_filter_all_brands: 'ทุกแบรนด์',
     adm_full_catalog_performance: 'ประสิทธิภาพแคตตาล็อกทั้งหมด (จัดอันดับตามยอดขาย)',
     adm_no_sales_data: 'ยังไม่มีข้อมูลการขายบันทึกไว้',
     adm_rank: 'อันดับ',
@@ -1251,6 +1264,7 @@ export const translations = {
     adm_all_orders: 'ออเดอร์ทั้งหมด',
     adm_pending_check: 'รอยืนยันสลิป',
     adm_verified_only: 'ยืนยันสลิปแล้ว',
+    adm_all_status: 'ทุกสถานะ',
     adm_bank_notified: 'แจ้งเลขบัญชีแล้ว',
     adm_edit_product: 'แก้ไขสินค้า',
     adm_add_color: 'เพิ่มสีสินค้า',
@@ -1262,6 +1276,7 @@ export const translations = {
     adm_form_brand: 'แบรนด์',
     adm_form_desc: 'รายละเอียด',
     adm_form_gallery: 'จัดการคลังรูปภาพ',
+    adm_form_gallery_hint: 'รูปแรกคือรูปหน้าปก, ใช้ ◀ ▶ เพื่อจัดลำดับ',
     adm_form_cover: 'หน้าปก',
     adm_form_stock: 'สต๊อก',
     adm_form_size_guide: 'ตารางไซส์',
@@ -1300,6 +1315,7 @@ export const translations = {
     adm_arrive: 'ถึงที่หมาย',
     adm_workforce_mgmt: 'การจัดการบุคลากร',
     adm_workforce_desc: 'การจัดการความปลอดภัยและกำหนดสิทธิ์ผู้ใช้งาน',
+    adm_admin_directory: 'ข้อมูลแอดมินทั้งหมด',
     adm_total_personnel: 'จำนวนบุคลากรทั้งหมด',
     adm_super_admins: 'ซูเปอร์แอดมิน',
     adm_biometrics_registered: 'ลงทะเบียนใบหน้าแล้ว',
@@ -1336,7 +1352,6 @@ export const translations = {
     adm_reset_face_confirm: 'คุณแน่ใจหรือไม่ที่จะรีเซ็ตข้อมูลใบหน้าของ {{username}}? เจ้าหน้าที่จะต้องสแกนใบหน้าใหม่',
     adm_reset_success: 'รีเซ็ตข้อมูลใบหน้าเรียบร้อยแล้ว',
     adm_form_password: 'รหัสผ่านสำหรับการเข้าถึง',
-
   }
 };
 
